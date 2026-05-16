@@ -1,0 +1,167 @@
+import GB from "../../emu";
+import FrameTimer from "./FrameTimer";
+import Speaker from "./Speaker";
+
+const PRESS_KEY_TO_ENABLE_AUDIO = "Press any key to enable audio!";
+
+const SYNC_TO_AUDIO = true;
+const AUDIO_DRIFT_THRESHOLD = 64;
+const SAMPLES_PER_FRAME = Math.floor(44100 / 60.098) + 1;
+
+/**
+ * An emulator runner instance.
+ */
+export default class Emulation {
+  constructor(
+    bytes,
+    screen,
+    getInput = () => [{}, {}],
+    onFps = () => {},
+    onError = () => {},
+    onSaveState = () => {},
+    saveState = null,
+    unbroken = false
+  ) {
+    this.screen = screen;
+    this.samples = [];
+
+    this.speaker = new Speaker(({ need, have, target }) => {
+      try {
+        if (this._canSyncToAudio()) {
+          let n = need;
+          if (have > target + AUDIO_DRIFT_THRESHOLD) n--;
+          else if (have < target - AUDIO_DRIFT_THRESHOLD) n++;
+          this.gb.samples(n);
+          this._updateSound();
+        }
+      } catch (error) {
+        onError(error);
+      }
+    });
+    this.speaker.start();
+    if (this.speaker.state === "suspended") alert(PRESS_KEY_TO_ENABLE_AUDIO);
+
+    this.saveState = saveState;
+    this.isSaveStateRequested = false;
+    this.isLoadStateRequested = false;
+    this.wasSaveStateRequested = false;
+    this.wasLoadStateRequested = false;
+    this.isDebugging = false;
+    this.isDebugStepFrameRequested = false;
+    this.isDebugStepScanlineRequested = false;
+
+    this.gb = new (GB({ unbroken }))(this._onFrame, this._onAudio);
+    this.frameTimer = new FrameTimer(() => {
+      this._updateInput(getInput());
+
+      if (
+        this.isDebugging &&
+        !this.isDebugStepFrameRequested &&
+        !this.isDebugStepScanlineRequested
+      )
+        return;
+
+      const isDebugStepScanlineRequested = this.isDebugStepScanlineRequested;
+      this.isDebugStepFrameRequested = false;
+      this.isDebugStepScanlineRequested = false;
+
+      if (this.isSaveStateRequested && !this.wasSaveStateRequested) {
+        this.saveState = this.gb.getSaveState();
+        this.wasSaveStateRequested = true;
+
+        onSaveState(this.saveState);
+      }
+      if (
+        this.isLoadStateRequested &&
+        !this.wasLoadStateRequested &&
+        this.saveState != null
+      ) {
+        this.gb.setSaveState(this.saveState);
+        this.wasLoadStateRequested = true;
+      }
+
+      try {
+        if (!this._canSyncToAudio()) {
+          if (isDebugStepScanlineRequested) {
+            this.gb.scanline(true);
+          } else {
+            this.gb.frame();
+            if (this.samples.length !== SAMPLES_PER_FRAME)
+              this.samples = this._resample(this.samples, SAMPLES_PER_FRAME);
+          }
+          this._updateSound();
+        }
+      } catch (error) {
+        onError(error);
+      }
+    }, onFps);
+
+    try {
+      this.gb.load(bytes);
+      this.frameTimer.start();
+    } catch (error) {
+      onError(error);
+    }
+  }
+
+  terminate = () => {
+    this.frameTimer.stop();
+    this.speaker.stop();
+  };
+
+  _onFrame = (frameBuffer) => {
+    this.frameTimer.countNewFrame();
+    this.screen.setBuffer(frameBuffer);
+  };
+
+  _onAudio = (sample) => {
+    this.samples.push(sample);
+  };
+
+  _updateSound() {
+    this.speaker.writeSamples(this.samples);
+    this.samples = [];
+  }
+
+  _resample(src, target) {
+    const n = src.length;
+    if (n === target) return src.slice();
+    if (n === 0) return new Array(target).fill(0);
+    if (n === 1) return new Array(target).fill(src[0]);
+
+    const out = new Array(target);
+    for (let i = 0; i < target; i++) {
+      const t = (i * (n - 1)) / (target - 1);
+      const k = Math.floor(t);
+      const a = src[k];
+      const b = src[k + 1] ?? a;
+      out[i] = a + (b - a) * (t - k);
+    }
+
+    return out;
+  }
+
+  _updateInput(input) {
+    for (let i = 0; i < 2; i++) {
+      if (i === 0) {
+        this.isSaveStateRequested = input[i].$saveState;
+        this.isLoadStateRequested = input[i].$loadState;
+        if (!input[i].$saveState) this.wasSaveStateRequested = false;
+        if (!input[i].$loadState) this.wasLoadStateRequested = false;
+        if (input[i].$startDebugging) this.isDebugging = true;
+        if (input[i].$stopDebugging) this.isDebugging = false;
+        if (input[i].$debugStepFrame) this.isDebugStepFrameRequested = true;
+        if (input[i].$debugStepScanline)
+          this.isDebugStepScanlineRequested = true;
+      }
+
+      for (let button in input[i])
+        if (button[0] !== "$")
+          this.gb.setButton(i + 1, button, input[i][button]);
+    }
+  }
+
+  _canSyncToAudio() {
+    return SYNC_TO_AUDIO && !this.isDebugging;
+  }
+}

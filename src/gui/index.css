@@ -1,0 +1,20 @@
+body {
+  margin: 0;
+
+  background-color: #000000;
+  color: white;
+  user-select: none;
+}
+
+.nes-balloon {
+  color: black;
+}
+
+html,
+body,
+pre,
+code,
+kbd,
+samp {
+  font-family: "Press Start 2P";
+}

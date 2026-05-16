@@ -1,0 +1,19 @@
+{
+  "name": "gbcore",
+  "version": "1.0.84",
+  "main": "index.js",
+  "description": "A really broken GB emulator that introduces glitches and random bugs on purpose!",
+  "author": "[r]labs",
+  "license": "MIT",
+  "dependencies": {},
+  "keywords": [
+    "nes",
+    "emulator",
+    "core",
+    "cpu",
+    "ppu",
+    "apu",
+    "mapper",
+    "cartridge"
+  ]
+}

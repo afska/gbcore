@@ -1,0 +1,53 @@
+.app {
+  padding: 10px;
+  text-align: center;
+}
+
+.sourceCode {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+}
+
+.subtitle {
+  color: #c7c7c7;
+}
+
+.subsubtitle {
+  color: #c7c7c7;
+  font-size: 6px;
+  margin-bottom: 24px;
+}
+
+.warning {
+  color: red;
+  font-size: 6px;
+  margin-bottom: 0px;
+}
+
+.gameContainer {
+  width: 100%;
+  max-width: 512px;
+  height: auto;
+  padding: 0 !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  aspect-ratio: 256/240;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .gameContainer {
+    max-width: 100%;
+    transform: scale(0.9);
+    transform-origin: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .gameContainer {
+    transform: scale(0.8);
+  }
+}
