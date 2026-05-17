@@ -4,7 +4,6 @@ import TVNoise from "./components/TVNoise";
 import classNames from "classnames";
 import styles from "./App.module.css";
 import emu from "../emu";
-import _ from "lodash";
 
 window.emu = emu;
 
@@ -77,7 +76,7 @@ export default class App extends Component {
   _onFileDrop = (e) => {
     e.preventDefault();
 
-    const file = _.first(e.dataTransfer.files);
+    const file = e.dataTransfer.files[0];
     const reader = new FileReader();
     if (!file) return;
 

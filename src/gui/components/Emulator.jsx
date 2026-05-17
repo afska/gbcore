@@ -3,7 +3,6 @@ import Screen from "./Screen";
 import Emulation from "../emulator/Emulation";
 import gamepad from "../emulator/gamepad";
 
-const UNBROKEN_MODE = (window.location.search || "").includes("unbroken");
 const SAVESTATE_KEY = "gbcore-savestate";
 const KEY_MAP = {
   " ": "BUTTON_A",
@@ -54,8 +53,7 @@ export default class Emulator extends Component {
       this._setFps,
       this._setError,
       this._setSaveState,
-      saveState,
-      UNBROKEN_MODE
+      saveState
     );
   }
 
