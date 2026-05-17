@@ -1,3 +1,3 @@
-import GB from "./GB";
+import Emulator from "./Emulator";
 
-export default GB;
+export default Emulator;

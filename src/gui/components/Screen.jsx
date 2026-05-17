@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import styles from "./Screen.module.css";
 
-const SCREEN_WIDTH = 256;
-const SCREEN_HEIGHT = 240;
+const SCREEN_WIDTH = 160;
+const SCREEN_HEIGHT = 144;
 
 export default class Screen extends Component {
   render() {

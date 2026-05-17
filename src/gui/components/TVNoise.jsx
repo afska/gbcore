@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 
-const SCREEN_WIDTH = 256;
-const SCREEN_HEIGHT = 240;
+const SCREEN_WIDTH = 160;
+const SCREEN_HEIGHT = 144;
 
 export default class TVNoise extends Component {
   render() {

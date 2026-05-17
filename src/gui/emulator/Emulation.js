@@ -1,4 +1,4 @@
-import GB from "../../emu";
+import Emulator from "../../emu";
 import FrameTimer from "./FrameTimer";
 import Speaker from "./Speaker";
 
@@ -50,7 +50,7 @@ export default class Emulation {
     this.isDebugStepFrameRequested = false;
     this.isDebugStepScanlineRequested = false;
 
-    this.gb = new (GB({ unbroken }))(this._onFrame, this._onAudio);
+    this.gb = new Emulator(this._onFrame, this._onAudio);
     this.frameTimer = new FrameTimer(() => {
       this._updateInput(getInput());
 
@@ -83,7 +83,8 @@ export default class Emulation {
       try {
         if (!this._canSyncToAudio()) {
           if (isDebugStepScanlineRequested) {
-            this.gb.scanline(true);
+            // TODO: Add support
+            // this.gb.scanline(true);
           } else {
             this.gb.frame();
             if (this.samples.length !== SAMPLES_PER_FRAME)
