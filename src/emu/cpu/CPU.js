@@ -27,6 +27,10 @@ export default class CPU {
 
     this.pc = new ProgramCounter();
     this.memory = new MemoryBus();
+
+    this.ime = 0;
+    this.eiCountdown = 0;
+    this.halted = false;
   }
 
   step() {
@@ -38,11 +42,20 @@ export default class CPU {
     if (operation == null) throw new Error(`Unknown opcode: ${opcode}`);
 
     operation.run(this);
+
+    _processPendingEI();
   }
 
   fetchProgramByte() {
     const value = this.memory.read(this.pc.getValue());
     this.pc.increment();
     return value;
+  }
+
+  _processPendingEI() {
+    if (this.eiCountdown <= 0) return;
+
+    this.eiCountdown--;
+    if (this.eiCountdown === 0) this.ime = 1;
   }
 }
