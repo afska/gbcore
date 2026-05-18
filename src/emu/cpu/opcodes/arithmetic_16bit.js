@@ -1,5 +1,3 @@
-import byte from "../lib/byte";
-
 /**
  * ADD \target, \addend
  * Add \addend to the contents of 16-bit register \target, and store the results in \target.
