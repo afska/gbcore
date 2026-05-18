@@ -1,5 +1,3 @@
-import { INC16, DEC16 } from "./arithmetic_16bit";
-
 /**
  * LD \target, \source
  * Load the contents of register \source into register \target.
@@ -128,7 +126,7 @@ export default [
       const hl = cpu.registers.hl.getValue();
       const a = cpu.registers.a.getValue();
       cpu.memory.write(hl, a);
-      INC16(cpu, cpu.registers.hl);
+      cpu.registers.hl.increment();
     },
     cycles: 2
   },
@@ -149,7 +147,7 @@ export default [
     run: (cpu) => {
       const hl = cpu.registers.hl.getValue();
       cpu.registers.a.setValue(cpu.memory.read(hl));
-      INC16(cpu, cpu.registers.hl);
+      cpu.registers.hl.increment();
     },
     cycles: 2
   },
@@ -171,7 +169,7 @@ export default [
       const hl = cpu.registers.hl.getValue();
       const a = cpu.registers.a.getValue();
       cpu.memory.write(hl, a);
-      DEC16(cpu, cpu.registers.hl);
+      cpu.registers.hl.decrement();
     },
     cycles: 2
   },
@@ -193,7 +191,7 @@ export default [
     run: (cpu) => {
       const hl = cpu.registers.hl.getValue();
       cpu.registers.a.setValue(cpu.memory.read(hl));
-      DEC16(cpu, cpu.registers.hl);
+      cpu.registers.hl.decrement();
     },
     cycles: 2
   },
