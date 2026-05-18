@@ -1,6 +1,7 @@
-import arithmetic_8bit from "./instructions";
+import arithmetic_8bit from "./arithmetic_8bit";
+import arithmetic_16bit from "./arithmetic_16bit";
 
-const operations = [...arithmetic_8bit];
+const operations = [...arithmetic_8bit, ...arithmetic_16bit];
 
 const normalOperations = new Array(256).fill(null);
 const prefixOperations = new Array(256).fill(null);
