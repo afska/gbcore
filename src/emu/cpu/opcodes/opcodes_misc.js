@@ -1,3 +1,5 @@
+import byte from "../../lib/byte";
+
 /**
  * DAA
  * Decimal Adjust Accumulator.

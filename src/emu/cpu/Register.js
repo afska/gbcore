@@ -39,7 +39,8 @@ export class Register16Bit extends Register {
   }
 
   setValue(value) {
-    this._high.setValue(byte.highByteOf(value), byte.lowByteOf(value));
+    this._high.setValue(byte.highByteOf(value));
+    this._low.setValue(byte.lowByteOf(value));
   }
 }
 

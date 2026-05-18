@@ -1,5 +1,5 @@
 import { withHL } from "./_helpers";
-import byte from "../lib/byte";
+import byte from "../../lib/byte";
 
 /**
  * ADD A, \addend

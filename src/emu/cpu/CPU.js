@@ -44,7 +44,7 @@ export default class CPU {
 
     operation.run(this);
 
-    _processPendingEI();
+    this._processPendingEI();
   }
 
   fetchProgramByte() {

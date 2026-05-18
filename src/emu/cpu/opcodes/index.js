@@ -1,12 +1,13 @@
-import arithmetic_8bit from "./arithmetic_8bit";
-import arithmetic_16bit from "./arithmetic_16bit";
-import bit_flag from "./bit_flag";
-import bitwise_logic from "./bitwise_logic";
-import carry_flag from "./carry_flag";
-import interrupts from "./interrupts";
-import jumps from "./jumps";
-import load from "./load";
-import misc from "./misc";
+import arithmetic_8bit from "./opcodes_arithmetic_8bit";
+import arithmetic_16bit from "./opcodes_arithmetic_16bit";
+import bit_flag from "./opcodes_bit_flag";
+import bitwise_logic from "./opcodes_bitwise_logic";
+import carry_flag from "./opcodes_carry_flag";
+import interrupts from "./opcodes_interrupts";
+import jumps from "./opcodes_jumps";
+import load from "./opcodes_load";
+import misc from "./opcodes_misc";
+import stack from "./opcodes_stack";
 
 const operations = [
   ...arithmetic_8bit,
@@ -17,7 +18,8 @@ const operations = [
   ...interrupts,
   ...jumps,
   ...load,
-  ...misc
+  ...misc,
+  ...stack
 ];
 
 const normalOperations = new Array(256).fill(null);

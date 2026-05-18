@@ -1,3 +1,5 @@
+import { Register8Bit } from "../Register";
+
 const tmp = new Register8Bit();
 
 export function withHL(cpu, action, arg) {
