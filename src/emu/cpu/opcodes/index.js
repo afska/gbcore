@@ -6,6 +6,7 @@ import carry_flag from "./carry_flag";
 import interrupts from "./interrupts";
 import jumps from "./jumps";
 import load from "./load";
+import misc from "./misc";
 
 const operations = [
   ...arithmetic_8bit,
@@ -15,7 +16,8 @@ const operations = [
   ...carry_flag,
   ...interrupts,
   ...jumps,
-  ...load
+  ...load,
+  ...misc
 ];
 
 const normalOperations = new Array(256).fill(null);
