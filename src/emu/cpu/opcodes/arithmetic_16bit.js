@@ -22,11 +22,11 @@ function ADD16(cpu, addend, target) {
  * DEC \target
  * Decrement the contents of 16-bit register \target by 1.
  */
-function INC16(cpu, target) {
+export function INC16(cpu, target) {
   target.setValue(target.getValue() + 1);
 }
 
-function DEC16(cpu, target) {
+export function DEC16(cpu, target) {
   target.setValue(target.getValue() - 1);
 }
 

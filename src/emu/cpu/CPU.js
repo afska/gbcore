@@ -2,6 +2,7 @@ import { Register8Bit, Register16Bit, ProgramCounter } from "./Register";
 import FlagsRegister from "./FlagsRegister";
 import MemoryBus from "../MemoryBus";
 import { getOperation } from "./opcodes";
+import byte from "../lib/byte";
 
 const PREFIX_INSTRUCTION = 0xcb;
 
@@ -50,6 +51,13 @@ export default class CPU {
     const value = this.memory.read(this.pc.getValue());
     this.pc.increment();
     return value;
+  }
+
+  fetchProgramHalfword() {
+    const low = this.fetchProgramByte();
+    const high = this.fetchProgramByte();
+
+    return byte.buildU16(high, low);
   }
 
   _processPendingEI() {

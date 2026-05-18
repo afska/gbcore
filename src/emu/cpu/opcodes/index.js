@@ -4,6 +4,8 @@ import bit_flag from "./bit_flag";
 import bitwise_logic from "./bitwise_logic";
 import carry_flag from "./carry_flag";
 import interrupts from "./interrupts";
+import jumps from "./jumps";
+import load from "./load";
 
 const operations = [
   ...arithmetic_8bit,
@@ -11,7 +13,9 @@ const operations = [
   ...bit_flag,
   ...bitwise_logic,
   ...carry_flag,
-  ...interrupts
+  ...interrupts,
+  ...jumps,
+  ...load
 ];
 
 const normalOperations = new Array(256).fill(null);
