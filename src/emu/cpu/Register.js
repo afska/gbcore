@@ -27,6 +27,22 @@ export class Register8Bit extends Register {
 }
 
 export class Register16Bit extends Register {
+  constructor() {
+    super();
+
+    this._bytes = new Uint16Array(1);
+  }
+
+  getValue() {
+    return this._bytes[0];
+  }
+
+  setValue(value) {
+    this._bytes[0] = value;
+  }
+}
+
+export class RegisterPair extends Register {
   constructor(high, low) {
     super();
 
@@ -41,21 +57,5 @@ export class Register16Bit extends Register {
   setValue(value) {
     this._high.setValue(byte.highByteOf(value));
     this._low.setValue(byte.lowByteOf(value));
-  }
-}
-
-export class ProgramCounter extends Register {
-  constructor() {
-    super();
-
-    this._bytes = new Uint16Array(1);
-  }
-
-  getValue() {
-    return this._bytes[0];
-  }
-
-  setValue(value) {
-    this._bytes[0] = value;
   }
 }

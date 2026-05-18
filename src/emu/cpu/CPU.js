@@ -1,8 +1,9 @@
-import { Register8Bit, Register16Bit, ProgramCounter } from "./Register";
+import { Register8Bit, Register16Bit, RegisterPair } from "./Register";
 import FlagsRegister from "./FlagsRegister";
 import MemoryBus from "../MemoryBus";
 import { getOperation } from "./opcodes";
 import byte from "../lib/byte";
+import Stack from "./Stack";
 
 const PREFIX_INSTRUCTION = 0xcb;
 
@@ -19,15 +20,18 @@ export default class CPU {
       l: new Register8Bit()
     };
 
-    this.registers.af = new Register16Bit(this.registers.a, this.registers.f);
-    this.registers.bc = new Register16Bit(this.registers.b, this.registers.c);
-    this.registers.de = new Register16Bit(this.registers.d, this.registers.e);
-    this.registers.hl = new Register16Bit(this.registers.h, this.registers.l);
+    this.registers.af = new RegisterPair(this.registers.a, this.registers.f);
+    this.registers.bc = new RegisterPair(this.registers.b, this.registers.c);
+    this.registers.de = new RegisterPair(this.registers.d, this.registers.e);
+    this.registers.hl = new RegisterPair(this.registers.h, this.registers.l);
 
     this.registers.flags = new FlagsRegister();
 
-    this.pc = new ProgramCounter();
+    this.registers.pc = new Register16Bit();
+    this.registers.sp = new Register16Bit();
+
     this.memory = new MemoryBus();
+    this.stack = new Stack(this.memory, this.registers.sp);
 
     this.ime = 0;
     this.eiCountdown = 0;
@@ -48,8 +52,8 @@ export default class CPU {
   }
 
   fetchProgramByte() {
-    const value = this.memory.read(this.pc.getValue());
-    this.pc.increment();
+    const value = this.memory.read(this.registers.pc.getValue());
+    this.registers.pc.increment();
     return value;
   }
 
