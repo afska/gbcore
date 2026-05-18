@@ -33,6 +33,7 @@ export default class CPU {
     this.memory = new MemoryBus();
     this.stack = new Stack(this.memory, this.registers.sp);
 
+    this.cycle = 0;
     this.ime = 0;
     this.eiCountdown = 0;
     this.halted = false;
