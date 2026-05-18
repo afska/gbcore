@@ -36,6 +36,13 @@ function DAA(cpu) {
 }
 
 export default [
+  // NOP
+  {
+    id: 0x00,
+    run: (cpu) => {},
+    cycles: 1
+  },
+
   // DAA
   {
     id: 0x27,
