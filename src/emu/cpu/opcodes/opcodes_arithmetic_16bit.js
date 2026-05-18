@@ -6,7 +6,7 @@
  * H: Set if overflow from bit 11.
  * C: Set if overflow from bit 15.
  */
-function ADD16(cpu, addend, target) {
+export function ADD16(cpu, addend, target) {
   const currentValue = target.getValue();
   const result = currentValue + addend;
 
@@ -18,29 +18,12 @@ function ADD16(cpu, addend, target) {
   cpu.registers.flags.carry = result > 0xffff;
 }
 
-/**
- * DEC \target
- * Decrement the contents of 16-bit register \target by 1.
- */
-function INC16(cpu, target) {
-  target.increment();
-}
-
-/**
- * DEC \target
- * Decrement the contents of 16-bit register \target by 1.
- */
-function DEC16(cpu, target) {
-  target.decrement();
-}
-
 export default [
   // INC BC
   {
     id: 0x03,
     run: (cpu) => {
-      const bc = cpu.registers.bc;
-      INC16(cpu, bc);
+      cpu.registers.bc.increment();
     },
     cycles: 2
   },
@@ -59,8 +42,7 @@ export default [
   {
     id: 0x0b,
     run: (cpu) => {
-      const bc = cpu.registers.bc;
-      DEC16(cpu, bc);
+      cpu.registers.bc.decrement();
     },
     cycles: 2
   },
@@ -69,8 +51,7 @@ export default [
   {
     id: 0x13,
     run: (cpu) => {
-      const de = cpu.registers.de;
-      INC16(cpu, de);
+      cpu.registers.de.increment();
     },
     cycles: 2
   },
@@ -89,8 +70,7 @@ export default [
   {
     id: 0x1b,
     run: (cpu) => {
-      const de = cpu.registers.de;
-      DEC16(cpu, de);
+      cpu.registers.de.decrement();
     },
     cycles: 2
   },
@@ -99,8 +79,7 @@ export default [
   {
     id: 0x23,
     run: (cpu) => {
-      const hl = cpu.registers.hl;
-      INC16(cpu, hl);
+      cpu.registers.hl.increment();
     },
     cycles: 2
   },
@@ -119,8 +98,7 @@ export default [
   {
     id: 0x2b,
     run: (cpu) => {
-      const hl = cpu.registers.hl;
-      DEC16(cpu, hl);
+      cpu.registers.hl.decrement();
     },
     cycles: 2
   }
