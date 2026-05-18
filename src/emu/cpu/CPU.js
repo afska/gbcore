@@ -31,16 +31,19 @@ export default class CPU {
   }
 
   step() {
-    let opcode = this.memory.read(this.pc.getValue());
+    let opcode = this.fetchProgramByte();
     const isPrefix = opcode === PREFIX_INSTRUCTION;
-    if (isPrefix) {
-      opcode = this.memory.read(byte.toU16(this.pc.getValue() + 1));
-    }
+    if (isPrefix) opcode = this.fetchProgramByte();
 
     const operation = operations[opcode];
     if (operation == null) throw new Error(`Unknown opcode: ${opcode}`);
 
-    const size = operation.instruction(this);
-    this.pc.setValue(this.pc.getValue() + size);
+    operation.run(this);
+  }
+
+  fetchProgramByte() {
+    const value = this.memory.read(this.pc.getValue());
+    this.pc.increment();
+    return value;
   }
 }
