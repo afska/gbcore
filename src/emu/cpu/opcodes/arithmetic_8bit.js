@@ -1,15 +1,5 @@
+import { withHL } from "./_helpers";
 import byte from "../lib/byte";
-
-const tmp = new Register8Bit();
-
-function withHL(cpu, action) {
-  const hl = cpu.registers.hl.getValue();
-  const value = cpu.memory.read(hl);
-
-  tmp.setValue(value);
-  action(cpu, tmp);
-  cpu.memory.write(hl, tmp.getValue());
-}
 
 /**
  * ADD A, \addend

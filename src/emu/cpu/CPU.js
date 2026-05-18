@@ -1,8 +1,7 @@
 import { Register8Bit, Register16Bit, ProgramCounter } from "./Register";
 import FlagsRegister from "./FlagsRegister";
 import MemoryBus from "../MemoryBus";
-import operations from "./operations";
-import byte from "../lib/byte";
+import { getOperation } from "./opcodes";
 
 const PREFIX_INSTRUCTION = 0xcb;
 
@@ -35,7 +34,7 @@ export default class CPU {
     const isPrefix = opcode === PREFIX_INSTRUCTION;
     if (isPrefix) opcode = this.fetchProgramByte();
 
-    const operation = operations[opcode];
+    const operation = getOperation(opcode, isPrefix);
     if (operation == null) throw new Error(`Unknown opcode: ${opcode}`);
 
     operation.run(this);
