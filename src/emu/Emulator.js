@@ -1,3 +1,8 @@
+import MemoryBus from "./MemoryBus";
+import CPU from "./cpu/CPU";
+import Cartridge from "./Cartridge";
+import Controller from "./Controller";
+
 const WIDTH = 160;
 const HEIGHT = 144;
 const SAMPLE_RATE_HZ = 44100;
@@ -10,12 +15,8 @@ export default class Emulator {
     this.onFrame = onFrame;
     this.onSample = onSample;
 
-    // <test>
-    this._frameBuffer = new Uint32Array(WIDTH * HEIGHT);
-    this._frameIndex = 0;
-    this._samplesSinceFrame = 0;
-    this._phase = 0;
-    // </test>
+    this.memory = new MemoryBus();
+    this.cpu = new CPU(this.memory);
   }
 
   /**
@@ -24,7 +25,13 @@ export default class Emulator {
    * `saveFileBytes`: `Uint8Array` or null
    */
   load(bytes, saveFileBytes = null) {
-    /* TODO: IMPLEMENT */
+    const cartridge = new Cartridge(bytes);
+    const controller = new Controller();
+
+    this.memory.onLoad(this.cpu, null, null, cartridge, controller);
+
+    this.context = { cartridge, controller };
+    this.cpu.reset();
   }
 
   /**
@@ -34,7 +41,10 @@ export default class Emulator {
    * `isPressed`: `boolean`
    */
   setButton(playerId, button, isPressed) {
-    /* TODO: IMPLEMENT */
+    if (!this.context) return;
+
+    const { controller } = this.context;
+    controller.setButton(button, isPressed);
   }
 
   /**
@@ -42,10 +52,9 @@ export default class Emulator {
    * Used when "SYNC TO VIDEO" is active.
    */
   frame() {
-    /* TODO: IMPLEMENT */
+    if (!this.context) return;
 
-    this._generateVideo();
-    this._generateAudio(SAMPLES_PER_FRAME);
+    // TODO: IMPLEMENT
   }
 
   /**
@@ -54,29 +63,27 @@ export default class Emulator {
    * `n`: `number`
    */
   samples(n) {
-    /* TODO: IMPLEMENT */
+    if (!this.context) return;
 
-    this._generateAudio(n);
-
-    this._samplesSinceFrame += n;
-    while (this._samplesSinceFrame >= SAMPLES_PER_FRAME) {
-      this._samplesSinceFrame -= SAMPLES_PER_FRAME;
-      this._generateVideo();
-    }
+    // TODO: IMPLEMENT
   }
 
   /**
    * Returns an array with the save file bytes, or null if the game doesn't have a save file.
    */
   getSaveFile() {
-    return null; /* TODO: IMPLEMENT */
+    if (!this.context) return;
+
+    return null; // TODO: IMPLEMENT
   }
 
   /**
    * Returns an object with a snapshot of the current state.
    */
   getSaveState() {
-    return {}; /* TODO: IMPLEMENT */
+    if (!this.context) return;
+
+    return {}; // TODO: IMPLEMENT
   }
 
   /*
@@ -84,26 +91,8 @@ export default class Emulator {
    * `saveState`: the object returned by `getSaveState()`
    */
   setSaveState(saveState) {
-    /* TODO: IMPLEMENT */
-  }
+    if (!this.context) return;
 
-  // <test>
-  _generateVideo() {
-    this._frameIndex++;
-    for (let x = 0; x < WIDTH; x++) {
-      for (let y = 0; y < HEIGHT; y++) {
-        this._frameBuffer[y * WIDTH + x] = 0xff000000 | this._frameIndex % 256;
-      }
-    }
-    this.onFrame(this._frameBuffer);
+    // TODO: IMPLEMENT
   }
-
-  _generateAudio(sampleCount) {
-    const phaseIncrement = (2 * Math.PI * 440) / SAMPLE_RATE_HZ;
-    for (let sampleIndex = 0; sampleIndex < sampleCount; sampleIndex++) {
-      this.onSample(Math.sin(this._phase) * 0.25);
-      this._phase += phaseIncrement;
-    }
-  }
-  // </test>
 }

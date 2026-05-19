@@ -1,6 +1,5 @@
 import { Register8Bit, Register16Bit, RegisterPair } from "./Register";
 import FlagsRegister from "./FlagsRegister";
-import MemoryBus from "../MemoryBus";
 import { getOperation } from "./opcodes";
 import byte from "../lib/byte";
 import Stack from "./Stack";
@@ -8,7 +7,9 @@ import Stack from "./Stack";
 const PREFIX_INSTRUCTION = 0xcb;
 
 export default class CPU {
-  constructor() {
+  constructor(memory) {
+    this.memory = memory;
+
     this.registers = {
       a: new Register8Bit(),
       b: new Register8Bit(),
@@ -30,12 +31,13 @@ export default class CPU {
     this.registers.pc = new Register16Bit();
     this.registers.sp = new Register16Bit();
 
-    this.memory = new MemoryBus();
     this.stack = new Stack(this.memory, this.registers.sp);
 
     this.cycle = 0;
+
     this.ime = 0;
     this.eiCountdown = 0;
+    this.ie = 0;
     this.halted = false;
   }
 
@@ -50,6 +52,10 @@ export default class CPU {
     operation.run(this);
 
     this._processPendingEI();
+  }
+
+  reset() {
+    // TODO: IMPLEMENT
   }
 
   fetchProgramByte() {
