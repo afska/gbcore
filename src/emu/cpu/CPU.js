@@ -3,6 +3,7 @@ import FlagsRegister from "./FlagsRegister";
 import { getOperation } from "./opcodes";
 import byte from "../lib/byte";
 import Stack from "./Stack";
+import interrupts from "../interrupts";
 
 const PREFIX_INSTRUCTION = 0xcb;
 
@@ -38,10 +39,14 @@ export default class CPU {
     this.ime = 0;
     this.eiCountdown = 0;
     this.ie = 0;
+    this.if = 0;
     this.halted = false;
   }
 
   step() {
+    this._processPendingEI();
+    if (this._processPendingInterrupts()) return;
+
     let opcode = this.fetchProgramByte();
     const isPrefix = opcode === PREFIX_INSTRUCTION;
     if (isPrefix) opcode = this.fetchProgramByte();
@@ -50,12 +55,14 @@ export default class CPU {
     if (operation == null) throw new Error(`Unknown opcode: ${opcode}`);
 
     operation.run(this);
-
-    this._processPendingEI();
   }
 
   reset() {
     // TODO: IMPLEMENT
+  }
+
+  requestInterrupt(interrupt) {
+    this.if |= interrupt.mask;
   }
 
   fetchProgramByte() {
@@ -76,5 +83,58 @@ export default class CPU {
 
     this.eiCountdown--;
     if (this.eiCountdown === 0) this.ime = 1;
+  }
+
+  _processPendingInterrupts() {
+    const pending = this.ie & this.if;
+
+    if (pending === 0) {
+      if (this.halted) {
+        // if halted, just burn cycles and stop execution
+        this.cycle++;
+        return true;
+      }
+
+      return false;
+    }
+
+    // --- there's a pending interrupt!!! ---
+
+    // if halted, wake up
+    this.halted = false;
+
+    // if IME=0, we don't service anything
+    if (this.ime === 0) return false;
+
+    // clear IME and EI countdown (so the interrupt handler doesn't get interrupted until RETI)
+    this.ime = 0;
+    this.eiCountdown = 0;
+
+    // service IRQ
+    if (this._serviceIRQ(pending, interrupts.VBLANK)) return true;
+    if (this._serviceIRQ(pending, interrupts.LCD)) return true;
+    if (this._serviceIRQ(pending, interrupts.TIMER)) return true;
+    if (this._serviceIRQ(pending, interrupts.SERIAL)) return true;
+    if (this._serviceIRQ(pending, interrupts.JOYPAD)) return true;
+
+    return false;
+  }
+
+  _serviceIRQ(pending, interrupt) {
+    if (!(pending & interrupt.mask)) return false;
+
+    // clear IF bit
+    this.if &= ~interrupt.mask;
+
+    // save current PC
+    this.stack.push16(this.registers.pc.getValue());
+
+    // jump to handler
+    this.registers.pc.setValue(interrupt.vector);
+
+    // the whole thing takes 5 M-cycles
+    this.cycle += 5;
+
+    return true;
   }
 }

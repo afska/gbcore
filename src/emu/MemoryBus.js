@@ -7,7 +7,6 @@ const VRAM_SIZE = 8 * KB;
 const OAM_SIZE = 160;
 
 // TODO: NEXT STEPS:
-// interrupts
 // IO regs
 // basic ppu
 // sync
@@ -65,12 +64,9 @@ export default class MemoryBus {
     } else if (address >= 0xff00 && address < 0xff80) {
       // I/O Registers
       return this._ioRead(address);
-    } else if (address >= 0xff80 && address < 0xffff) {
+    } else if ((address >= 0xff00 && address < 0xff80) || address === 0xffff) {
       // High RAM (HRAM)
       return this.hram[address - 0xff80];
-    } else if (address === 0xffff) {
-      // Interrupt Enable register (IE)
-      return this.cpu.ie;
     }
 
     return 0xff;
@@ -107,15 +103,12 @@ export default class MemoryBus {
       // Not Usable
       // Use of this area is prohibited.
       return;
-    } else if (address >= 0xff00 && address < 0xff80) {
+    } else if ((address >= 0xff00 && address < 0xff80) || address === 0xffff) {
       // I/O Registers
       return this._ioWrite(address, value);
     } else if (address >= 0xff80 && address < 0xffff) {
       // High RAM (HRAM)
       return (this.hram[address - 0xff80] = value);
-    } else if (address === 0xffff) {
-      // Interrupt Enable register (IE)
-      this.cpu.ie = value;
     }
 
     return 0xff;
@@ -126,14 +119,40 @@ export default class MemoryBus {
   }
 
   _ioRead(address) {
-    if (address === 0xff00) {
-      // Joypad input
-      return this.controller.onRead();
+    switch (address) {
+      case 0xff00: {
+        // Joypad input
+        return this.controller.onRead();
+      }
+      case 0xff0f: {
+        // IF: Interrupt flag
+        return this.cpu.if;
+      }
+      case 0xffff: {
+        // IE: Interrupt enable
+        return this.cpu.ie;
+      }
     }
-    // TODO: IMPLEMENT OTHERS
+
+    return 0xff;
   }
 
   _ioWrite(address, value) {
-    // TODO: IMPLEMENT
+    switch (address) {
+      case 0xff00: {
+        // Joypad input
+        return this.controller.onWrite(address, value);
+      }
+      case 0xff0f: {
+        // IF: Interrupt flag
+        return (this.cpu.if = value);
+      }
+      case 0xffff: {
+        // IE: Interrupt enable
+        return (this.cpu.ie = value);
+      }
+    }
+
+    return 0xff;
   }
 }

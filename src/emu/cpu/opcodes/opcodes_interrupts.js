@@ -11,7 +11,7 @@ function DI(cpu) {
 /**
  * EI
  * Set the interrupt master enable (IME) flag and enable maskable interrupts. This instruction can be used in an interrupt routine to enable higher-order interrupts.
- * The IME flag is reset immediately after an interrupt occurs. The IME flag reset remains in effect if coontrol is returned from the interrupt routine by a RET instruction. However, if an EI instruction is executed in the interrupt routine, control is returned with IME = 1.
+ * The IME flag is reset immediately after an interrupt occurs. The IME flag reset remains in effect if control is returned from the interrupt routine by a RET instruction. However, if an EI instruction is executed in the interrupt routine, control is returned with IME = 1.
  */
 function EI(cpu) {
   cpu.eiCountdown = 2;
