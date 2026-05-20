@@ -143,23 +143,17 @@ export default class Emulation {
   }
 
   _updateInput(input) {
-    for (let i = 0; i < 2; i++) {
-      if (i === 0) {
-        this.isSaveStateRequested = input[i].$saveState;
-        this.isLoadStateRequested = input[i].$loadState;
-        if (!input[i].$saveState) this.wasSaveStateRequested = false;
-        if (!input[i].$loadState) this.wasLoadStateRequested = false;
-        if (input[i].$startDebugging) this.isDebugging = true;
-        if (input[i].$stopDebugging) this.isDebugging = false;
-        if (input[i].$debugStepFrame) this.isDebugStepFrameRequested = true;
-        if (input[i].$debugStepScanline)
-          this.isDebugStepScanlineRequested = true;
-      }
+    this.isSaveStateRequested = input[0].$saveState;
+    this.isLoadStateRequested = input[0].$loadState;
+    if (!input[0].$saveState) this.wasSaveStateRequested = false;
+    if (!input[0].$loadState) this.wasLoadStateRequested = false;
+    if (input[0].$startDebugging) this.isDebugging = true;
+    if (input[0].$stopDebugging) this.isDebugging = false;
+    if (input[0].$debugStepFrame) this.isDebugStepFrameRequested = true;
+    if (input[0].$debugStepScanline) this.isDebugStepScanlineRequested = true;
 
-      for (let button in input[i])
-        if (button[0] !== "$")
-          this.gb.setButton(i + 1, button, input[i][button]);
-    }
+    for (let button in input[0])
+      if (button[0] !== "$") this.gb.setButton(1, button, input[0][button]);
   }
 
   _canSyncToAudio() {

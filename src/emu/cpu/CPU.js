@@ -58,6 +58,7 @@ export default class CPU {
 
     operation.run(this);
     this.cycle += operation.cycles;
+
     return this.cycle - previousCycles;
   }
 
