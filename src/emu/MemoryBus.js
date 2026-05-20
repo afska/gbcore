@@ -64,7 +64,7 @@ export default class MemoryBus {
     } else if ((address >= 0xff00 && address < 0xff80) || address === 0xffff) {
       // I/O Registers
       return this._ioRead(address);
-    } else if (address >= 0xff00 && address < 0xff80) {
+    } else if (address >= 0xff80 && address < 0xffff) {
       // High RAM (HRAM)
       return this.hram[address - 0xff80];
     }
@@ -128,10 +128,18 @@ export default class MemoryBus {
         // IF: Interrupt flag
         return this.cpu.if;
       }
+      case 0xff44: {
+        // LY: LCD Y coordinate
+        return this.ppu.ly;
+      }
       case 0xff40: {
         // LCDC: LCD control
         // TODO: IMPLEMENT
         return 0x91;
+      }
+      case 0xff41: {
+        // STAT: LCD status
+        return 0x80 | this.ppu.getMode();
       }
       case 0xffff: {
         // IE: Interrupt enable

@@ -11,10 +11,11 @@ class Register {
 }
 
 export class Register8Bit extends Register {
-  constructor() {
+  constructor(initialValue) {
     super();
 
     this._bytes = new Uint8Array(1);
+    if (initialValue != null) this.setValue(initialValue);
   }
 
   getValue() {
@@ -27,10 +28,11 @@ export class Register8Bit extends Register {
 }
 
 export class Register16Bit extends Register {
-  constructor() {
+  constructor(initialValue) {
     super();
 
     this._bytes = new Uint16Array(1);
+    if (initialValue != null) this.setValue(initialValue);
   }
 
   getValue() {

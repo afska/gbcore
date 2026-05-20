@@ -29,7 +29,6 @@ export default class Emulator {
     this.memory.onLoad(this.cpu, this.ppu, null, cartridge, controller);
 
     this.context = { cartridge, controller };
-    this.cpu.reset();
   }
 
   /**

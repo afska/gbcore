@@ -29,8 +29,8 @@ export default class CPU {
 
     this.registers.flags = new FlagsRegister();
 
-    this.registers.pc = new Register16Bit();
-    this.registers.sp = new Register16Bit();
+    this.registers.pc = new Register16Bit(0x0100);
+    this.registers.sp = new Register16Bit(0xfffe);
 
     this.stack = new Stack(this.memory, this.registers.sp);
 
@@ -57,11 +57,8 @@ export default class CPU {
     if (operation == null) throw new Error(`Unknown opcode: ${opcode}`);
 
     operation.run(this);
+    this.cycle += operation.cycles;
     return this.cycle - previousCycles;
-  }
-
-  reset() {
-    // TODO: IMPLEMENT
   }
 
   requestInterrupt(interrupt) {
