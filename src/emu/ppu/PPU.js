@@ -20,6 +20,10 @@ export default class PPU {
     this.backgroundRenderer = new BackgroundRenderer(this);
   }
 
+  plot(x, y, color) {
+    this.frameBuffer[y * WIDTH + x] = color;
+  }
+
   step(onFrame) {
     this.dot++;
 

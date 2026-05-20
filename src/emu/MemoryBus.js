@@ -61,10 +61,10 @@ export default class MemoryBus {
       // Not Usable
       // Use of this area is prohibited.
       return 0;
-    } else if (address >= 0xff00 && address < 0xff80) {
+    } else if ((address >= 0xff00 && address < 0xff80) || address === 0xffff) {
       // I/O Registers
       return this._ioRead(address);
-    } else if ((address >= 0xff00 && address < 0xff80) || address === 0xffff) {
+    } else if (address >= 0xff00 && address < 0xff80) {
       // High RAM (HRAM)
       return this.hram[address - 0xff80];
     }
@@ -128,6 +128,11 @@ export default class MemoryBus {
         // IF: Interrupt flag
         return this.cpu.if;
       }
+      case 0xff40: {
+        // LCDC: LCD control
+        // TODO: IMPLEMENT
+        return 0x91;
+      }
       case 0xffff: {
         // IE: Interrupt enable
         return this.cpu.ie;
@@ -141,7 +146,7 @@ export default class MemoryBus {
     switch (address) {
       case 0xff00: {
         // Joypad input
-        return this.controller.onWrite(address, value);
+        return this.controller.onWrite(value);
       }
       case 0xff0f: {
         // IF: Interrupt flag
