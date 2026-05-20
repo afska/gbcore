@@ -44,8 +44,10 @@ export default class CPU {
   }
 
   step() {
+    const previousCycles = this.cycle;
+
     this._processPendingEI();
-    if (this._processPendingInterrupts()) return;
+    if (this._processPendingInterrupts()) return this.cycle - previousCycles;
 
     let opcode = this.fetchProgramByte();
     const isPrefix = opcode === PREFIX_INSTRUCTION;
@@ -55,6 +57,7 @@ export default class CPU {
     if (operation == null) throw new Error(`Unknown opcode: ${opcode}`);
 
     operation.run(this);
+    return this.cycle - previousCycles;
   }
 
   reset() {

@@ -2,12 +2,9 @@ import MemoryBus from "./MemoryBus";
 import CPU from "./cpu/CPU";
 import Cartridge from "./Cartridge";
 import Controller from "./Controller";
+import PPU from "./ppu/PPU";
 
-const WIDTH = 160;
-const HEIGHT = 144;
-const SAMPLE_RATE_HZ = 44100;
-const VIDEO_FRAMES_PER_SECOND = 60;
-const SAMPLES_PER_FRAME = SAMPLE_RATE_HZ / VIDEO_FRAMES_PER_SECOND;
+const T_CYCLES_PER_MCYCLE = 4;
 
 /** A GB emulator. */
 export default class Emulator {
@@ -17,6 +14,7 @@ export default class Emulator {
 
     this.memory = new MemoryBus();
     this.cpu = new CPU(this.memory);
+    this.ppu = new PPU(this.cpu);
   }
 
   /**
@@ -28,7 +26,7 @@ export default class Emulator {
     const cartridge = new Cartridge(bytes);
     const controller = new Controller();
 
-    this.memory.onLoad(this.cpu, null, null, cartridge, controller);
+    this.memory.onLoad(this.cpu, this.ppu, null, cartridge, controller);
 
     this.context = { cartridge, controller };
     this.cpu.reset();
@@ -54,7 +52,8 @@ export default class Emulator {
   frame() {
     if (!this.context) return;
 
-    // TODO: IMPLEMENT
+    const currentFrame = this.ppu.frame;
+    while (this.ppu.frame === currentFrame) this.step();
   }
 
   /**
@@ -66,6 +65,13 @@ export default class Emulator {
     if (!this.context) return;
 
     // TODO: IMPLEMENT
+  }
+
+  /** Executes a step in the emulation (1 CPU instruction). */
+  step() {
+    const mCycles = this.cpu.step();
+    const tCycles = mCycles * T_CYCLES_PER_MCYCLE;
+    this._clockPPU(tCycles);
   }
 
   /**
@@ -94,5 +100,11 @@ export default class Emulator {
     if (!this.context) return;
 
     // TODO: IMPLEMENT
+  }
+
+  _clockPPU(tCycles) {
+    for (let i = 0; i < tCycles; i++) {
+      this.ppu.step(this.onFrame);
+    }
   }
 }
