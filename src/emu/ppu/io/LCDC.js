@@ -1,0 +1,27 @@
+import InMemoryRegister from "../../lib/InMemoryRegister";
+
+/**
+ * LCDC: LCD control
+ * LCDC is the main LCD Control register.
+ * Its bits toggle what elements are displayed on the screen, and how.
+ */
+export default class LCDC extends InMemoryRegister.PPU {
+  onLoad() {
+    this.addField("showBackgroundAndWindow", 0)
+      .addField("showSprites", 1)
+      .addField("use8x16Sprites", 2)
+      .addField("backgroundTileMapId", 3)
+      .addField("useSignedTileMode", 4)
+      .addField("showWindow", 5)
+      .addField("windowTileMapId", 6)
+      .addField("enableLCD", 7);
+  }
+
+  onRead() {
+    return this.value;
+  }
+
+  onWrite(value) {
+    this.setValue(value);
+  }
+}

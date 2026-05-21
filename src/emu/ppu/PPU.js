@@ -1,5 +1,6 @@
 import BackgroundRenderer from "./BackgroundRenderer";
 import interrupts from "../interrupts";
+import VideoRegisters from "./io";
 
 const WIDTH = 160;
 const HEIGHT = 144;
@@ -12,10 +13,12 @@ export default class PPU {
     this.cpu = cpu;
 
     this.dot = 0;
-    this.ly = 0;
+    this.scanline = 0;
     this.frame = 0;
 
     this.frameBuffer = new Uint32Array(WIDTH * HEIGHT);
+
+    this.registers = new VideoRegisters(this);
 
     this.backgroundRenderer = new BackgroundRenderer(this);
   }
@@ -27,27 +30,27 @@ export default class PPU {
   step(onFrame) {
     this.dot++;
 
-    if (this.ly < HEIGHT && this.dot === RENDER_DOT) {
+    if (this.scanline < HEIGHT && this.dot === RENDER_DOT) {
       this.backgroundRenderer.renderScanline();
     }
 
     if (this.dot >= DOTS_PER_SCANLINE) {
       this.dot = 0;
-      this.ly++;
+      this.scanline++;
 
-      if (this.ly === HEIGHT) {
+      if (this.scanline === HEIGHT) {
         this.frame++;
         this.cpu.requestInterrupt(interrupts.VBLANK);
         onFrame(this.frameBuffer);
         return;
       }
 
-      if (this.ly >= TOTAL_SCANLINES) this.ly = 0;
+      if (this.scanline >= TOTAL_SCANLINES) this.scanline = 0;
     }
   }
 
   getMode() {
-    if (this.ly >= HEIGHT) return 1; // VBlank
+    if (this.scanline >= HEIGHT) return 1; // VBlank
     if (this.dot < 80) return 2; // OAM
     if (this.dot < 252) return 3; // Drawing
     return 0; // HBlank

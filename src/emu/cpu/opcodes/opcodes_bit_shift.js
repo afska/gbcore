@@ -17,7 +17,7 @@ import byte from "../../lib/byte";
  */
 function RL(cpu, target, ignoreZ = false) {
   const value = target.getValue();
-  const oldCarry = cpu.registers.flags.carry ? 1 : 0;
+  const oldCarry = +cpu.registers.flags.carry;
   const carry = byte.getBit(value, 7);
 
   target.setValue((value << 1) | oldCarry);
@@ -72,7 +72,7 @@ function RLC(cpu, target, ignoreZ = false) {
  */
 function RR(cpu, target, ignoreZ = false) {
   const value = target.getValue();
-  const oldCarry = cpu.registers.flags.carry ? 1 : 0;
+  const oldCarry = +cpu.registers.flags.carry;
   const carry = byte.getBit(value, 0);
 
   target.setValue((value >> 1) | (oldCarry << 7));

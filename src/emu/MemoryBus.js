@@ -7,9 +7,6 @@ const VRAM_SIZE = 8 * KB;
 const OAM_SIZE = 160;
 
 // TODO: NEXT STEPS:
-// IO regs
-// basic ppu
-// sync
 // cartridge validation
 
 export default class MemoryBus {
@@ -34,7 +31,7 @@ export default class MemoryBus {
     if (address >= 0x0000 && address < 0x8000) {
       // 32 KiB ROM
       // From cartridge, most carts do bank switching
-      return this.cartridge.onRead(address);
+      return this.cartridge.read(address);
     } else if (address >= 0x8000 && address < 0xa000) {
       // 8 KiB Video RAM (VRAM)
       // In CGB mode, switchable bank 0/1
@@ -42,7 +39,7 @@ export default class MemoryBus {
     } else if (address >= 0xa000 && address < 0xc000) {
       // 8 KiB External RAM
       // From cartridge, switchable bank if any
-      return this.cartridge.onRead(address);
+      return this.cartridge.read(address);
     } else if (address >= 0xc000 && address < 0xd000) {
       // 4 KiB Work RAM (WRAM)
       return this.wramBank0[address - 0xc000];
@@ -76,7 +73,7 @@ export default class MemoryBus {
     if (address >= 0x0000 && address < 0x8000) {
       // 32 KiB ROM
       // From cartridge, most carts do bank switching
-      return this.cartridge.onWrite(address, value);
+      return this.cartridge.write(address, value);
     } else if (address >= 0x8000 && address < 0xa000) {
       // 8 KiB Video RAM (VRAM)
       // In CGB mode, switchable bank 0/1
@@ -84,7 +81,7 @@ export default class MemoryBus {
     } else if (address >= 0xa000 && address < 0xc000) {
       // 8 KiB External RAM
       // From cartridge, switchable bank if any
-      return this.cartridge.onWrite(address, value);
+      return this.cartridge.write(address, value);
     } else if (address >= 0xc000 && address < 0xd000) {
       // 4 KiB Work RAM (WRAM)
       return (this.wramBank0[address - 0xc000] = value);
@@ -119,53 +116,36 @@ export default class MemoryBus {
   }
 
   _ioRead(address) {
-    switch (address) {
-      case 0xff00: {
-        // Joypad input
-        return this.controller.onRead();
-      }
-      case 0xff0f: {
-        // IF: Interrupt flag
-        return this.cpu.if;
-      }
-      case 0xff44: {
-        // LY: LCD Y coordinate
-        return this.ppu.ly;
-      }
-      case 0xff40: {
-        // LCDC: LCD control
-        // TODO: IMPLEMENT
-        return 0x91;
-      }
-      case 0xff41: {
-        // STAT: LCD status
-        return 0x80 | this.ppu.getMode();
-      }
-      case 0xffff: {
-        // IE: Interrupt enable
-        return this.cpu.ie;
-      }
+    if (address === 0xff00) {
+      // Joypad input
+      return this.controller.onRead();
+    } else if (address === 0xff0f) {
+      // IF: Interrupt flag
+      return this.cpu.if;
+    } else if (address >= 0xff40 && address < 0xff4c) {
+      // Video registers
+      return this.ppu.registers.read(address);
+    } else if (address === 0xffff) {
+      // IE: Interrupt enable
+      return this.cpu.ie;
     }
 
     return 0xff;
   }
 
   _ioWrite(address, value) {
-    switch (address) {
-      case 0xff00: {
-        // Joypad input
-        return this.controller.onWrite(value);
-      }
-      case 0xff0f: {
-        // IF: Interrupt flag
-        return (this.cpu.if = value);
-      }
-      case 0xffff: {
-        // IE: Interrupt enable
-        return (this.cpu.ie = value);
-      }
+    if (address === 0xff00) {
+      // Joypad input
+      return this.controller.onWrite(value);
+    } else if (address === 0xff0f) {
+      // IF: Interrupt flag
+      return (this.cpu.if = value);
+    } else if (address >= 0xff40 && address < 0xff4c) {
+      // Video registers
+      return this.ppu.registers.write(address, value);
+    } else if (address === 0xffff) {
+      // IE: Interrupt enable
+      return (this.cpu.ie = value);
     }
-
-    return 0xff;
   }
 }

@@ -6,8 +6,11 @@ const TILE_SIZE_BYTES = 16;
 
 export default class Tile {
   constructor(memory, tileId, y, useSignedTileMode = false) {
+    // the "unsigned" addressing mode interprets the byte as an unsigned 8-bit number and starts from 0x8000
     let vramBase = VRAM_BASE_UNSIGNED;
+
     if (useSignedTileMode) {
+      // the "signed" addressing mode interprets the byte as a signed 8-bit number and starts from 0x9000
       vramBase = VRAM_BASE_SIGNED;
       tileId = byte.toS8(tileId);
     }

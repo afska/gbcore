@@ -3,7 +3,7 @@ export default class Cartridge {
     this.rom = bytes;
   }
 
-  onRead(address) {
+  read(address) {
     if (address >= 0x0000 && address < 0x8000) {
       return this.rom[address] ?? 0xff;
     }
@@ -11,7 +11,7 @@ export default class Cartridge {
     return 0xff;
   }
 
-  onWrite(address, value) {
+  write(address, value) {
     // TODO: IMPLEMENT
   }
 }
