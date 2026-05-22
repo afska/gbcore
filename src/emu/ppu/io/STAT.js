@@ -13,6 +13,8 @@ export default class STAT extends InMemoryRegister.PPU {
       .addField("mode1InterruptSelect", 4)
       .addField("mode2InterruptSelect", 5)
       .addField("lycInterruptSelect", 6);
+
+    this.interruptLine = false;
   }
 
   onRead() {
@@ -20,6 +22,15 @@ export default class STAT extends InMemoryRegister.PPU {
   }
 
   onWrite(value) {
+    // ppuMode and lycEqualsLy are read-only
+    const ppuMode = this.ppuMode;
+    const lycEqualsLy = this.lycEqualsLy;
+
     this.setValue(value);
+
+    this.ppuMode = ppuMode;
+    this.lycEqualsLy = lycEqualsLy;
+
+    this.ppu.syncSTAT();
   }
 }

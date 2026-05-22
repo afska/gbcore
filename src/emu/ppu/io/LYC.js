@@ -11,5 +11,7 @@ export default class LYC extends InMemoryRegister.PPU {
 
   onWrite(value) {
     this.setValue(value);
+
+    this.ppu.syncSTAT();
   }
 }

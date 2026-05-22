@@ -7,6 +7,11 @@ const VRAM_SIZE = 8 * KB;
 const OAM_SIZE = 160;
 
 // TODO: NEXT STEPS:
+// honor LCDC fields
+// sprites
+// maybe some audio?
+// scrolling
+// mappers
 // cartridge validation
 
 export default class MemoryBus {
