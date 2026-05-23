@@ -11,10 +11,12 @@ export default class LCDC extends InMemoryRegister.PPU {
       .addField("showSprites", 1)
       .addField("use8x16Sprites", 2)
       .addField("backgroundTileMapId", 3)
-      .addField("useSignedTileMode", 4)
+      .addField("useUnsignedTileMode", 4)
       .addField("showWindow", 5)
       .addField("windowTileMapId", 6)
       .addField("enableLCD", 7);
+
+    this.setValue(0b10010001);
   }
 
   onRead() {

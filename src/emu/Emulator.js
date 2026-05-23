@@ -2,7 +2,7 @@ import MemoryBus from "./MemoryBus";
 import CPU from "./cpu/CPU";
 import Cartridge from "./Cartridge";
 import Controller from "./Controller";
-import PPU from "./ppu/PPU";
+import PPU, { T_CYCLES_PER_FRAME } from "./ppu/PPU";
 
 const T_CYCLES_PER_MCYCLE = 4;
 
@@ -52,7 +52,13 @@ export default class Emulator {
     if (!this.context) return;
 
     const currentFrame = this.ppu.frame;
-    while (this.ppu.frame === currentFrame) this.step();
+    let elapsed = 0;
+
+    while (elapsed < T_CYCLES_PER_FRAME) {
+      elapsed += this.step();
+
+      if (this.ppu.frame !== currentFrame) return;
+    }
   }
 
   /**
@@ -66,11 +72,13 @@ export default class Emulator {
     // TODO: IMPLEMENT
   }
 
-  /** Executes a step in the emulation (1 CPU instruction). */
+  /** Executes a step in the emulation (1 CPU instruction). Returns the number of T-cycles. */
   step() {
     const mCycles = this.cpu.step();
     const tCycles = mCycles * T_CYCLES_PER_MCYCLE;
     this._clockPPU(tCycles);
+
+    return tCycles;
   }
 
   /**
@@ -102,6 +110,8 @@ export default class Emulator {
   }
 
   _clockPPU(tCycles) {
+    if (!this.ppu.isEnabled()) return;
+
     for (let i = 0; i < tCycles; i++) {
       this.ppu.step(this.onFrame);
     }

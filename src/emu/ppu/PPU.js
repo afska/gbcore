@@ -7,6 +7,7 @@ const HEIGHT = 144;
 const DOTS_PER_SCANLINE = 456;
 const RENDER_DOT = 252;
 const TOTAL_SCANLINES = 154;
+export const T_CYCLES_PER_FRAME = DOTS_PER_SCANLINE * TOTAL_SCANLINES;
 
 export default class PPU {
   constructor(cpu) {
@@ -74,6 +75,10 @@ export default class PPU {
       this.cpu.requestInterrupt(interrupts.LCD);
 
     stat.interruptLine = interruptLine;
+  }
+
+  isEnabled() {
+    return !!this.registers.lcdc.enableLCD;
   }
 
   _getMode() {
