@@ -1,5 +1,7 @@
 const HEADER_OFFSET = 0x100;
 const HEADER_SIZE = 80;
+const GLOBAL_CHECKSUM_OFFSET_HIGH = 0x014e;
+const GLOBAL_CHECKSUM_OFFSET_LOW = 0x014f;
 
 export default class Cartridge {
   constructor(bytes) {
@@ -10,7 +12,8 @@ export default class Cartridge {
 
     this.bytes = bytes;
     this.header = this._buildHeader();
-    this._validateROM();
+    this._validateHeaderChecksum();
+    this._validateGlobalChecksum();
   }
 
   read(address) {
@@ -79,8 +82,33 @@ export default class Cartridge {
     };
   }
 
-  _validateROM() {
-    // TODO: IMPLEMENT
+  _validateHeaderChecksum() {
+    const expectedChecksum = this.bytes[0x014d];
+
+    const checksum = new Uint8Array(1);
+    for (let address = 0x0134; address <= 0x014c; address++)
+      checksum[0] = checksum[0] - this.bytes[address] - 1;
+
+    if (checksum[0] !== expectedChecksum)
+      throw new Error(`Bad header checksum: 0x ${checksum.toString(16)}`);
+  }
+
+  _validateGlobalChecksum() {
+    const expectedChecksum =
+      (this.bytes[GLOBAL_CHECKSUM_OFFSET_HIGH] << 8) |
+      this.bytes[GLOBAL_CHECKSUM_OFFSET_LOW];
+
+    const checksum = new Uint16Array(1);
+    for (let address = 0; address < this.bytes.length; address++) {
+      if (
+        address !== GLOBAL_CHECKSUM_OFFSET_HIGH &&
+        address !== GLOBAL_CHECKSUM_OFFSET_LOW
+      )
+        checksum[0] += this.bytes[address];
+    }
+
+    if (checksum[0] !== expectedChecksum)
+      throw new Error(`Bad global checksum: 0x${checksum.toString(16)}`);
   }
 
   _getString(offset, maxLength) {
