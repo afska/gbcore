@@ -1,11 +1,12 @@
 const HEADER_OFFSET = 0x100;
 const HEADER_SIZE = 80;
-const KB = 1024;
 
 export default class Cartridge {
   constructor(bytes) {
     if (bytes.length < HEADER_OFFSET + HEADER_SIZE)
-      throw new Error("Invalid ROM: should be at least 336 bytes.");
+      throw new Error(
+        "File too small: " + bytes.length + " (should be at least 336 bytes)"
+      );
 
     this.bytes = bytes;
     this.header = this._buildHeader();
@@ -25,15 +26,39 @@ export default class Cartridge {
   }
 
   _buildHeader() {
+    const romSizeCode = this.bytes[0x0148];
     const ramSizeCode = this.bytes[0x0149];
 
     return {
-      title: this._getString(0x0134, 16),
+      title: this._getString(0x0134, 16), // can be 11 in new cartridges
       manufacturerCode: this._getString(0x013f, 4),
       cgbFlag: this.bytes[0x0143],
       sgbFlag: this.bytes[0x0146],
       cartridgeType: this.bytes[0x0147],
-      romSize: 32 * KB * (1 << this.bytes[0x0148]),
+      romBanks16KiB: (() => {
+        switch (romSizeCode) {
+          case 0x00:
+          case 0x01:
+          case 0x02:
+          case 0x03:
+          case 0x04:
+          case 0x05:
+          case 0x06:
+          case 0x07:
+          case 0x08:
+            return Math.pow(2, 1 + romSizeCode);
+          case 0x52:
+            return 72;
+          case 0x53:
+            return 80;
+          case 0x54:
+            return 96;
+          default:
+            throw new Error(
+              `Invalid ROM size code: 0x${romSizeCode.toString(16)}`
+            );
+        }
+      })(),
       ramBanks8KiB: (() => {
         switch (ramSizeCode) {
           case 0x02:
