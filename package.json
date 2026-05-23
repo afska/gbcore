@@ -13,7 +13,6 @@
     "start": "vite",
     "build": "vite build",
     "dev": "vite",
-    "benchmark": "npm run build-lib && cp package-lib.json build/lib/package.json && cd scripts/benchmark && node benchmark.js rom.nes",
     "build-lib": "cross-env NODE_ENV=production babel src/emu --out-dir build/lib --copy-files --presets=@babel/preset-env"
   },
   "eslintConfig": {

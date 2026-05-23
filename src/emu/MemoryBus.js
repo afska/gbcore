@@ -11,7 +11,6 @@ const OAM_SIZE = 160;
 // maybe some audio?
 // scrolling
 // mappers
-// cartridge validation
 
 export default class MemoryBus {
   constructor() {

@@ -23,5 +23,4 @@ yarn-debug.log*
 yarn-error.log*
 
 # app
-scripts/benchmark/node_modules
-scripts/benchmark/rom.nes
+rom.gb
