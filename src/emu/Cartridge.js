@@ -1,3 +1,5 @@
+import mbcs from "./mbcs";
+
 const HEADER_OFFSET = 0x100;
 const HEADER_SIZE = 80;
 const GLOBAL_CHECKSUM_OFFSET_HIGH = 0x014e;
@@ -14,18 +16,16 @@ export default class Cartridge {
     this.header = this._buildHeader();
     this._validateHeaderChecksum();
     this._validateGlobalChecksum();
+
+    this.mbc = this._createMBC();
   }
 
   read(address) {
-    if (address >= 0x0000 && address < 0x8000) {
-      return this.bytes[address] ?? 0xff;
-    }
-
-    return 0xff;
+    return this.mbc.read(address);
   }
 
   write(address, value) {
-    // TODO: IMPLEMENT
+    return this.mbc.write(address, value);
   }
 
   _buildHeader() {
@@ -90,7 +90,7 @@ export default class Cartridge {
       checksum[0] = checksum[0] - this.bytes[address] - 1;
 
     if (checksum[0] !== expectedChecksum)
-      throw new Error(`Bad header checksum: 0x ${checksum.toString(16)}`);
+      throw new Error(`Bad header checksum: 0x${checksum[0].toString(16)}`);
   }
 
   _validateGlobalChecksum() {
@@ -121,5 +121,19 @@ export default class Cartridge {
       .filter((it, i) => it > 0 && (firstNull === -1 || i < firstNull))
       .map((it) => String.fromCharCode(it))
       .join("");
+  }
+
+  _createMBC() {
+    const id = this.header.cartridgeType;
+    const type = mbcs.find((it) => it.id === id);
+    if (type == null)
+      throw new Error(`Unknown cartridge type: 0x${id.toString(16)}`);
+    const MBC = type.MBC;
+    if (MBC == null)
+      throw new Error(
+        `Unsupported cartridge type: 0x${id.toString(16)} (${type.name})`
+      );
+
+    return new MBC(this);
   }
 }
