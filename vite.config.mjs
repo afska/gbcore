@@ -16,9 +16,18 @@ export default defineConfig(({ mode }) => {
       importPrefixPlugin(),
       htmlPlugin(mode)
     ],
-    esbuild: {
-      keepNames: true,
-      minifyIdentifiers: false
+    build: {
+      rolldownOptions: {
+        output: {
+          keepNames: true,
+          minify: {
+            mangle: false,
+            compress: {
+              keepNames: true
+            }
+          }
+        }
+      }
     }
   };
 });
