@@ -8,9 +8,8 @@ const OAM_SIZE = 160;
 
 // TODO: NEXT STEPS:
 // sprites
-// maybe some audio?
 // scrolling
-// mappers
+// maybe some audio?
 
 export default class MemoryBus {
   constructor() {
