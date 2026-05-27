@@ -4,6 +4,8 @@ import STAT from "./STAT";
 import LY from "./LY";
 import LYC from "./LYC";
 import OAMDMA from "./OAMDMA";
+import SCY from "./SCY";
+import SCX from "./SCX";
 
 export default class VideoRegisters extends IORegisterSegment {
   constructor(ppu) {
@@ -14,6 +16,8 @@ export default class VideoRegisters extends IORegisterSegment {
     this.ly = new LY(ppu);
     this.lyc = new LYC(ppu);
     this.oamDma = new OAMDMA(ppu);
+    this.scy = new SCY(ppu);
+    this.scx = new SCX(ppu);
   }
 
   _getRegister(address) {
@@ -22,6 +26,10 @@ export default class VideoRegisters extends IORegisterSegment {
         return this.lcdc;
       case 0xff41:
         return this.stat;
+      case 0xff42:
+        return this.scy;
+      case 0xff43:
+        return this.scx;
       case 0xff44:
         return this.ly;
       case 0xff45:
