@@ -1,0 +1,50 @@
+import byte from "../lib/byte";
+
+const TILE_SIZE_PIXELS = 8;
+const SPRITE_ATTR_HORIZONTAL_FLIP_BIT = 5;
+const SPRITE_ATTR_VERTICAL_FLIP_BIT = 6;
+const SPRITE_ATTR_PRIORITY_BIT = 7;
+
+export default class Sprite {
+  constructor(id, x, y, is8x16, topTileId, attributes) {
+    this.id = id;
+    this.x = x;
+    this.y = y;
+    this.is8x16 = is8x16;
+    this.tileId = topTileId;
+    this.attributes = attributes;
+  }
+
+  tileIdFor(insideY) {
+    let index = +(insideY >= TILE_SIZE_PIXELS);
+    if (this.is8x16 && this.flipY) index = +!index;
+
+    return this.tileId + index;
+  }
+
+  shouldRenderInScanline(scanline) {
+    const diffY = this.diffY(scanline);
+
+    return diffY >= 0 && diffY < this.height;
+  }
+
+  diffY(scanline) {
+    return scanline - this.y;
+  }
+
+  get isInFrontOfBackground() {
+    return !byte.getBit(this.attributes, SPRITE_ATTR_PRIORITY_BIT);
+  }
+
+  get flipX() {
+    return byte.getFlag(this.attributes, SPRITE_ATTR_HORIZONTAL_FLIP_BIT);
+  }
+
+  get flipY() {
+    return byte.getFlag(this.attributes, SPRITE_ATTR_VERTICAL_FLIP_BIT);
+  }
+
+  get height() {
+    return this.is8x16 ? 16 : 8;
+  }
+}

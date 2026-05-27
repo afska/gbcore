@@ -1,6 +1,7 @@
 import BackgroundRenderer from "./BackgroundRenderer";
 import interrupts from "../interrupts";
 import VideoRegisters from "./io";
+import SpriteRenderer from "./SpriteRenderer";
 
 const WIDTH = 160;
 const HEIGHT = 144;
@@ -22,6 +23,7 @@ export default class PPU {
     this.registers = new VideoRegisters(this);
 
     this.backgroundRenderer = new BackgroundRenderer(this);
+    this.spriteRenderer = new SpriteRenderer(this);
 
     this.syncSTAT();
   }
@@ -35,6 +37,7 @@ export default class PPU {
 
     if (this.scanline < HEIGHT && this.dot === RENDER_DOT) {
       this.backgroundRenderer.renderScanline();
+      this.spriteRenderer.renderScanline();
     }
 
     if (this.dot >= DOTS_PER_SCANLINE) {

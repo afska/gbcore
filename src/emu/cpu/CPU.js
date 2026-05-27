@@ -35,6 +35,7 @@ export default class CPU {
     this.stack = new Stack(this.memory, this.registers.sp);
 
     this.cycle = 0;
+    this.pendingCycles = 0;
 
     this.ime = 0;
     this.eiCountdown = 0;
