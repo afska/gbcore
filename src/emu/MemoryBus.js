@@ -7,7 +7,6 @@ const VRAM_SIZE = 8 * KB;
 const OAM_SIZE = 160;
 
 // TODO: NEXT STEPS:
-// TODO: render window
 // TODO: run dmg-acid2
 // maybe some audio?
 

@@ -5,6 +5,7 @@ import LY from "./LY";
 import LYC from "./LYC";
 import OAMDMA from "./OAMDMA";
 import SCXY from "./SCXY";
+import WXY from "./WXY";
 
 export default class VideoRegisters extends IORegisterSegment {
   constructor(ppu) {
@@ -17,6 +18,8 @@ export default class VideoRegisters extends IORegisterSegment {
     this.oamDma = new OAMDMA(ppu);
     this.scy = new SCXY(ppu);
     this.scx = new SCXY(ppu);
+    this.wy = new WXY(ppu);
+    this.wx = new WXY(ppu);
   }
 
   _getRegister(address) {
@@ -35,6 +38,10 @@ export default class VideoRegisters extends IORegisterSegment {
         return this.lyc;
       case 0xff46:
         return this.oamDma;
+      case 0xff4a:
+        return this.wy;
+      case 0xff4b:
+        return this.wx;
       default:
     }
   }
