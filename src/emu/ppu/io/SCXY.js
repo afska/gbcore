@@ -1,9 +1,9 @@
 import InMemoryRegister from "../../lib/InMemoryRegister";
 
 /**
- * SCX: Background viewport X position
+ * SCX/SCY: Background viewport X/Y position
  */
-export default class SCX extends InMemoryRegister.PPU {
+export default class SCXY extends InMemoryRegister.PPU {
   onRead() {
     return this.value;
   }
