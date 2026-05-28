@@ -10,14 +10,15 @@ import byte from "../../lib/byte";
  */
 export default class OAMDMA extends InMemoryRegister.PPU {
   onWrite(value) {
+    const cpu = this.ppu.cpu;
     if (value > 0xdf) return;
 
     for (let i = 0; i < 160; i++) {
       const address = byte.buildU16(value, i);
-      const data = this.ppu.cpu.memory.read(address);
-      this.ppu.cpu.memory.oam[i] = data;
+      const data = cpu.memory.read(address);
+      cpu.memory.oam[i] = data;
     }
 
-    this.ppu.cpu.pendingCycles += 160;
+    cpu.pendingCycles += 160;
   }
 }

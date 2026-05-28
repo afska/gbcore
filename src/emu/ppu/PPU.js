@@ -22,8 +22,8 @@ export default class PPU {
 
     this.registers = new VideoRegisters(this);
 
-    this.backgroundRenderer = new BackgroundRenderer(this);
-    this.spriteRenderer = new SpriteRenderer(this);
+    this.backgroundRenderer = new BackgroundRenderer(this.cpu, this);
+    this.spriteRenderer = new SpriteRenderer(this.cpu, this);
 
     this.syncSTAT();
   }

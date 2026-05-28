@@ -11,7 +11,8 @@ const SPRITE_BYTE_ATTRIBUTES = 3;
 const FIXED_PALETTE = [0xffffffff, 0xffaaaaaa, 0xff555555, 0xff000000];
 
 export default class SpriteRenderer {
-  constructor(ppu) {
+  constructor(cpu, ppu) {
+    this.cpu = cpu;
     this.ppu = ppu;
   }
 
@@ -48,7 +49,7 @@ export default class SpriteRenderer {
       const insideY = sprite.diffY(this.ppu.scanline);
       const tileInsideY = insideY % 8;
       const tile = new Tile(
-        this.ppu.cpu.memory,
+        this.cpu.memory,
         sprite.tileIdFor(insideY),
         sprite.flipY ? 7 - tileInsideY : tileInsideY
       );
@@ -68,7 +69,7 @@ export default class SpriteRenderer {
   }
 
   _createSprite(id) {
-    const oam = this.ppu.cpu.memory.oam;
+    const oam = this.cpu.memory.oam;
     const lcdc = this.ppu.registers.lcdc;
 
     const is8x16 = lcdc.use8x16Sprites === 1;

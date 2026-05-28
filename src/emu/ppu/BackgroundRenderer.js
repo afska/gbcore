@@ -9,7 +9,8 @@ const TILEMAP_SIZE_BYTES = 1024;
 const FIXED_PALETTE = [0xffffffff, 0xffaaaaaa, 0xff555555, 0xff000000];
 
 export default class BackgroundRenderer {
-  constructor(ppu) {
+  constructor(cpu, ppu) {
+    this.cpu = cpu;
     this.ppu = ppu;
   }
 
@@ -41,11 +42,11 @@ export default class BackgroundRenderer {
       const tileMapX = Math.floor(backgroundX / 8);
       const tileIndex = tileMapY * TILES_PER_ROW + tileMapX;
 
-      const tileId = this.ppu.cpu.memory.read(tileMapAddress + tileIndex);
+      const tileId = this.cpu.memory.read(tileMapAddress + tileIndex);
       const tileStartX = backgroundX % 8;
       const tileInsideY = backgroundY % 8;
       const tile = new Tile(
-        this.ppu.cpu.memory,
+        this.cpu.memory,
         tileId,
         tileInsideY,
         !this.ppu.registers.lcdc.useUnsignedTileMode
