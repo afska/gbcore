@@ -38,6 +38,7 @@ export default class Emulator {
    * `isPressed`: `boolean`
    */
   setButton(playerId, button, isPressed) {
+    if (playerId !== 1) return;
     if (!this.context) return;
 
     const { controller } = this.context;

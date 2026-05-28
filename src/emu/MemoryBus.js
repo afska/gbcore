@@ -7,7 +7,7 @@ const VRAM_SIZE = 8 * KB;
 const OAM_SIZE = 160;
 
 // TODO: NEXT STEPS:
-// TODO: run dmg-acid2
+// hw timers
 // maybe some audio?
 
 export default class MemoryBus {
