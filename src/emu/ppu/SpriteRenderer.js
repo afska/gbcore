@@ -8,7 +8,6 @@ const SPRITE_BYTE_Y = 0;
 const SPRITE_BYTE_X = 1;
 const SPRITE_BYTE_TILE_ID = 2;
 const SPRITE_BYTE_ATTRIBUTES = 3;
-const FIXED_PALETTE = [0xffffffff, 0xffaaaaaa, 0xff555555, 0xff000000];
 
 export default class SpriteRenderer {
   constructor(cpu, ppu) {
@@ -46,6 +45,9 @@ export default class SpriteRenderer {
 
   _render(sprites) {
     for (let sprite of sprites) {
+      const palette = sprite.dmgPaletteId
+        ? this.ppu.registers.obp1
+        : this.ppu.registers.obp0;
       const insideY = sprite.diffY(this.ppu.scanline);
       const tileInsideY = insideY % 8;
       const tile = new Tile(
@@ -62,7 +64,7 @@ export default class SpriteRenderer {
           this.ppu.plot(
             sprite.x + insideX,
             this.ppu.scanline,
-            FIXED_PALETTE[colorIndex]
+            palette.colorFor(colorIndex)
           );
       }
     }

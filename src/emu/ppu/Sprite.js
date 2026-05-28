@@ -1,6 +1,7 @@
 import byte from "../lib/byte";
 
 const TILE_SIZE_PIXELS = 8;
+const SPRITE_ATTR_DMG_PALETTE_BIT = 4;
 const SPRITE_ATTR_HORIZONTAL_FLIP_BIT = 5;
 const SPRITE_ATTR_VERTICAL_FLIP_BIT = 6;
 const SPRITE_ATTR_PRIORITY_BIT = 7;
@@ -42,6 +43,10 @@ export default class Sprite {
 
   get flipY() {
     return byte.getFlag(this.attributes, SPRITE_ATTR_VERTICAL_FLIP_BIT);
+  }
+
+  get dmgPaletteId() {
+    return byte.getBit(this.attributes, SPRITE_ATTR_DMG_PALETTE_BIT);
   }
 
   get height() {

@@ -4,6 +4,7 @@ import STAT from "./STAT";
 import LY from "./LY";
 import LYC from "./LYC";
 import OAMDMA from "./OAMDMA";
+import Palette from "./Palette";
 import SCXY from "./SCXY";
 import WXY from "./WXY";
 
@@ -16,6 +17,9 @@ export default class VideoRegisters extends IORegisterSegment {
     this.ly = new LY(ppu);
     this.lyc = new LYC(ppu);
     this.oamDma = new OAMDMA(ppu);
+    this.bgp = new Palette(ppu, 0xfc);
+    this.obp0 = new Palette(ppu, 0xff);
+    this.obp1 = new Palette(ppu, 0xff);
     this.scy = new SCXY(ppu);
     this.scx = new SCXY(ppu);
     this.wy = new WXY(ppu);
@@ -38,6 +42,12 @@ export default class VideoRegisters extends IORegisterSegment {
         return this.lyc;
       case 0xff46:
         return this.oamDma;
+      case 0xff47:
+        return this.bgp;
+      case 0xff48:
+        return this.obp0;
+      case 0xff49:
+        return this.obp1;
       case 0xff4a:
         return this.wy;
       case 0xff4b:

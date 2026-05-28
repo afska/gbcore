@@ -5,7 +5,7 @@ const BG_WIDTH = 256;
 const BG_HEIGHT = 256;
 const TILES_PER_ROW = 32;
 const TILEMAP_SIZE_BYTES = 1024;
-const FIXED_PALETTE = [0xffffffff, 0xffaaaaaa, 0xff555555, 0xff000000];
+const WHITE = 0xffffffff;
 
 export default class BackgroundRenderer {
   constructor(cpu, ppu) {
@@ -19,8 +19,7 @@ export default class BackgroundRenderer {
 
     if (!lcdc.showBackgroundAndWindow) {
       for (let x = 0; x < WIDTH; x++) {
-        const color = FIXED_PALETTE[0];
-        this.ppu.plot(x, y, color);
+        this.ppu.plot(x, y, WHITE);
       }
       return;
     }
@@ -62,7 +61,7 @@ export default class BackgroundRenderer {
 
       for (let xx = 0; xx < tilePixels; xx++) {
         const colorIndex = tile.getColorIndex(tileStartX + xx);
-        const color = FIXED_PALETTE[colorIndex];
+        const color = this.ppu.registers.bgp.colorFor(colorIndex);
         this.ppu.plot(x + xx, y, color);
       }
 
