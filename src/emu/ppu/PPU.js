@@ -16,6 +16,7 @@ export default class PPU {
 
     this.dot = 0;
     this.scanline = 0;
+    this.windowLine = 0;
     this.frame = 0;
 
     this.frameBuffer = new Uint32Array(WIDTH * HEIGHT);
@@ -54,7 +55,10 @@ export default class PPU {
       this.dot = 0;
       this.scanline++;
 
-      if (this.scanline >= TOTAL_SCANLINES) this.scanline = 0;
+      if (this.scanline >= TOTAL_SCANLINES) {
+        this.scanline = 0;
+        this.windowLine = 0;
+      }
 
       this.syncSTAT();
 

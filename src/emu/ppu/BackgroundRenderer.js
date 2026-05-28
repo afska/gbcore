@@ -5,6 +5,7 @@ const BG_WIDTH = 256;
 const BG_HEIGHT = 256;
 const TILES_PER_ROW = 32;
 const TILEMAP_SIZE_BYTES = 1024;
+const WINDOW_X_OFFSET = 7;
 const WHITE = 0xffffffff;
 
 export default class BackgroundRenderer {
@@ -26,15 +27,17 @@ export default class BackgroundRenderer {
 
     const scrollX = this.ppu.registers.scx.value;
     const scrollY = this.ppu.registers.scy.value;
-    const windowX = this.ppu.registers.wx.value - 7;
+    const windowX = this.ppu.registers.wx.value - WINDOW_X_OFFSET;
     const windowY = this.ppu.registers.wy.value;
     const isWindowEnabled = !!lcdc.showWindow;
+    let didRenderWindow = false;
 
     for (let x = 0; x < WIDTH; ) {
       const isWindow = isWindowEnabled && x >= windowX && y >= windowY;
+      if (isWindow) didRenderWindow = true;
 
       const scrolledX = isWindow ? x - windowX : x + scrollX;
-      const scrolledY = isWindow ? y - windowY : y + scrollY;
+      const scrolledY = isWindow ? this.ppu.windowLine : y + scrollY;
 
       const backgroundX = scrolledX % BG_WIDTH;
       const backgroundY = scrolledY % BG_HEIGHT;
@@ -67,5 +70,7 @@ export default class BackgroundRenderer {
 
       x += tilePixels;
     }
+
+    if (didRenderWindow) this.ppu.windowLine++;
   }
 }
