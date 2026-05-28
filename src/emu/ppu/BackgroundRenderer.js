@@ -19,7 +19,7 @@ export default class BackgroundRenderer {
 
     if (!lcdc.showBackgroundAndWindow) {
       for (let x = 0; x < WIDTH; x++) {
-        this.ppu.plot(x, y, WHITE);
+        this.ppu.plotBG(x, y, WHITE, 0);
       }
       return;
     }
@@ -62,7 +62,7 @@ export default class BackgroundRenderer {
       for (let xx = 0; xx < tilePixels; xx++) {
         const colorIndex = tile.getColorIndex(tileStartX + xx);
         const color = this.ppu.registers.bgp.colorFor(colorIndex);
-        this.ppu.plot(x + xx, y, color);
+        this.ppu.plotBG(x + xx, y, color, colorIndex);
       }
 
       x += tilePixels;

@@ -1,6 +1,7 @@
 import Sprite from "./Sprite";
 import Tile from "./Tile";
 
+const WIDTH = 160;
 const MAX_SPRITES = 40;
 const MAX_SPRITES_PER_SCANLINE = 10;
 const SPRITE_SIZE_BYTES = 4;
@@ -40,15 +41,19 @@ export default class SpriteRenderer {
       }
     }
 
-    return sprites.reverse();
+    // sprite priority: smaller X wins; if X matches, lower OAM index wins
+    return sprites.sort((a, b) => a.x - b.x || a.id - b.id);
   }
 
   _render(sprites) {
+    const y = this.ppu.scanline;
+    const claimedPixels = new Uint8Array(WIDTH);
+
     for (let sprite of sprites) {
       const palette = sprite.dmgPaletteId
         ? this.ppu.registers.obp1
         : this.ppu.registers.obp0;
-      const insideY = sprite.diffY(this.ppu.scanline);
+      const insideY = sprite.diffY(y);
       const tileInsideY = insideY % 8;
       const tile = new Tile(
         this.cpu.memory,
@@ -60,12 +65,19 @@ export default class SpriteRenderer {
         const colorIndex = tile.getColorIndex(
           sprite.flipX ? 7 - insideX : insideX
         );
-        if (colorIndex > 0)
-          this.ppu.plot(
-            sprite.x + insideX,
-            this.ppu.scanline,
-            palette.colorFor(colorIndex)
-          );
+        if (colorIndex === 0) continue;
+
+        const x = sprite.x + insideX;
+        if (x < 0 || x >= WIDTH || claimedPixels[x]) continue;
+
+        claimedPixels[x] = 1;
+
+        const isCoveredByBackground =
+          !sprite.isInFrontOfBackground &&
+          this.ppu.isBackgroundPixelOpaque(x, y);
+        if (isCoveredByBackground) continue;
+
+        this.ppu.plot(x, y, palette.colorFor(colorIndex));
       }
     }
   }
