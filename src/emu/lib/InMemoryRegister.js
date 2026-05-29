@@ -55,6 +55,16 @@ export default class InMemoryRegister {
       this[name] = byte.getBits(this.value, startPosition, size);
   }
 
+  static get Unit() {
+    return class UnitInMemoryRegister extends InMemoryRegister {
+      constructor(unit) {
+        super();
+
+        this.unit = unit;
+      }
+    };
+  }
+
   static get PPU() {
     return class PPUInMemoryRegister extends InMemoryRegister {
       constructor(ppu) {

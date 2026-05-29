@@ -1,3 +1,4 @@
+import TimerRegisters from "./timer/Timer";
 import byte from "./lib/byte";
 
 const KB = 1024;
@@ -7,8 +8,9 @@ const VRAM_SIZE = 8 * KB;
 const OAM_SIZE = 160;
 
 // TODO: NEXT STEPS:
-// hw timers
+// TODO: JOYPAD interrupt
 // maybe some audio?
+// install import sorter
 
 export default class MemoryBus {
   constructor() {
@@ -26,6 +28,8 @@ export default class MemoryBus {
     this.apu = apu;
     this.cartridge = cartridge;
     this.controller = controller;
+
+    this.timer = new TimerRegisters(cpu);
   }
 
   read(address) {
@@ -120,6 +124,8 @@ export default class MemoryBus {
     if (address === 0xff00) {
       // Joypad input
       return this.controller.onRead();
+    } else if (address >= 0xff04 && address < 0xff08) {
+      return this.timer.read(address);
     } else if (address === 0xff0f) {
       // IF: Interrupt flag
       return this.cpu.if;
@@ -138,6 +144,8 @@ export default class MemoryBus {
     if (address === 0xff00) {
       // Joypad input
       return this.controller.onWrite(value);
+    } else if (address >= 0xff04 && address < 0xff08) {
+      return this.timer.write(address, value);
     } else if (address === 0xff0f) {
       // IF: Interrupt flag
       return (this.cpu.if = value);

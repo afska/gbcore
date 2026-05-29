@@ -15,7 +15,7 @@ export default class Cartridge {
     this.bytes = bytes;
     this.header = this._buildHeader();
     this._validateHeaderChecksum();
-    this._validateGlobalChecksum();
+    // this._validateGlobalChecksum(); // DISABLED
 
     this.mbc = this._createMBC();
   }

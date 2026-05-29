@@ -1,0 +1,77 @@
+import IORegisterSegment from "../lib/IORegisterSegment";
+import DIV from "./DIV";
+import TIMA from "./TIMA";
+import TMA from "./TMA";
+import TAC from "./TAC";
+import byte from "../lib/byte";
+import interrupts from "../interrupts";
+
+const CPU_FREQ_MCYCLES = 1048576;
+const DIV_INCREMENT_INTERVAL = CPU_FREQ_MCYCLES / 16384;
+
+export default class Timer extends IORegisterSegment {
+  constructor(cpu) {
+    super();
+
+    this.cpu = cpu;
+
+    this.div = new DIV(this);
+    this.tima = new TIMA(this);
+    this.tma = new TMA(this);
+    this.tac = new TAC(this);
+
+    this._divCycleCount = 0;
+    this._timaCycleCount = 0;
+  }
+
+  advance(mCycles) {
+    this._incrementDiv(mCycles);
+    this._incrementTima(mCycles);
+  }
+
+  resetDivPhase() {
+    this._divCycleCount = 0;
+  }
+
+  _incrementDiv(mCycles) {
+    this._divCycleCount += mCycles;
+
+    const increments = Math.floor(this._divCycleCount / DIV_INCREMENT_INTERVAL);
+    this._divCycleCount %= DIV_INCREMENT_INTERVAL;
+
+    this.div.setValue(byte.toU8(this.div.value + increments));
+  }
+
+  _incrementTima(mCycles) {
+    if (!this.tac.enable) return;
+
+    this._timaCycleCount += mCycles;
+
+    const interval = this.tac.incrementInterval;
+    const increments = Math.floor(this._timaCycleCount / interval);
+    this._timaCycleCount %= interval;
+
+    for (let i = 0; i < increments; i++) {
+      if (this.tima.value === 0xff) {
+        this.tima.setValue(this.tma.value);
+        this.cpu.requestInterrupt(interrupts.TIMER);
+      } else {
+        this.tima.setValue(this.tima.value + 1);
+      }
+    }
+  }
+
+  _getRegister(address) {
+    switch (address) {
+      case 0xff04:
+        return this.div;
+      case 0xff05:
+        return this.tima;
+      case 0xff06:
+        return this.tma;
+      case 0xff07:
+        return this.tac;
+      default:
+    }
+  }
+}

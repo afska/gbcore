@@ -2,8 +2,6 @@ import InMemoryRegister from "../../lib/InMemoryRegister";
 
 /**
  * STAT: LCD status
- * LCDC is the main LCD Control register.
- * Its bits toggle what elements are displayed on the screen, and how.
  */
 export default class STAT extends InMemoryRegister.PPU {
   onLoad() {

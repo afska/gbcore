@@ -140,6 +140,7 @@ export default class CPU {
   _consumeCycles() {
     const cycles = this.cycles;
     this.cycles = 0;
+    this.memory.timer.advance(cycles);
     return cycles;
   }
 }
