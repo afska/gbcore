@@ -51,6 +51,7 @@ export default class Emulation {
     this.isDebugStepScanlineRequested = false;
 
     this.gb = new Emulator(this._onFrame, this._onAudio);
+    window.gb = this.gb; // DEBUG
     this.frameTimer = new FrameTimer(() => {
       this._updateInput(getInput());
 
