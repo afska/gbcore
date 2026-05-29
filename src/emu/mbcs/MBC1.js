@@ -4,6 +4,8 @@ import InMemoryRegister from "../lib/InMemoryRegister";
 export default (options = {}) => {
   return class MBC1 extends MBC {
     onLoad() {
+      this.options = options;
+
       this._registers = {
         ramEnable: new RamEnable(),
         romBankSelect: new RomBankSelect(),

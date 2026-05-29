@@ -29,6 +29,8 @@ export default class Emulator {
     this.memory.onLoad(this.cpu, this.ppu, null, cartridge, controller);
 
     this.context = { cartridge, controller };
+
+    this._setSaveFile(saveFileBytes);
   }
 
   /**
@@ -88,7 +90,10 @@ export default class Emulator {
   getSaveFile() {
     if (!this.context) return;
 
-    return null; // TODO: IMPLEMENT
+    const mbc = this.context.cartridge.mbc;
+    if (!mbc.hasSaveFile) return null;
+
+    return mbc.getRam();
   }
 
   /**
@@ -116,5 +121,12 @@ export default class Emulator {
     for (let i = 0; i < tCycles; i++) {
       this.ppu.step(this.onFrame);
     }
+  }
+
+  _setSaveFile(saveFileBytes) {
+    const mbc = this.context.cartridge.mbc;
+    if (!mbc.hasSaveFile) return;
+
+    mbc.setRam(saveFileBytes);
   }
 }

@@ -16,7 +16,9 @@ export default class MBC {
     const totalRamPages = Math.floor(ramLength / this.ramPageSize());
     this.ramPages = new Array(totalRamPages)
       .fill(null)
-      .map((it) => new Uint8Array(8 * KB));
+      .map((it) => new Uint8Array(this.ramPageSize()));
+
+    this.options = {};
 
     this.onLoad();
   }
@@ -37,6 +39,36 @@ export default class MBC {
 
   write(/*address, value*/) {
     throw new Error("not_implemented");
+  }
+
+  setRam(bytes) {
+    const ramPageSize = this.ramPageSize();
+
+    for (let i = 0; i < bytes.length; i++) {
+      const page = Math.floor(i / ramPageSize);
+      const byteIndex = i % ramPageSize;
+
+      this.ramPages[page]?.[byteIndex] = bytes[i];
+    }
+  }
+
+  getRam() {
+    const ramPageSize = this.ramPageSize();
+    const totalRam = ramPageSize * this.ramPages.length;
+    const bytes = new Uint8Array(totalRam);
+
+    for (let i = 0; i < totalRam; i++) {
+      const page = Math.floor(i / ramPageSize);
+      const byteIndex = i % ramPageSize;
+
+      bytes[i] = this.ramPages[page][byteIndex];
+    }
+
+    return bytes;
+  }
+
+  get hasSaveFile() {
+    return this.hasRam && this.options.ram && this.options.batt;
   }
 
   get hasRam() {
