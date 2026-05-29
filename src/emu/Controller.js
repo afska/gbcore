@@ -1,7 +1,10 @@
+import interrupts from "./interrupts";
 import byte from "./lib/byte";
 
 export default class Controller {
-  constructor() {
+  constructor(cpu) {
+    this.cpu = cpu;
+
     this._buttons = {
       BUTTON_LEFT: false,
       BUTTON_RIGHT: false,
@@ -22,7 +25,9 @@ export default class Controller {
   }
 
   setButton(button, isPressed) {
-    this._buttons[button] = isPressed;
+    this._update(() => {
+      this._buttons[button] = !!isPressed;
+    });
   }
 
   onRead() {
@@ -39,8 +44,21 @@ export default class Controller {
   }
 
   onWrite(value) {
-    this._selectDpad = !byte.getFlag(value, 4);
-    this._selectButtons = !byte.getFlag(value, 5);
+    this._update(() => {
+      this._selectDpad = !byte.getFlag(value, 4);
+      this._selectButtons = !byte.getFlag(value, 5);
+    });
+  }
+
+  _update(fn) {
+    const prev = this.onRead() & 0b1111;
+    fn();
+    const next = this.onRead() & 0b1111;
+
+    if ((prev & next) !== prev) {
+      // any of the bits 0-3 changed from High (unpressed) to Low (pressed)
+      this.cpu.requestInterrupt(interrupts.JOYPAD);
+    }
   }
 
   _getBit(buttonId, dpadId) {

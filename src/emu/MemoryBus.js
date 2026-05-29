@@ -8,7 +8,6 @@ const VRAM_SIZE = 8 * KB;
 const OAM_SIZE = 160;
 
 // TODO: NEXT STEPS:
-// TODO: JOYPAD interrupt
 // maybe some audio?
 // install import sorter
 

@@ -24,7 +24,7 @@ export default class Emulator {
    */
   load(bytes, saveFileBytes = null) {
     const cartridge = new Cartridge(bytes);
-    const controller = new Controller();
+    const controller = new Controller(this.cpu);
 
     this.memory.onLoad(this.cpu, this.ppu, null, cartridge, controller);
 
