@@ -20,10 +20,12 @@ export default class Emulation {
     onError = () => {},
     onSaveState = () => {},
     saveState = null,
-    unbroken = false
+    onSaveFile = () => {},
+    saveFile = null
   ) {
     this.screen = screen;
     this.samples = [];
+    this.onSaveFile = onSaveFile;
 
     this.speaker = new Speaker(({ need, have, target }) => {
       try {
@@ -99,7 +101,7 @@ export default class Emulation {
     }, onFps);
 
     try {
-      this.gb.load(bytes);
+      this.gb.load(bytes, saveFile);
       this.frameTimer.start();
     } catch (error) {
       onError(error);
@@ -109,6 +111,7 @@ export default class Emulation {
   terminate = () => {
     this.frameTimer.stop();
     this.speaker.stop();
+    this.onSaveFile?.(this.gb.getSaveFile());
   };
 
   _onFrame = (frameBuffer) => {

@@ -124,6 +124,8 @@ export default class Emulator {
   }
 
   _setSaveFile(saveFileBytes) {
+    if (!saveFileBytes) return;
+
     const mbc = this.context.cartridge.mbc;
     if (!mbc.hasSaveFile) return;
 

@@ -42,26 +42,28 @@ export default class MBC {
   }
 
   setRam(bytes) {
-    const ramPageSize = this.ramPageSize();
+    const pageSize = this.ramPageSize();
 
     for (let i = 0; i < bytes.length; i++) {
-      const page = Math.floor(i / ramPageSize);
-      const byteIndex = i % ramPageSize;
+      const pageIndex = Math.floor(i / pageSize);
+      const byteIndex = i % pageSize;
 
-      this.ramPages[page]?.[byteIndex] = bytes[i];
+      const page = this.ramPages[pageIndex];
+      if (page != null) page[byteIndex] = bytes[i];
     }
   }
 
   getRam() {
-    const ramPageSize = this.ramPageSize();
-    const totalRam = ramPageSize * this.ramPages.length;
+    const pageSize = this.ramPageSize();
+    const totalRam = pageSize * this.ramPages.length;
     const bytes = new Uint8Array(totalRam);
 
     for (let i = 0; i < totalRam; i++) {
-      const page = Math.floor(i / ramPageSize);
-      const byteIndex = i % ramPageSize;
+      const pageIndex = Math.floor(i / pageSize);
+      const byteIndex = i % pageSize;
 
-      bytes[i] = this.ramPages[page][byteIndex];
+      const page = this.ramPages[pageIndex];
+      bytes[i] = page[byteIndex];
     }
 
     return bytes;

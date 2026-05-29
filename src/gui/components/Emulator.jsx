@@ -4,6 +4,7 @@ import Emulation from "../emulator/Emulation";
 import gamepad from "../emulator/gamepad";
 
 const SAVESTATE_KEY = "gbcore-savestate";
+const SAVEFILE_KEY = "gbcore-savefile";
 const KEY_MAP = {
   " ": "BUTTON_A",
   d: "BUTTON_B",
@@ -41,11 +42,13 @@ export default class Emulator extends Component {
     this._stop();
 
     this.keyboardInput = gamepad.createInput();
+    window.addEventListener("beforeunload", this._stop);
     window.addEventListener("keydown", this._onKeyDown);
     window.addEventListener("keyup", this._onKeyUp);
 
     const bytes = new Uint8Array(rom);
     const saveState = this._getSaveState();
+    const saveFile = this._getSaveFile();
     emulation = new Emulation(
       bytes,
       screen,
@@ -53,7 +56,9 @@ export default class Emulator extends Component {
       this._setFps,
       this._setError,
       this._setSaveState,
-      saveState
+      saveState,
+      this._setSaveFile,
+      saveFile
     );
   }
 
@@ -73,7 +78,7 @@ export default class Emulator extends Component {
     this._stop();
   };
 
-  _stop() {
+  _stop = () => {
     if (emulation) {
       emulation.terminate();
       emulation = null;
@@ -81,9 +86,10 @@ export default class Emulator extends Component {
 
     this._setFps(0);
 
+    window.removeEventListener("beforeunload", this._stop);
     window.removeEventListener("keydown", this._onKeyDown);
     window.removeEventListener("keyup", this._onKeyUp);
-  }
+  };
 
   _onKeyDown = (e) => {
     emulation?.speaker?.resume();
@@ -111,5 +117,20 @@ export default class Emulator extends Component {
 
   _setSaveState = (saveState) => {
     localStorage.setItem(SAVESTATE_KEY, JSON.stringify(saveState));
+  };
+
+  _getSaveFile() {
+    try {
+      const bytes = JSON.parse(localStorage.getItem(SAVEFILE_KEY));
+      return bytes != null ? new Uint8Array(bytes) : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  _setSaveFile = (saveFile) => {
+    if (saveFile == null) return;
+
+    localStorage.setItem(SAVEFILE_KEY, JSON.stringify(Array.from(saveFile)));
   };
 }
