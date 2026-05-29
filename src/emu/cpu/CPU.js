@@ -34,8 +34,7 @@ export default class CPU {
 
     this.stack = new Stack(this.memory, this.registers.sp);
 
-    this.cycle = 0;
-    this.pendingCycles = 0;
+    this.cycles = 0;
 
     this.ime = 0;
     this.eiCountdown = 0;
@@ -45,10 +44,8 @@ export default class CPU {
   }
 
   step() {
-    const previousCycles = this.cycle;
-
     this._processPendingEI();
-    if (this._processPendingInterrupts()) return this.cycle - previousCycles;
+    if (this._processPendingInterrupts()) return this._consumeCycles();
 
     let opcode = this.fetchProgramByte();
     const isPrefix = opcode === PREFIX_INSTRUCTION;
@@ -58,9 +55,9 @@ export default class CPU {
     if (operation == null) throw new Error(`Unknown opcode: ${opcode}`);
 
     operation.run(this);
-    this.cycle += operation.cycles;
+    this.cycles += operation.cycles;
 
-    return this.cycle - previousCycles;
+    return this._consumeCycles();
   }
 
   requestInterrupt(interrupt) {
@@ -93,7 +90,7 @@ export default class CPU {
     if (pending === 0) {
       if (this.halted) {
         // if halted, just burn cycles and stop execution
-        this.cycle++;
+        this.cycles++;
         return true;
       }
 
@@ -135,8 +132,14 @@ export default class CPU {
     this.registers.pc.setValue(interrupt.vector);
 
     // the whole thing takes 5 M-cycles
-    this.cycle += 5;
+    this.cycles += 5;
 
     return true;
+  }
+
+  _consumeCycles() {
+    const cycles = this.cycles;
+    this.cycles = 0;
+    return cycles;
   }
 }

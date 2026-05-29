@@ -65,7 +65,7 @@ export default [
       const s8 = cpu.fetchProgramByte();
 
       if (!cpu.registers.flags.zero) {
-        cpu.cycle += 1;
+        cpu.cycles += 1;
         JR(cpu, s8);
       }
     },
@@ -79,7 +79,7 @@ export default [
       const s8 = cpu.fetchProgramByte();
 
       if (cpu.registers.flags.zero) {
-        cpu.cycle += 1;
+        cpu.cycles += 1;
         JR(cpu, s8);
       }
     },
@@ -93,7 +93,7 @@ export default [
       const s8 = cpu.fetchProgramByte();
 
       if (!cpu.registers.flags.carry) {
-        cpu.cycle += 1;
+        cpu.cycles += 1;
         JR(cpu, s8);
       }
     },
@@ -107,7 +107,7 @@ export default [
       const s8 = cpu.fetchProgramByte();
 
       if (cpu.registers.flags.carry) {
-        cpu.cycle += 1;
+        cpu.cycles += 1;
         JR(cpu, s8);
       }
     },
@@ -119,7 +119,7 @@ export default [
     id: 0xc0,
     run: (cpu) => {
       if (!cpu.registers.flags.zero) {
-        cpu.cycle += 3;
+        cpu.cycles += 3;
         RET(cpu);
       }
     },
@@ -133,7 +133,7 @@ export default [
       const a16 = cpu.fetchProgramHalfword();
 
       if (!cpu.registers.flags.zero) {
-        cpu.cycle += 1;
+        cpu.cycles += 1;
         JP(cpu, a16);
       }
     },
@@ -157,7 +157,7 @@ export default [
       const a16 = cpu.fetchProgramHalfword();
 
       if (!cpu.registers.flags.zero) {
-        cpu.cycle += 3;
+        cpu.cycles += 3;
         CALL(cpu, a16);
       }
     },
@@ -178,7 +178,7 @@ export default [
     id: 0xc8,
     run: (cpu) => {
       if (cpu.registers.flags.zero) {
-        cpu.cycle += 3;
+        cpu.cycles += 3;
         RET(cpu);
       }
     },
@@ -201,7 +201,7 @@ export default [
       const a16 = cpu.fetchProgramHalfword();
 
       if (cpu.registers.flags.zero) {
-        cpu.cycle += 1;
+        cpu.cycles += 1;
         JP(cpu, a16);
       }
     },
@@ -215,7 +215,7 @@ export default [
       const a16 = cpu.fetchProgramHalfword();
 
       if (cpu.registers.flags.zero) {
-        cpu.cycle += 3;
+        cpu.cycles += 3;
         CALL(cpu, a16);
       }
     },
@@ -246,7 +246,7 @@ export default [
     id: 0xd0,
     run: (cpu) => {
       if (!cpu.registers.flags.carry) {
-        cpu.cycle += 3;
+        cpu.cycles += 3;
         RET(cpu);
       }
     },
@@ -260,7 +260,7 @@ export default [
       const a16 = cpu.fetchProgramHalfword();
 
       if (!cpu.registers.flags.carry) {
-        cpu.cycle += 1;
+        cpu.cycles += 1;
         JP(cpu, a16);
       }
     },
@@ -274,7 +274,7 @@ export default [
       const a16 = cpu.fetchProgramHalfword();
 
       if (!cpu.registers.flags.carry) {
-        cpu.cycle += 3;
+        cpu.cycles += 3;
         CALL(cpu, a16);
       }
     },
@@ -295,7 +295,7 @@ export default [
     id: 0xd8,
     run: (cpu) => {
       if (cpu.registers.flags.carry) {
-        cpu.cycle += 3;
+        cpu.cycles += 3;
         RET(cpu);
       }
     },
@@ -318,7 +318,7 @@ export default [
       const a16 = cpu.fetchProgramHalfword();
 
       if (cpu.registers.flags.carry) {
-        cpu.cycle += 1;
+        cpu.cycles += 1;
         JP(cpu, a16);
       }
     },
@@ -332,7 +332,7 @@ export default [
       const a16 = cpu.fetchProgramHalfword();
 
       if (cpu.registers.flags.carry) {
-        cpu.cycle += 3;
+        cpu.cycles += 3;
         CALL(cpu, a16);
       }
     },

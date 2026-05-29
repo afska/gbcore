@@ -19,6 +19,6 @@ export default class OAMDMA extends InMemoryRegister.PPU {
       cpu.memory.oam[i] = data;
     }
 
-    cpu.pendingCycles += 160;
+    cpu.cycles += 160;
   }
 }
