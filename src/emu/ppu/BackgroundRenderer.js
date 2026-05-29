@@ -18,7 +18,7 @@ export default class BackgroundRenderer {
     const y = this.ppu.scanline;
     const lcdc = this.ppu.registers.lcdc;
 
-    if (!lcdc.showBackgroundAndWindow) {
+    if (!lcdc.showBackgroundAndWindow || lcdc.needsWhiteFrame) {
       for (let x = 0; x < WIDTH; x++) {
         this.ppu.plotBG(x, y, WHITE, 0);
       }

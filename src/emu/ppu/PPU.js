@@ -66,6 +66,7 @@ export default class PPU {
         this.frame++;
         this.cpu.requestInterrupt(interrupts.VBLANK);
         onFrame(this.frameBuffer);
+        this.registers.lcdc.needsWhiteFrame = false;
         return;
       }
     } else {

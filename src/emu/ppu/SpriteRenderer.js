@@ -17,7 +17,8 @@ export default class SpriteRenderer {
   }
 
   renderScanline() {
-    if (!this.ppu.registers.lcdc.showSprites) return;
+    const lcdc = this.ppu.registers.lcdc;
+    if (!lcdc.showSprites || lcdc.needsWhiteFrame) return;
 
     const sprites = this._evaluate();
     this._render(sprites);

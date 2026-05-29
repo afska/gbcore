@@ -17,6 +17,8 @@ export default class LCDC extends InMemoryRegister.PPU {
       .addField("enableLCD", 7);
 
     this.setValue(0b10010001);
+
+    this.needsWhiteFrame = false; // after re-enabling LCD, next frame is all white
   }
 
   onRead() {
@@ -24,6 +26,10 @@ export default class LCDC extends InMemoryRegister.PPU {
   }
 
   onWrite(value) {
+    const enableLCD = this.enableLCD;
+
     this.setValue(value);
+
+    if (!enableLCD && this.enableLCD) this.needsWhiteFrame = true;
   }
 }
