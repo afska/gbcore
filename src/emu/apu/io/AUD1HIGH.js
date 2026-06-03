@@ -7,9 +7,9 @@ const TRIGGER_BIT = 7;
  */
 export default class AUD1HIGH extends InMemoryRegister.APU {
   onLoad() {
-    this.addWritableField("period", 0, 2)
-      .addWritableField("enableLength", 6)
-      .addWritableField("trigger", TRIGGER_BIT);
+    this.addField("periodHigh", 0, 3)
+      .addField("enableLength", 6)
+      .addField("trigger", TRIGGER_BIT);
   }
 
   onRead() {
@@ -17,10 +17,6 @@ export default class AUD1HIGH extends InMemoryRegister.APU {
   }
 
   onWrite(value) {
-    const wasEnabled = this.enableAudio;
-
-    this.setValue((value & ~READ_ONLY_MASK) | (this.value & READ_ONLY_MASK));
-
-    if (wasEnabled && !this.enableAudio) this.apu.reset();
+    this.setValue(value);
   }
 }

@@ -128,6 +128,9 @@ export default class MemoryBus {
     } else if (address === 0xff0f) {
       // IF: Interrupt flag
       return this.cpu.if;
+    } else if (address >= 0xff10 && address < 0xff27) {
+      // Audio registers
+      return this.apu.registers.read(address);
     } else if (address >= 0xff40 && address < 0xff4c) {
       // Video registers
       return this.ppu.registers.read(address);
@@ -148,6 +151,9 @@ export default class MemoryBus {
     } else if (address === 0xff0f) {
       // IF: Interrupt flag
       return (this.cpu.if = value);
+    } else if (address >= 0xff10 && address < 0xff27) {
+      // Audio registers
+      return this.apu.registers.write(address, value);
     } else if (address >= 0xff40 && address < 0xff4c) {
       // Video registers
       return this.ppu.registers.write(address, value);

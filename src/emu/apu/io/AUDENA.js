@@ -1,5 +1,7 @@
 import InMemoryRegister from "../../lib/InMemoryRegister";
 
+const READ_ONLY_MASK = 0b1111;
+
 /**
  * AUDENA (aka NR52): Audio master control
  */

@@ -28,7 +28,7 @@ export default class Emulator {
     const cartridge = new Cartridge(bytes);
     const controller = new Controller(this.cpu);
 
-    this.memory.onLoad(this.cpu, this.ppu, null, cartridge, controller);
+    this.memory.onLoad(this.cpu, this.ppu, this.apu, cartridge, controller);
 
     this.context = { cartridge, controller };
 
