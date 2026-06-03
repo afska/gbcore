@@ -7,10 +7,10 @@ const READ_ONLY_MASK = 0b1111;
  */
 export default class AUDENA extends InMemoryRegister.APU {
   onLoad() {
-    this.addWritableField("enableChannel0", 0)
-      .addWritableField("enableChannel1", 1)
-      .addWritableField("enableChannel2", 2)
-      .addWritableField("enableChannel3", 3)
+    this.addWritableField("enableChannel1", 0)
+      .addWritableField("enableChannel2", 1)
+      .addWritableField("enableChannel3", 2)
+      .addWritableField("enableChannel4", 3)
       .addField("enableAudio", 7);
 
     this.setValue(0b10000000);

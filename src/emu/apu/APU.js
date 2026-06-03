@@ -1,5 +1,5 @@
+import PulseChannel from "./channnels/PulseChannel";
 import AudioRegisters from "./io";
-import PulseOscillator from "./oscillators/PulseOscillator";
 
 const APU_RATE = 4194304;
 const SAMPLE_RATE = 44100;
@@ -13,28 +13,25 @@ export default class APU {
     this.sample = 0;
 
     this.registers = new AudioRegisters(this);
-
-    this.oscillator1 = new PulseOscillator();
-    this.oscillator2 = new PulseOscillator();
+    this.channels = {
+      pulses: [
+        new PulseChannel(this, 0, "enableChannel1"),
+        new PulseChannel(this, 1, "enableChannel2")
+      ]
+    };
   }
 
   step(onSample) {
+    this.channels.pulses[0].step();
+    this.channels.pulses[1].step();
+
     this.sampleCounter++;
 
     if (this.sampleCounter >= STEPS_PER_SAMPLE) {
-      const periodValue1 =
-        (this.registers.aud1high.periodHigh << 8) |
-        this.registers.aud1low.value;
-      this.oscillator1.frequency = 131072 / (2048 - periodValue1);
-      const sample1 = periodValue1 > 0 ? this.oscillator1.sample() : 0;
+      const pulse1 = this.channels.pulses[0].sample();
+      const pulse2 = this.channels.pulses[1].sample();
 
-      const periodValue2 =
-        (this.registers.aud2high.periodHigh << 8) |
-        this.registers.aud2low.value;
-      this.oscillator2.frequency = 131072 / (2048 - periodValue2);
-      const sample2 = periodValue2 > 0 ? this.oscillator2.sample() : 0;
-
-      this.sample = (sample1 + sample2) / 2;
+      this.sample = (pulse1 + pulse2) * 0.01;
 
       this.sampleCounter = 0;
       onSample(this.sample);

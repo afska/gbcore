@@ -12,22 +12,23 @@ export default class AudioRegisters extends IORegisterSegment {
     this.audena = new AUDENA(apu);
     this.audterm = new AUDTERM(apu);
     this.audvol = new AUDVOL(apu);
-    this.aud1low = new AUD12LOW(apu);
-    this.aud1high = new AUD12HIGH(apu);
-    this.aud2low = new AUD12LOW(apu);
-    this.aud2high = new AUD12HIGH(apu);
+
+    this.pulses = [0, 1].map((it) => ({
+      low: new AUD12LOW(apu),
+      high: new AUD12HIGH(apu)
+    }));
   }
 
   _getRegister(address) {
     switch (address) {
       case 0xff13:
-        return this.aud1low;
+        return this.pulses[0].low;
       case 0xff14:
-        return this.aud1high;
+        return this.pulses[0].high;
       case 0xff18:
-        return this.aud2low;
+        return this.pulses[1].low;
       case 0xff19:
-        return this.aud2high;
+        return this.pulses[1].high;
       case 0xff24:
         return this.audvol;
       case 0xff25:
