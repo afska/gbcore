@@ -3,6 +3,7 @@ import CPU from "./cpu/CPU";
 import Cartridge from "./Cartridge";
 import Controller from "./Controller";
 import PPU, { T_CYCLES_PER_FRAME } from "./ppu/PPU";
+import APU from "./apu/APU";
 
 const T_CYCLES_PER_MCYCLE = 4;
 
@@ -15,6 +16,7 @@ export default class Emulator {
     this.memory = new MemoryBus();
     this.cpu = new CPU(this.memory);
     this.ppu = new PPU(this.cpu);
+    this.apu = new APU(this.cpu);
   }
 
   /**
@@ -80,6 +82,7 @@ export default class Emulator {
     const mCycles = this.cpu.step();
     const tCycles = mCycles * T_CYCLES_PER_MCYCLE;
     this._clockPPU(tCycles);
+    this._clockAPU(tCycles);
 
     return tCycles;
   }
@@ -120,6 +123,12 @@ export default class Emulator {
 
     for (let i = 0; i < tCycles; i++) {
       this.ppu.step(this.onFrame);
+    }
+  }
+
+  _clockAPU(tCycles) {
+    for (let i = 0; i < tCycles; i++) {
+      this.apu.step(this.onSample);
     }
   }
 
