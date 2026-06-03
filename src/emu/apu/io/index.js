@@ -1,6 +1,6 @@
 import IORegisterSegment from "../../lib/IORegisterSegment";
-import AUD1HIGH from "./AUD1HIGH";
-import AUD1LOW from "./AUD1LOW";
+import AUD12HIGH from "./AUD12HIGH";
+import AUD12LOW from "./AUD12LOW";
 import AUDENA from "./AUDENA";
 import AUDTERM from "./AUDTERM";
 import AUDVOL from "./AUDVOL";
@@ -12,8 +12,10 @@ export default class AudioRegisters extends IORegisterSegment {
     this.audena = new AUDENA(apu);
     this.audterm = new AUDTERM(apu);
     this.audvol = new AUDVOL(apu);
-    this.aud1low = new AUD1LOW(apu);
-    this.aud1high = new AUD1HIGH(apu);
+    this.aud1low = new AUD12LOW(apu);
+    this.aud1high = new AUD12HIGH(apu);
+    this.aud2low = new AUD12LOW(apu);
+    this.aud2high = new AUD12HIGH(apu);
   }
 
   _getRegister(address) {
@@ -22,6 +24,10 @@ export default class AudioRegisters extends IORegisterSegment {
         return this.aud1low;
       case 0xff14:
         return this.aud1high;
+      case 0xff18:
+        return this.aud2low;
+      case 0xff19:
+        return this.aud2high;
       case 0xff24:
         return this.audvol;
       case 0xff25:

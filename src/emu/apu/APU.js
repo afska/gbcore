@@ -14,18 +14,27 @@ export default class APU {
 
     this.registers = new AudioRegisters(this);
 
-    this.oscillator = new PulseOscillator();
+    this.oscillator1 = new PulseOscillator();
+    this.oscillator2 = new PulseOscillator();
   }
 
   step(onSample) {
     this.sampleCounter++;
 
     if (this.sampleCounter >= STEPS_PER_SAMPLE) {
-      const periodValue =
+      const periodValue1 =
         (this.registers.aud1high.periodHigh << 8) |
         this.registers.aud1low.value;
-      this.oscillator.frequency = 131072 / (2048 - periodValue);
-      this.sample = periodValue > 0 ? this.oscillator.sample() : 0;
+      this.oscillator1.frequency = 131072 / (2048 - periodValue1);
+      const sample1 = periodValue1 > 0 ? this.oscillator1.sample() : 0;
+
+      const periodValue2 =
+        (this.registers.aud2high.periodHigh << 8) |
+        this.registers.aud2low.value;
+      this.oscillator2.frequency = 131072 / (2048 - periodValue2);
+      const sample2 = periodValue2 > 0 ? this.oscillator2.sample() : 0;
+
+      this.sample = (sample1 + sample2) / 2;
 
       this.sampleCounter = 0;
       onSample(this.sample);
