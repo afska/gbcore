@@ -30,7 +30,7 @@ export default class PulseChannel {
     //   return this.outputSample;
 
     this.oscillator.frequency = 131072 / (2048 - this.periodValue);
-    // this.oscillator.dutyCycle = this.registers.control.dutyCycleId;
+    this.oscillator.dutyCycle = this.registers.len.dutyCycle;
     // this.oscillator.volume = this.registers.control.constantVolume
     //   ? this.registers.control.volumeOrEnvelopePeriod
     //   : this.volumeEnvelope.volume;

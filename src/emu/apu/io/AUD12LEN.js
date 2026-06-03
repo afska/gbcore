@@ -1,15 +1,13 @@
 import InMemoryRegister from "../../lib/InMemoryRegister";
 
-const READ_MASK = 0b01111111;
+const READ_MASK = 0b11000000;
 
 /**
- * AUD1HIGH/AUD2HIGH (aka NR14/NR24): Channel 1/2 period high & control
+ * AUD1LEN/AUD2LEN (aka NR11/NR21): Channel 1/2 length timer & duty cycle
  */
 export default class AUD12HIGH extends InMemoryRegister.APU {
   onLoad() {
-    this.addField("periodHigh", 0, 3)
-      .addField("enableLength", 6)
-      .addField("trigger", 7);
+    this.addField("initialLengthTimer", 0, 6).addField("dutyCycle", 6, 2);
   }
 
   onRead() {
