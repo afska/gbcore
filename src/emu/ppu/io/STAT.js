@@ -1,5 +1,7 @@
 import InMemoryRegister from "../../lib/InMemoryRegister";
 
+const READ_ONLY_MASK = 0b111;
+
 /**
  * STAT: LCD status
  */
@@ -20,14 +22,7 @@ export default class STAT extends InMemoryRegister.PPU {
   }
 
   onWrite(value) {
-    // ppuMode and lycEqualsLy are read-only
-    const ppuMode = this.ppuMode;
-    const lycEqualsLy = this.lycEqualsLy;
-
-    this.setValue(value);
-
-    this.ppuMode = ppuMode;
-    this.lycEqualsLy = lycEqualsLy;
+    this.setValue((value & ~READ_ONLY_MASK) | (this.value & READ_ONLY_MASK));
 
     this.ppu.syncSTAT();
   }

@@ -95,7 +95,7 @@ export default class PPU {
     stat.interruptLine = interruptLine;
   }
 
-  isEnabled() {
+  get isEnabled() {
     return !!this.registers.lcdc.enableLCD;
   }
 

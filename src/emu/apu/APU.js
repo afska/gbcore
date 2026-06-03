@@ -22,4 +22,12 @@ export default class APU {
       onSample(this.sample);
     }
   }
+
+  get isEnabled() {
+    return !!this.registers.audena.enableAudio;
+  }
+
+  reset() {
+    // TODO: IMPLEMENT
+  }
 }
