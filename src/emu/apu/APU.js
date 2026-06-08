@@ -19,9 +19,12 @@ export default class APU {
         new PulseChannel(this, 1, "enableChannel2")
       ]
     };
+
+    this.divApu = 0;
   }
 
   step(onSample) {
+    this._processTicks();
     this.channels.pulses[0].step();
     this.channels.pulses[1].step();
 
@@ -44,5 +47,23 @@ export default class APU {
 
   reset() {
     // TODO: IMPLEMENT
+  }
+
+  _processTicks() {
+    const currentDivApu = this.cpu.memory.timer.div;
+    for (; this.divApu < currentDivApu; this.divApu++) {
+      if (this.divApu % 8 === 0) {
+        // Envelope sweep
+      }
+
+      if (this.divApu % 2 === 0) {
+        // Sound length
+      }
+
+      if (this.divApu % 4 === 0) {
+        // CH1 freq sweep
+      }
+      // TODO: IMPLEMENT
+    }
   }
 }

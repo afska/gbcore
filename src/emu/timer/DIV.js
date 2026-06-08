@@ -1,12 +1,27 @@
 import InMemoryRegister from "../lib/InMemoryRegister";
+import byte from "../lib/byte";
 
 /**
  * DIV: Divider register
  * This register is incremented at a rate of 16384Hz (~16779Hz on SGB). Writing any value to this register resets it to $00. Additionally, this register is reset when executing the stop instruction, and only begins ticking again once stop mode ends.
  */
 export default class DIV extends InMemoryRegister.Unit {
+  onLoad() {
+    this.divApu = 0;
+  }
+
   onRead() {
     return this.value;
+  }
+
+  set(value) {
+    const oldValue = this.value;
+
+    this.setValue(value);
+
+    // every time DIV's bit 4 (or 5 in double-speed mode) goes from 1 to 0, DIV-APU is incremented
+    if (byte.getFlag(oldValue, 4) && !byte.getFlag(value, 4)) this.divApu++;
+    // TODO: IMPLEMENT double-speed
   }
 
   onWrite(value) {
