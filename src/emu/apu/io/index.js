@@ -5,6 +5,8 @@ import AUD12LEN from "./AUD12LEN";
 import AUDENA from "./AUDENA";
 import AUDTERM from "./AUDTERM";
 import AUDVOL from "./AUDVOL";
+import AUD1SWEEP from "./AUD1SWEEP";
+import AUD12ENV from "./AUD12ENV";
 
 export default class AudioRegisters extends IORegisterSegment {
   constructor(apu) {
@@ -15,22 +17,30 @@ export default class AudioRegisters extends IORegisterSegment {
     this.audvol = new AUDVOL(apu);
 
     this.pulses = [0, 1].map((it) => ({
-      low: new AUD12LOW(apu),
-      high: new AUD12HIGH(apu),
-      len: new AUD12LEN(apu)
+      low: new AUD12LOW(apu, it),
+      high: new AUD12HIGH(apu, it),
+      len: new AUD12LEN(apu, it),
+      env: new AUD12ENV(apu, it),
+      sweep: it === 0 ? new AUD1SWEEP(apu) : null
     }));
   }
 
   _getRegister(address) {
     switch (address) {
+      case 0xff10:
+        return this.pulses[0].sweep;
       case 0xff11:
         return this.pulses[0].len;
+      case 0xff12:
+        return this.pulses[0].env;
       case 0xff13:
         return this.pulses[0].low;
       case 0xff14:
         return this.pulses[0].high;
       case 0xff16:
         return this.pulses[1].len;
+      case 0xff17:
+        return this.pulses[1].env;
       case 0xff18:
         return this.pulses[1].low;
       case 0xff19:
