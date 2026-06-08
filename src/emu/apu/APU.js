@@ -58,6 +58,8 @@ export default class APU {
 
       if (this.divApu % 2 === 0) {
         // Sound length
+        this.channels.pulses[0].lengthTimerTick();
+        this.channels.pulses[1].lengthTimerTick();
       }
 
       if (this.divApu % 4 === 0) {

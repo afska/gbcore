@@ -1,4 +1,5 @@
 import InMemoryRegister from "../../lib/InMemoryRegister";
+import byte from "../../lib/byte";
 
 const READ_MASK = 0b01111111;
 
@@ -18,5 +19,7 @@ export default class AUD12HIGH extends InMemoryRegister.APU {
 
   onWrite(value) {
     this.setValue(value);
+
+    if (byte.getFlag(value, 7)) this.apu.channels.pulses[this.id].trigger();
   }
 }
