@@ -1,11 +1,11 @@
 import IORegisterSegment from "../../lib/IORegisterSegment";
 import LCDC from "./LCDC";
-import STAT from "./STAT";
 import LY from "./LY";
 import LYC from "./LYC";
 import OAMDMA from "./OAMDMA";
 import Palette from "./Palette";
 import SCXY from "./SCXY";
+import STAT from "./STAT";
 import WXY from "./WXY";
 
 export default class VideoRegisters extends IORegisterSegment {

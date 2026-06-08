@@ -1,5 +1,5 @@
-import TimerRegisters from "./timer/Timer";
 import byte from "./lib/byte";
+import TimerRegisters from "./timer/Timer";
 
 const KB = 1024;
 const WRAM_SIZE = 8 * KB;
@@ -9,7 +9,6 @@ const OAM_SIZE = 160;
 
 // TODO: NEXT STEPS:
 // maybe some audio?
-// install import sorter
 
 export default class MemoryBus {
   constructor() {

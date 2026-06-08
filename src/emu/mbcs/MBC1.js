@@ -1,5 +1,5 @@
-import MBC from "./MBC";
 import InMemoryRegister from "../lib/InMemoryRegister";
+import MBC from "./MBC";
 
 export default (options = {}) => {
   return class MBC1 extends MBC {

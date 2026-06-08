@@ -1,5 +1,5 @@
-import { ADD16 } from "./opcodes_arithmetic_16bit";
 import byte from "../../lib/byte";
+import { ADD16 } from "./opcodes_arithmetic_16bit";
 
 /**
  * PUSH AF

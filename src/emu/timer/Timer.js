@@ -1,10 +1,10 @@
+import interrupts from "../interrupts";
 import IORegisterSegment from "../lib/IORegisterSegment";
+import byte from "../lib/byte";
 import DIV from "./DIV";
+import TAC from "./TAC";
 import TIMA from "./TIMA";
 import TMA from "./TMA";
-import TAC from "./TAC";
-import byte from "../lib/byte";
-import interrupts from "../interrupts";
 
 const CPU_FREQ_MCYCLES = 1048576;
 const DIV_INCREMENT_INTERVAL = CPU_FREQ_MCYCLES / 16384;

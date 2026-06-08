@@ -1,7 +1,7 @@
-import BackgroundRenderer from "./BackgroundRenderer";
 import interrupts from "../interrupts";
-import VideoRegisters from "./io";
+import BackgroundRenderer from "./BackgroundRenderer";
 import SpriteRenderer from "./SpriteRenderer";
+import VideoRegisters from "./io";
 
 const WIDTH = 160;
 const HEIGHT = 144;

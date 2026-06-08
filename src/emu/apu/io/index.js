@@ -1,12 +1,12 @@
 import IORegisterSegment from "../../lib/IORegisterSegment";
+import AUD1SWEEP from "./AUD1SWEEP";
+import AUD12ENV from "./AUD12ENV";
 import AUD12HIGH from "./AUD12HIGH";
-import AUD12LOW from "./AUD12LOW";
 import AUD12LEN from "./AUD12LEN";
+import AUD12LOW from "./AUD12LOW";
 import AUDENA from "./AUDENA";
 import AUDTERM from "./AUDTERM";
 import AUDVOL from "./AUDVOL";
-import AUD1SWEEP from "./AUD1SWEEP";
-import AUD12ENV from "./AUD12ENV";
 
 export default class AudioRegisters extends IORegisterSegment {
   constructor(apu) {

@@ -1,7 +1,7 @@
 import React, { Component } from "react";
-import Screen from "./Screen";
 import Emulation from "../emulator/Emulation";
 import gamepad from "../emulator/gamepad";
+import Screen from "./Screen";
 
 const SAVESTATE_KEY = "gbcore-savestate";
 const SAVEFILE_KEY = "gbcore-savefile";

@@ -1,9 +1,9 @@
 import React, { Component } from "react";
+import classNames from "classnames";
+import emu from "../emu";
 import Emulator from "./components/Emulator";
 import TVNoise from "./components/TVNoise";
-import classNames from "classnames";
 import styles from "./App.module.css";
-import emu from "../emu";
 
 window.emu = emu;
 

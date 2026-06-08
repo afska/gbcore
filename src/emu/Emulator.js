@@ -1,9 +1,9 @@
-import MemoryBus from "./MemoryBus";
-import CPU from "./cpu/CPU";
 import Cartridge from "./Cartridge";
 import Controller from "./Controller";
-import PPU, { T_CYCLES_PER_FRAME } from "./ppu/PPU";
+import MemoryBus from "./MemoryBus";
 import APU from "./apu/APU";
+import CPU from "./cpu/CPU";
+import PPU, { T_CYCLES_PER_FRAME } from "./ppu/PPU";
 
 const T_CYCLES_PER_MCYCLE = 4;
 

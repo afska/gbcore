@@ -1,9 +1,9 @@
-import { Register8Bit, Register16Bit, RegisterPair } from "./Register";
-import FlagsRegister from "./FlagsRegister";
-import { getOperation } from "./opcodes";
-import byte from "../lib/byte";
-import Stack from "./Stack";
 import interrupts from "../interrupts";
+import byte from "../lib/byte";
+import FlagsRegister from "./FlagsRegister";
+import { Register8Bit, Register16Bit, RegisterPair } from "./Register";
+import Stack from "./Stack";
+import { getOperation } from "./opcodes";
 
 const PREFIX_INSTRUCTION = 0xcb;
 

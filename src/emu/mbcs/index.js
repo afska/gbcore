@@ -1,5 +1,5 @@
-import NoMBC from "./NoMBC";
 import MBC1 from "./MBC1";
+import NoMBC from "./NoMBC";
 
 export default [
   { id: 0x00, name: "ROM ONLY", MBC: NoMBC() },

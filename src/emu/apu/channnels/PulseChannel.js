@@ -1,5 +1,5 @@
-import PulseOscillator from "../oscillators/PulseOscillator";
 import byte from "../../lib/byte";
+import PulseOscillator from "../oscillators/PulseOscillator";
 
 export default class PulseChannel {
   constructor(apu, id, enableFlagName) {
