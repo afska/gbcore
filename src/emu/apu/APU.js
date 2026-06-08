@@ -14,10 +14,7 @@ export default class APU {
 
     this.registers = new AudioRegisters(this);
     this.channels = {
-      pulses: [
-        new PulseChannel(this, 0, "enableChannel1"),
-        new PulseChannel(this, 1, "enableChannel2")
-      ]
+      pulses: [new PulseChannel(this, 0), new PulseChannel(this, 1)]
     };
 
     this.divApu = 0;

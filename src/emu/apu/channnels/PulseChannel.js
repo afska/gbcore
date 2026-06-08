@@ -1,33 +1,29 @@
 import byte from "../../lib/byte";
+import LengthCounter from "../LengthCounter";
 import PulseOscillator from "../oscillators/PulseOscillator";
 
-const LENGTH_TIMER_TARGET = 64;
-
 export default class PulseChannel {
-  constructor(apu, id, enableFlagName) {
+  constructor(apu, id) {
     this.apu = apu;
 
     this.id = id;
-    this.enableFlagName = enableFlagName;
-
-    this.periodValue = 0;
     this.registers = this.apu.registers.pulses[this.id];
 
+    this.isPlaying = false;
+    this.periodValue = 0;
+    this.outputSample = 0;
+
     this.oscillator = new PulseOscillator();
+    this.lengthCounter = new LengthCounter();
     // this.volumeEnvelope = new VolumeEnvelope();
     // this.frequencySweep = new FrequencySweep(this);
-
-    this.isPlaying = false;
-    this.lengthTimer = 0;
-
-    this.outputSample = 0;
   }
 
   trigger() {
     this.isPlaying = true;
 
     // If length timer expired it is reset.
-    if (this.lengthTimer >= LENGTH_TIMER_TARGET) this.lengthTimer = 0;
+    this.lengthCounter.resetIfNeeded();
 
     // The period divider is set to the contents of NR13 and NR14.
     this.periodValue = byte.buildU16(
@@ -46,22 +42,12 @@ export default class PulseChannel {
   }
 
   sample() {
-    // TODO: trigger the channels
-    // if (
-    //   !this.isEnabled
-    //   /* ||
-    //   !this.lengthCounter.isActive() ||
-    //   this.frequencySweep.mute*/
-    // )
-    //   return this.outputSample;
+    if (!this.isPlaying) return this.outputSample;
 
     this.oscillator.frequency = 131072 / (2048 - this.periodValue);
     this.oscillator.dutyCycle = this.registers.len.dutyCycle;
-    // this.oscillator.volume = this.registers.control.constantVolume
-    //   ? this.registers.control.volumeOrEnvelopePeriod
-    //   : this.volumeEnvelope.volume;
 
-    this.outputSample = this.periodValue > 0 ? this.oscillator.sample() : 0;
+    this.outputSample = this.oscillator.sample();
 
     return this.outputSample;
   }
@@ -69,16 +55,6 @@ export default class PulseChannel {
   step() {}
 
   lengthTimerTick() {
-    this.lengthTimer++;
-
-    if (this.lengthTimer >= LENGTH_TIMER_TARGET) {
-      this.lengthTimer = 0;
-      this.periodValue = 0;
-      this.isPlaying = false;
-    }
-  }
-
-  get isEnabled() {
-    return !!this.apu.registers.audena[this.enableFlagName];
+    if (this.registers.high.enableLength) this.lengthCounter.clock(this);
   }
 }

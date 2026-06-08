@@ -10,6 +10,11 @@ export default class AUD12ENV extends InMemoryRegister.APU {
       .addField("initialVolume", 4, 3);
   }
 
+  get isDACEnabled() {
+    // Channel x’s DAC is enabled if and only if [NRx2] & $F8 != 0
+    return (this.value & 0xf8) !== 0;
+  }
+
   onRead() {
     return this.value;
   }
