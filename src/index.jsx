@@ -1,8 +1,8 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 import App from "./gui/App";
-import "./gui/index.css";
 import "nes.css/css/nes.css";
+import "./gui/index.css";
 
 const container = document.getElementById("root");
 const root = createRoot(container);
