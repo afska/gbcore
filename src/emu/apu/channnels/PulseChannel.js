@@ -23,7 +23,7 @@ export default class PulseChannel {
   trigger() {
     this.isPlaying = true;
 
-    // If length timer expired it is reset.
+    // If length counter expired it is reset.
     this.lengthCounter.resetIfNeeded();
 
     // The period divider is set to the contents of NR13 and NR14.
@@ -62,11 +62,11 @@ export default class PulseChannel {
 
   step() {}
 
-  lengthTimerTick() {
+  lengthCounterTick() {
     if (this.registers.high.enableLength) this.lengthCounter.clock(this);
   }
 
-  envelopeTick() {
+  volumeEnvelopeTick() {
     if (this.registers.env.hasEnvelope)
       this.volumeEnvelope.clock(this, this.registers.env.negative ? -1 : 1);
   }

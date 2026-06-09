@@ -57,14 +57,14 @@ export default class APU {
     for (; this.divApu < currentDivApu; this.divApu++) {
       if (this.divApu % 8 === 0) {
         // Envelope sweep
-        this.channels.pulses[0].envelopeTick();
-        this.channels.pulses[1].envelopeTick();
+        this.channels.pulses[0].volumeEnvelopeTick();
+        this.channels.pulses[1].volumeEnvelopeTick();
       }
 
       if (this.divApu % 2 === 0) {
         // Sound length
-        this.channels.pulses[0].lengthTimerTick();
-        this.channels.pulses[1].lengthTimerTick();
+        this.channels.pulses[0].lengthCounterTick();
+        this.channels.pulses[1].lengthCounterTick();
       }
 
       if (this.divApu % 4 === 0) {
