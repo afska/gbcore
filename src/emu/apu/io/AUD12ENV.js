@@ -15,6 +15,10 @@ export default class AUD12ENV extends InMemoryRegister.APU {
     return (this.value & 0xf8) !== 0;
   }
 
+  get hasEnvelope() {
+    return this.sweepPace > 0;
+  }
+
   onRead() {
     return this.value;
   }

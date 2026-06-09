@@ -57,6 +57,8 @@ export default class APU {
     for (; this.divApu < currentDivApu; this.divApu++) {
       if (this.divApu % 8 === 0) {
         // Envelope sweep
+        this.channels.pulses[0].envelopeTick();
+        this.channels.pulses[1].envelopeTick();
       }
 
       if (this.divApu % 2 === 0) {

@@ -1,5 +1,6 @@
 import byte from "../../lib/byte";
 import LengthCounter from "../LengthCounter";
+import VolumeEnvelope from "../VolumeEnvelope";
 import PulseOscillator from "../oscillators/PulseOscillator";
 
 export default class PulseChannel {
@@ -15,7 +16,7 @@ export default class PulseChannel {
 
     this.oscillator = new PulseOscillator();
     this.lengthCounter = new LengthCounter();
-    // this.volumeEnvelope = new VolumeEnvelope();
+    this.volumeEnvelope = new VolumeEnvelope();
     // this.frequencySweep = new FrequencySweep(this);
   }
 
@@ -32,7 +33,8 @@ export default class PulseChannel {
     );
 
     // Envelope timer is reset.
-    // TODO: IMPLEMENT
+    this.volumeEnvelope.reset();
+    this.volumeEnvelope.sweepPace = this.registers.env.sweepPace;
 
     // Volume is set to contents of NR12 initial volume.
     this.oscillator.volume = this.registers.env.initialVolume;
@@ -62,5 +64,10 @@ export default class PulseChannel {
 
   lengthTimerTick() {
     if (this.registers.high.enableLength) this.lengthCounter.clock(this);
+  }
+
+  envelopeTick() {
+    if (this.registers.env.hasEnvelope)
+      this.volumeEnvelope.clock(this, this.registers.env.negative ? -1 : 1);
   }
 }
