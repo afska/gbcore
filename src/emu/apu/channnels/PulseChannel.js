@@ -12,7 +12,6 @@ export default class PulseChannel {
 
     this.isPlaying = false;
     this.notePeriod = 0;
-    this.outputSample = 0;
 
     this.oscillator = new PulseOscillator();
     this.lengthCounter = new LengthCounter();
@@ -43,6 +42,8 @@ export default class PulseChannel {
     // TODO: IMPLEMENT
 
     // TODO: Use AUDVOL for left/right volume
+
+    if (!this.registers.env.isDACEnabled) this.isPlaying = false;
   }
 
   stop() {
@@ -50,14 +51,12 @@ export default class PulseChannel {
   }
 
   sample() {
-    if (!this.isPlaying) return this.outputSample;
+    if (!this.isPlaying) return 0;
 
     this.oscillator.frequency = 131072 / (2048 - this.notePeriod);
     this.oscillator.dutyCycle = this.registers.len.dutyCycle;
 
-    this.outputSample = this.oscillator.sample();
-
-    return this.outputSample;
+    return this.oscillator.sample();
   }
 
   step() {}

@@ -21,6 +21,7 @@ export default class APU {
   }
 
   step(onSample) {
+    // TODO: ADD COMMENTS FROM PAN DOCS
     this._processTicks();
     this.channels.pulses[0].step();
     this.channels.pulses[1].step();
@@ -33,7 +34,7 @@ export default class APU {
 
       this.sample = (pulse1 + pulse2) * 0.01;
 
-      this.sampleCounter = 0;
+      this.sampleCounter -= STEPS_PER_SAMPLE;
       onSample(this.sample);
     }
   }
@@ -50,10 +51,11 @@ export default class APU {
       this.registers.pulses[i].env.setValue(0);
     }
     this.registers.pulses[0].sweep.setValue(0);
+    // TODO: ALSO DISABLE PulseChannel's isPlaying and internal state
   }
 
   _processTicks() {
-    const currentDivApu = this.cpu.memory.timer.div;
+    const currentDivApu = this.cpu.memory.timer.div.divApu;
     for (; this.divApu < currentDivApu; this.divApu++) {
       if (this.divApu % 8 === 0) {
         // Envelope sweep

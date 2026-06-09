@@ -25,7 +25,7 @@ export default class DIV extends InMemoryRegister.Unit {
   }
 
   onWrite(value) {
-    this.setValue(0);
+    this.set(0);
     this.unit.resetDivPhase();
   }
 }

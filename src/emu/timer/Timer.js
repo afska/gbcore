@@ -39,7 +39,7 @@ export default class Timer extends IORegisterSegment {
     const increments = Math.floor(this._divCycleCount / DIV_INCREMENT_INTERVAL);
     this._divCycleCount %= DIV_INCREMENT_INTERVAL;
 
-    this.div.setValue(byte.toU8(this.div.value + increments));
+    this.div.set(byte.toU8(this.div.value + increments));
   }
 
   _incrementTima(mCycles) {
