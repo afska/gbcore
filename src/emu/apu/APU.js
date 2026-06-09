@@ -43,7 +43,13 @@ export default class APU {
   }
 
   reset() {
-    // TODO: IMPLEMENT
+    for (let i = 0; i < 2; i++) {
+      this.registers.pulses[i].low.setValue(0);
+      this.registers.pulses[i].high.setValue(0);
+      this.registers.pulses[i].len.setValue(0);
+      this.registers.pulses[i].env.setValue(0);
+    }
+    this.registers.pulses[0].sweep.setValue(0);
   }
 
   _processTicks() {

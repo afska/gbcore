@@ -39,6 +39,12 @@ export default class PulseChannel {
 
     // Sweep does several things.
     // TODO: IMPLEMENT
+
+    // TODO: Use AUDVOL for left/right volume
+  }
+
+  stop() {
+    this.isPlaying = false;
   }
 
   sample() {

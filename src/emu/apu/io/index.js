@@ -8,6 +8,8 @@ import AUDENA from "./AUDENA";
 import AUDTERM from "./AUDTERM";
 import AUDVOL from "./AUDVOL";
 
+const AUDENA_ADDR = 0xff26;
+
 export default class AudioRegisters extends IORegisterSegment {
   constructor(apu) {
     super();
@@ -23,6 +25,12 @@ export default class AudioRegisters extends IORegisterSegment {
       env: new AUD12ENV(apu, it),
       sweep: it === 0 ? new AUD1SWEEP(apu) : null
     }));
+  }
+
+  write(address, value) {
+    if (!this.audena.enableAudio && address !== AUDENA_ADDR) return;
+
+    super.write(address, value);
   }
 
   _getRegister(address) {
@@ -49,7 +57,7 @@ export default class AudioRegisters extends IORegisterSegment {
         return this.audvol;
       case 0xff25:
         return this.audterm;
-      case 0xff26:
+      case AUDENA_ADDR:
         return this.audena;
       default:
     }

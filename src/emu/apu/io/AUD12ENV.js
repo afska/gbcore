@@ -20,6 +20,11 @@ export default class AUD12ENV extends InMemoryRegister.APU {
   }
 
   onWrite(value) {
+    const wasDACEnabled = this.isDACEnabled;
+
     this.setValue(value);
+
+    if (wasDACEnabled && !this.isDACEnabled)
+      this.apu.channels.pulses[this.id].stop();
   }
 }
