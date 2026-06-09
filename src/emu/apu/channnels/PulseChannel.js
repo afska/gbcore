@@ -11,7 +11,7 @@ export default class PulseChannel {
     this.registers = this.apu.registers.pulses[this.id];
 
     this.isPlaying = false;
-    this.periodValue = 0;
+    this.notePeriod = 0;
     this.outputSample = 0;
 
     this.oscillator = new PulseOscillator();
@@ -27,7 +27,7 @@ export default class PulseChannel {
     this.lengthCounter.resetIfNeeded();
 
     // The period divider is set to the contents of NR13 and NR14.
-    this.periodValue = byte.buildU16(
+    this.notePeriod = byte.buildU16(
       this.registers.high.periodHigh,
       this.registers.low.value
     );
@@ -52,7 +52,7 @@ export default class PulseChannel {
   sample() {
     if (!this.isPlaying) return this.outputSample;
 
-    this.oscillator.frequency = 131072 / (2048 - this.periodValue);
+    this.oscillator.frequency = 131072 / (2048 - this.notePeriod);
     this.oscillator.dutyCycle = this.registers.len.dutyCycle;
 
     this.outputSample = this.oscillator.sample();
