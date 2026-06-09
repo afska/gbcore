@@ -8,7 +8,7 @@ const READ_MASK = 0b01111111;
  */
 export default class AUD12HIGH extends InMemoryRegister.APU {
   onLoad() {
-    this.addField("periodHigh", 0, 3)
+    this.addWritableField("periodHigh", 0, 3)
       .addField("enableLength", 6)
       .addField("trigger", 7);
   }
@@ -19,6 +19,9 @@ export default class AUD12HIGH extends InMemoryRegister.APU {
 
   onWrite(value) {
     this.setValue(value);
+    this.apu.channels.pulses[this.id].notePeriod =
+      (this.apu.channels.pulses[this.id].notePeriod & 0xff) |
+      (this.periodHigh << 8);
 
     if (byte.getFlag(value, 7)) this.apu.channels.pulses[this.id].trigger();
   }

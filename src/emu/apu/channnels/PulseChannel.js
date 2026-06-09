@@ -1,4 +1,5 @@
 import byte from "../../lib/byte";
+import FrequencySweep from "../FrequencySweep";
 import LengthCounter from "../LengthCounter";
 import VolumeEnvelope from "../VolumeEnvelope";
 import PulseOscillator from "../oscillators/PulseOscillator";
@@ -16,7 +17,7 @@ export default class PulseChannel {
     this.oscillator = new PulseOscillator();
     this.lengthCounter = new LengthCounter();
     this.volumeEnvelope = new VolumeEnvelope();
-    // this.frequencySweep = new FrequencySweep(this);
+    this.frequencySweep = new FrequencySweep(this);
   }
 
   trigger() {
@@ -39,7 +40,27 @@ export default class PulseChannel {
     this.oscillator.volume = this.registers.env.initialVolume;
 
     // Sweep does several things.
-    // TODO: IMPLEMENT
+    if (this.id === 0) {
+      // TODO: REFACTOR
+      this.frequencySweep.sweepPace = this.registers.sweep.pace;
+      this.frequencySweep.sweepStep = this.registers.sweep.individualStep;
+      this.frequencySweep.negative = this.registers.sweep.negative;
+
+      // CH1 period value is copied to the “shadow register”.
+      this.frequencySweep.notePeriod = this.notePeriod;
+
+      // The “sweep timer” is reset.
+      this.frequencySweep.reset();
+
+      // The “enabled flag” is set if either the sweep pace or individual step are non-zero, cleared otherwise.
+      this.frequencySweep.enabled =
+        this.registers.sweep.pace > 0 ||
+        this.registers.sweep.individualStep > 0;
+
+      // If the individual step is non-zero, frequency calculation and overflow check are performed immediately.
+      if (this.registers.sweep.individualStep > 0)
+        this.frequencySweep.frequencyCalculationAndOverflowCheck();
+    }
 
     // TODO: Use AUDVOL for left/right volume
 
@@ -68,5 +89,12 @@ export default class PulseChannel {
   volumeEnvelopeTick() {
     if (this.registers.env.hasEnvelope)
       this.volumeEnvelope.clock(this, this.registers.env.negative ? -1 : 1);
+  }
+
+  frequencySweepTick() {
+    if (this.id !== 0) return;
+
+    if (this.registers.sweep.hasSweep && this.frequencySweep.enabled)
+      this.frequencySweep.clock();
   }
 }

@@ -71,8 +71,8 @@ export default class APU {
 
       if (this.divApu % 4 === 0) {
         // CH1 freq sweep
+        this.channels.pulses[0].frequencySweepTick();
       }
-      // TODO: IMPLEMENT
     }
   }
 }
