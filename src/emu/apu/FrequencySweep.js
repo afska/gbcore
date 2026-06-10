@@ -5,6 +5,10 @@ export default class FrequencySweep {
   constructor(channel) {
     this.channel = channel;
 
+    this.reset();
+  }
+
+  reset() {
     this._enabled = false;
 
     this._notePeriod = 0;

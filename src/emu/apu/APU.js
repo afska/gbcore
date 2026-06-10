@@ -23,6 +23,10 @@ export default class APU {
     this.divApu = 0;
   }
 
+  reset() {
+    for (let i = 0; i < 2; i++) this.channels.pulses[i].reset();
+  }
+
   step(onSample) {
     // TODO: ADD COMMENTS FROM PAN DOCS
     this._processTicks();
@@ -44,17 +48,6 @@ export default class APU {
 
   get isEnabled() {
     return !!this.registers.audena.enableAudio;
-  }
-
-  reset() {
-    for (let i = 0; i < 2; i++) {
-      this.registers.pulses[i].low.setValue(0);
-      this.registers.pulses[i].high.setValue(0);
-      this.registers.pulses[i].len.setValue(0);
-      this.registers.pulses[i].env.setValue(0);
-    }
-    this.registers.pulses[0].sweep.setValue(0);
-    // TODO: ALSO DISABLE PulseChannel's isPlaying and internal state
   }
 
   _processTicks() {

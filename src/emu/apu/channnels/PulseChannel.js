@@ -34,6 +34,20 @@ export default class PulseChannel {
     this.registers.low.setValue(value & 0b00011111111);
   }
 
+  reset() {
+    this.registers.low.setValue(0);
+    this.registers.high.setValue(0);
+    this.registers.len.setValue(0);
+    this.registers.env.setValue(0);
+    if (this.id === 0) this.registers.sweep.setValue(0);
+
+    this.isPlaying = false;
+    this.oscillator.reset();
+    this.lengthCounter.reset();
+    this.volumeEnvelope.reset();
+    this.frequencySweep.reset();
+  }
+
   trigger() {
     this.isPlaying = true;
 
