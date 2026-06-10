@@ -4,7 +4,7 @@ import AudioRegisters from "./io";
 const APU_RATE = 4194304;
 const SAMPLE_RATE = 44100;
 const STEPS_PER_SAMPLE = APU_RATE / SAMPLE_RATE;
-const GAIN = 0.01;
+const MAX_VOLUME = 15;
 
 /**
  * The Game Boy’s sound chip is called the APU.
@@ -38,25 +38,11 @@ export default class APU {
     if (this.sampleCounter >= STEPS_PER_SAMPLE) {
       const pulse1 = this.channels.pulses[0].sample();
       const pulse2 = this.channels.pulses[1].sample();
-      const term = this.registers.audterm.value;
-      const vol = this.registers.audvol;
-      let left = 0;
-      let right = 0;
 
-      if (term & 0b00010000) left += pulse1;
-      if (term & 0b00100000) left += pulse2;
-      if (term & 0b00000001) right += pulse1;
-      if (term & 0b00000010) right += pulse2;
-
-      // A value of 0 is treated as a volume of 1 (very quiet), and a value of 7 is treated as a volume of 8 (no volume reduction).
-      // Importantly, the amplifier never mutes a non-silent input.
-      left *= ((vol.leftVolume + 1) / 8) * GAIN;
-      right *= ((vol.rightVolume + 1) / 8) * GAIN;
-      this.sample[0] = left;
-      this.sample[1] = right;
+      this._mix(pulse1, pulse2);
 
       this.sampleCounter -= STEPS_PER_SAMPLE;
-      onSample(left, right);
+      onSample(this.sample[0], this.sample[1]);
     }
   }
 
@@ -84,5 +70,46 @@ export default class APU {
         this.channels.pulses[0].frequencySweepTick();
       }
     }
+  }
+
+  _mix(pulse1, pulse2) {
+    const term = this.registers.audterm;
+    const vol = this.registers.audvol;
+
+    let left = 0;
+    let right = 0;
+    let leftChannels = 0;
+    let rightChannels = 0;
+
+    if (this.channels.pulses[0].isPlaying && term.channel1Left) {
+      left += pulse1;
+      leftChannels++;
+    }
+    if (this.channels.pulses[1].isPlaying && term.channel2Left) {
+      left += pulse2;
+      leftChannels++;
+    }
+    if (this.channels.pulses[0].isPlaying && term.channel1Right) {
+      right += pulse1;
+      rightChannels++;
+    }
+    if (this.channels.pulses[1].isPlaying && term.channel2Right) {
+      right += pulse2;
+      rightChannels++;
+    }
+
+    // Centering
+    // We move the signal from 0..15 to -1..1
+    if (leftChannels) left = (left / (MAX_VOLUME * leftChannels)) * 2 - 1;
+    if (rightChannels) right = (right / (MAX_VOLUME * rightChannels)) * 2 - 1;
+
+    // Master volume
+    // A value of 0 is treated as a volume of 1 (very quiet), and a value of 7 is treated as a volume of 8 (no volume reduction).
+    // Importantly, the amplifier never mutes a non-silent input.
+    left *= (vol.leftVolume + 1) / 8;
+    right *= (vol.rightVolume + 1) / 8;
+
+    this.sample[0] = left;
+    this.sample[1] = right;
   }
 }
