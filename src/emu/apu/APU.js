@@ -1,4 +1,4 @@
-import PulseChannel from "./channnels/PulseChannel";
+import PulseChannel from "./channels/PulseChannel";
 import AudioRegisters from "./io";
 
 const APU_RATE = 4194304;
