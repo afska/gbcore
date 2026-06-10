@@ -6,7 +6,7 @@ import InMemoryRegister from "../../lib/InMemoryRegister";
 export default class AUD12ENV extends InMemoryRegister.APU {
   onLoad() {
     this.addField("sweepPace", 0, 3)
-      .addField("negative", 3)
+      .addField("increase", 3)
       .addField("initialVolume", 4, 4);
   }
 

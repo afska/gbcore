@@ -80,7 +80,7 @@ export default class PulseChannel {
 
   volumeEnvelopeTick() {
     if (this.registers.env.hasEnvelope)
-      this.volumeEnvelope.clock(this, this.registers.env.negative ? -1 : 1);
+      this.volumeEnvelope.clock(this, this.registers.env.increase ? 1 : -1);
   }
 
   frequencySweepTick() {
