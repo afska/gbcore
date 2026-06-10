@@ -10,10 +10,6 @@ export default class AUD1SWEEP extends InMemoryRegister.APU {
       .addField("pace", 4, 3);
   }
 
-  get hasSweep() {
-    return this.pace > 0;
-  }
-
   onRead() {
     return this.value;
   }

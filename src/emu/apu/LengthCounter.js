@@ -1,20 +1,25 @@
-export default class LengthCounter {
-  constructor(target = 64) {
-    this._target = target;
+const MAX_LENGTH = 64;
 
-    this.counter = 0;
+export default class LengthCounter {
+  constructor(target = MAX_LENGTH) {
+    this._target = target;
+    this._counter = 0;
+  }
+
+  set(value) {
+    this._counter = value;
   }
 
   resetIfNeeded() {
-    if (this.counter >= this._target) this.counter = 0;
+    if (this._counter >= this._target) this._counter = 0;
   }
 
   clock(channel) {
-    this.counter++;
+    this._counter++;
 
-    if (this.counter >= this._target) {
-      this.counter = 0;
-      channel.isPlaying = false;
+    if (this._counter >= this._target) {
+      this._counter = 0;
+      channel.stop();
     }
   }
 }

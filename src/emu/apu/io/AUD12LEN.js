@@ -17,7 +17,8 @@ export default class AUD12HIGH extends InMemoryRegister.APU {
   onWrite(value) {
     this.setValue(value);
 
-    this.apu.channels.pulses[this.id].lengthCounter.counter =
-      this.initialLengthCounter;
+    this.apu.channels.pulses[this.id].lengthCounter.set(
+      this.initialLengthCounter
+    );
   }
 }

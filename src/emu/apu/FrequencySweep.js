@@ -2,45 +2,60 @@ export default class FrequencySweep {
   constructor(channel) {
     this.channel = channel;
 
-    this.enabled = false;
-    this.notePeriod = 0;
-    this.sweepPace = 0;
-    this.sweepStep = 0;
-    this.negative = false;
-    this.reset();
+    this._enabled = false;
+
+    this._notePeriod = 0;
+    this._sweepPace = 0;
+
+    this._counter = 0;
   }
 
-  reset() {
-    this.counter = 0;
-  }
+  trigger() {
+    const sweep = this.channel.registers.sweep;
+    this._sweepPace = sweep.pace;
 
-  frequencyCalculationAndOverflowCheck(write = false) {
-    const sign = this.negative ? -1 : 1;
-    const newNotePeriod =
-      this.notePeriod +
-      sign * Math.floor(this.notePeriod / Math.pow(2, this.sweepStep));
-    if (newNotePeriod > 0b11111111111) this.channel.isPlaying = false;
-    else if (write) {
-      this.notePeriod = newNotePeriod;
-      this.channel.notePeriod = newNotePeriod;
-      this.channel.registers.low.setValue(
-        this.channel.notePeriod & 0b00011111111
-      );
-      this.channel.registers.high.periodHigh =
-        (this.channel.notePeriod & 0b11100000000) >> 8;
-    }
+    this._notePeriod = this.channel.notePeriod;
+    this._counter = 0;
+    this._enabled = this._sweepPace > 0 || this._sweepStep > 0;
+    if (this._sweepStep > 0) this._updateNote();
   }
 
   clock() {
-    this.counter++;
+    if (!this._enabled || this._sweepPace === 0) return;
 
-    if (this.counter >= this.sweepPace) {
-      if (this.sweepStep > 0) {
-        this.frequencyCalculationAndOverflowCheck(true);
-        this.frequencyCalculationAndOverflowCheck();
+    this._counter++;
+
+    if (this._counter >= this._sweepPace) {
+      if (this._sweepStep > 0) {
+        if (this._updateNote(true)) this._updateNote();
       }
 
-      this.counter = 0;
+      this._counter = 0;
     }
+  }
+
+  _updateNote(write = false) {
+    const sign = this._negative ? -1 : 1;
+    const newNotePeriod =
+      this._notePeriod +
+      sign * Math.floor(this._notePeriod / Math.pow(2, this._sweepStep));
+
+    if (newNotePeriod > 0b11111111111) {
+      this.channel.isPlaying = false;
+      return false;
+    } else if (write) {
+      this._notePeriod = newNotePeriod;
+      this.channel.notePeriod = newNotePeriod;
+    }
+
+    return true;
+  }
+
+  get _sweepStep() {
+    return this.channel.registers.sweep.individualStep;
+  }
+
+  get _negative() {
+    return this.channel.registers.sweep.negative;
   }
 }
