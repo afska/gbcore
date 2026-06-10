@@ -4,7 +4,7 @@ import Speaker from "./Speaker";
 
 const PRESS_KEY_TO_ENABLE_AUDIO = "Press any key to enable audio!";
 
-const SYNC_TO_AUDIO = false; // TODO: MAKE IT TRUE
+const SYNC_TO_AUDIO = true;
 const AUDIO_DRIFT_THRESHOLD = 64;
 const SAMPLES_PER_FRAME = Math.floor(44100 / 60.098) + 1;
 

@@ -12,8 +12,13 @@ const T_CYCLES_PER_MCYCLE = 4;
  */
 export default class Emulator {
   constructor(onFrame, onSample) {
+    this.sampleCount = 0;
+
     this.onFrame = onFrame;
-    this.onSample = onSample;
+    this.onSample = (sample) => {
+      this.sampleCount++;
+      onSample(sample);
+    };
 
     this.memory = new MemoryBus();
     this.cpu = new CPU(this.memory);
@@ -76,7 +81,9 @@ export default class Emulator {
   samples(n) {
     if (!this.context) return;
 
-    // TODO: IMPLEMENT
+    this.sampleCount = 0;
+
+    while (this.sampleCount < n) this.step();
   }
 
   /** Executes a step in the emulation (1 CPU instruction). Returns the number of T-cycles. */
