@@ -10,6 +10,9 @@ const RENDER_DOT = 252;
 const TOTAL_SCANLINES = 154;
 export const T_CYCLES_PER_FRAME = DOTS_PER_SCANLINE * TOTAL_SCANLINES;
 
+/**
+ * The Game Boy outputs graphics to a 160×144 pixel LCD, using a quite complex mechanism to facilitate rendering.
+ */
 export default class PPU {
   constructor(cpu) {
     this.cpu = cpu;

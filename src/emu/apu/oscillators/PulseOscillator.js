@@ -1,6 +1,9 @@
 const APU_SAMPLE_RATE = 44100;
 const DUTY_TABLE = [0.125, 0.25, 0.5, 0.75];
 
+/**
+ * A pulse wave generator.
+ */
 export default class PulseOscillator {
   constructor() {
     this.frequency = 0;

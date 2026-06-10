@@ -3,6 +3,9 @@ import MBC from "./MBC";
 const KB = 1024;
 
 export default (options = {}) => {
+  /**
+   * Small games of not more than 32 KiB ROM do not require a MBC chip for ROM banking. The ROM is directly mapped to memory at $0000-7FFF. Optionally up to 8 KiB of RAM could be connected at $A000-BFFF, using a discrete logic decoder in place of a full MBC chip.
+   */
   return class NoMBC extends MBC {
     onLoad() {
       this.options = options;

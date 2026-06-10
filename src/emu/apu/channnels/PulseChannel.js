@@ -4,6 +4,9 @@ import LengthCounter from "../LengthCounter";
 import VolumeEnvelope from "../VolumeEnvelope";
 import PulseOscillator from "../oscillators/PulseOscillator";
 
+/**
+ * Channels 1 and 2, the “pulse channels”, produce pulse width modulated waves with 4 fixed pulse width settings.
+ */
 export default class PulseChannel {
   constructor(apu, id) {
     this.apu = apu;

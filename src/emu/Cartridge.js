@@ -5,6 +5,9 @@ const HEADER_SIZE = 80;
 const GLOBAL_CHECKSUM_OFFSET_HIGH = 0x014e;
 const GLOBAL_CHECKSUM_OFFSET_LOW = 0x014f;
 
+/**
+ * Each cartridge contains a header, located at the address range $0100—$014F. The cartridge header provides information about the game itself and the hardware it expects to run on.
+ */
 export default class Cartridge {
   constructor(bytes) {
     if (bytes.length < HEADER_OFFSET + HEADER_SIZE)

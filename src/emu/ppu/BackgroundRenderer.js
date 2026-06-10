@@ -8,6 +8,9 @@ const TILEMAP_SIZE_BYTES = 1024;
 const WINDOW_X_OFFSET = 7;
 const WHITE = 0xffffffff;
 
+/**
+ * Background + Window renderer.
+ */
 export default class BackgroundRenderer {
   constructor(cpu, ppu) {
     this.cpu = cpu;

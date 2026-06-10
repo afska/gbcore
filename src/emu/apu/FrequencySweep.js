@@ -1,3 +1,6 @@
+/**
+ * The first square channel has a frequency sweep unit, controlled by NR10.
+ */
 export default class FrequencySweep {
   constructor(channel) {
     this.channel = channel;

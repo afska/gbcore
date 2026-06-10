@@ -7,9 +7,9 @@ const HRAM_SIZE = 127;
 const VRAM_SIZE = 8 * KB;
 const OAM_SIZE = 160;
 
-// TODO: NEXT STEPS:
-// maybe some audio?
-
+/**
+ * The Game Boy has a 16-bit address bus, which is used to address ROM, RAM, and I/O.
+ */
 export default class MemoryBus {
   constructor() {
     this.wramBank0 = new Uint8Array(WRAM_SIZE / 2);

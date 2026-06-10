@@ -19,9 +19,6 @@ export default class AUD12HIGH extends InMemoryRegister.APU {
 
   onWrite(value) {
     this.setValue(value);
-    this.apu.channels.pulses[this.id].notePeriod =
-      (this.apu.channels.pulses[this.id].notePeriod & 0xff) |
-      (this.periodHigh << 8);
 
     if (byte.getFlag(value, 7)) this.apu.channels.pulses[this.id].trigger();
   }

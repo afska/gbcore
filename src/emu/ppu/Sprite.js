@@ -6,6 +6,9 @@ const SPRITE_ATTR_HORIZONTAL_FLIP_BIT = 5;
 const SPRITE_ATTR_VERTICAL_FLIP_BIT = 6;
 const SPRITE_ATTR_PRIORITY_BIT = 7;
 
+/**
+ * The Game Boy PPU can display up to 40 movable objects (or sprites), each 8×8 or 8×16 pixels. Because of a limitation of hardware, only ten objects can be displayed per scanline. Object tiles have the same format as BG tiles, but they are taken from tile blocks 0 and 1 located at $8000-8FFF and have unsigned numbering.
+ */
 export default class Sprite {
   constructor(id, x, y, is8x16, topTileId, attributes) {
     this.id = id;

@@ -10,6 +10,9 @@ const SPRITE_BYTE_X = 1;
 const SPRITE_BYTE_TILE_ID = 2;
 const SPRITE_BYTE_ATTRIBUTES = 3;
 
+/**
+ * Sprite renderer.
+ */
 export default class SpriteRenderer {
   constructor(cpu, ppu) {
     this.cpu = cpu;

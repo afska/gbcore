@@ -1,6 +1,9 @@
 import interrupts from "./interrupts";
 import byte from "./lib/byte";
 
+/**
+ * The eight Game Boy action/direction buttons are arranged as a 2×4 matrix. Select either action or direction buttons by writing to this register, then read out the bits 0-3.
+ */
 export default class Controller {
   constructor(cpu) {
     this.cpu = cpu;

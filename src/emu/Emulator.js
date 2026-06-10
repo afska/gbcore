@@ -7,7 +7,9 @@ import PPU, { T_CYCLES_PER_FRAME } from "./ppu/PPU";
 
 const T_CYCLES_PER_MCYCLE = 4;
 
-/** A GB emulator. */
+/**
+ * A Game Boy emulator.
+ */
 export default class Emulator {
   constructor(onFrame, onSample) {
     this.onFrame = onFrame;

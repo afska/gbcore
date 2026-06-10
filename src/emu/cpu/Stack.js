@@ -1,5 +1,8 @@
 import byte from "../lib/byte";
 
+/**
+ * A stack that lives in WRAM.
+ */
 export default class Stack {
   constructor(memory, sp) {
     this._memory = memory;

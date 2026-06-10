@@ -4,6 +4,9 @@ const VRAM_BASE_UNSIGNED = 0x8000;
 const VRAM_BASE_SIGNED = 0x9000;
 const TILE_SIZE_BYTES = 16;
 
+/**
+ * A Tile in VRAM.
+ */
 export default class Tile {
   constructor(memory, tileId, y, useSignedTileMode = false) {
     // the "unsigned" addressing mode interprets the byte as an unsigned 8-bit number and starts from 0x8000

@@ -1,5 +1,8 @@
 import byte from "../lib/byte";
 
+/**
+ * A CPU register.
+ */
 class Register {
   increment() {
     this.setValue(this.getValue() + 1);
@@ -10,6 +13,9 @@ class Register {
   }
 }
 
+/**
+ * An 8-bit CPU register.
+ */
 export class Register8Bit extends Register {
   constructor(initialValue) {
     super();
@@ -27,6 +33,9 @@ export class Register8Bit extends Register {
   }
 }
 
+/**
+ * A 16-bit CPU register.
+ */
 export class Register16Bit extends Register {
   constructor(initialValue) {
     super();
@@ -44,6 +53,9 @@ export class Register16Bit extends Register {
   }
 }
 
+/**
+ * A 16-bit register formed by combining two 8-bit registers.
+ */
 export class RegisterPair extends Register {
   constructor(high, low) {
     super();

@@ -7,6 +7,9 @@ import { getOperation } from "./opcodes";
 
 const PREFIX_INSTRUCTION = 0xcb;
 
+/**
+ * The Game Boy’s SM83 processor possesses a CISC, variable-length instruction set.
+ */
 export default class CPU {
   constructor(memory) {
     this.memory = memory;

@@ -8,6 +8,9 @@ import SCXY from "./SCXY";
 import STAT from "./STAT";
 import WXY from "./WXY";
 
+/**
+ * Video registers: $FF40 - $FF4C
+ */
 export default class VideoRegisters extends IORegisterSegment {
   constructor(ppu) {
     super();

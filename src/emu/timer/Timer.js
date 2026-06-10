@@ -9,6 +9,9 @@ import TMA from "./TMA";
 const CPU_FREQ_MCYCLES = 1048576;
 const DIV_INCREMENT_INTERVAL = CPU_FREQ_MCYCLES / 16384;
 
+/**
+ * A built-in timer in the Game Boy.
+ */
 export default class Timer extends IORegisterSegment {
   constructor(cpu) {
     super();

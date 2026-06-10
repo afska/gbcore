@@ -5,6 +5,9 @@ const APU_RATE = 4194304;
 const SAMPLE_RATE = 44100;
 const STEPS_PER_SAMPLE = APU_RATE / SAMPLE_RATE;
 
+/**
+ * The Game Boy’s sound chip is called the APU.
+ */
 export default class APU {
   constructor(cpu) {
     this.cpu = cpu;

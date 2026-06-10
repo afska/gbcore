@@ -1,5 +1,9 @@
 import byte from "../lib/byte";
 
+/**
+ * The Flags Register (lower 8 bits of AF register)
+ * Contains information about the result of the most recent instruction that has affected flags.
+ */
 export default class FlagsRegister {
   constructor() {
     this.zero = false;

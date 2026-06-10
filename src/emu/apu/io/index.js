@@ -10,6 +10,9 @@ import AUDVOL from "./AUDVOL";
 
 const AUDENA_ADDR = 0xff26;
 
+/**
+ * Audio registers: $FF10 - $FF27
+ */
 export default class AudioRegisters extends IORegisterSegment {
   constructor(apu) {
     super();

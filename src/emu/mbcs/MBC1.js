@@ -2,6 +2,9 @@ import InMemoryRegister from "../lib/InMemoryRegister";
 import MBC from "./MBC";
 
 export default (options = {}) => {
+  /**
+   * This is the first MBC chip for the Game Boy. Any newer MBC chips work similarly, so it is relatively easy to upgrade a program from one MBC chip to another — or to make it compatible with several types of MBCs.
+   */
   return class MBC1 extends MBC {
     onLoad() {
       this.options = options;
