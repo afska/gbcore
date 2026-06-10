@@ -2,7 +2,7 @@ import audioWorklet from "./audioWorklet?worker&url";
 
 const WORKLET_NAME = "player-worklet";
 const APU_SAMPLE_RATE = 44100;
-const CHANNELS = 1;
+const CHANNELS = 2;
 
 export default class Speaker {
   constructor(onAudioRequested = () => {}) {

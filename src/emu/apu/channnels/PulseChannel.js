@@ -57,7 +57,6 @@ export default class PulseChannel {
     if (this.id === 0) this.frequencySweep.trigger();
 
     if (!this.registers.env.isDACEnabled) this.isPlaying = false;
-    // TODO: Use AUDVOL for left/right volume
   }
 
   stop() {

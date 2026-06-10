@@ -4,6 +4,7 @@ import AudioRegisters from "./io";
 const APU_RATE = 4194304;
 const SAMPLE_RATE = 44100;
 const STEPS_PER_SAMPLE = APU_RATE / SAMPLE_RATE;
+const GAIN = 0.01;
 
 /**
  * The Game Boy’s sound chip is called the APU.
@@ -13,7 +14,7 @@ export default class APU {
     this.cpu = cpu;
 
     this.sampleCounter = 0;
-    this.sample = 0;
+    this.sample = [0, 0];
 
     this.registers = new AudioRegisters(this);
     this.channels = {
@@ -28,7 +29,6 @@ export default class APU {
   }
 
   step(onSample) {
-    // TODO: ADD COMMENTS FROM PAN DOCS
     this._processTicks();
     this.channels.pulses[0].step();
     this.channels.pulses[1].step();
@@ -38,11 +38,25 @@ export default class APU {
     if (this.sampleCounter >= STEPS_PER_SAMPLE) {
       const pulse1 = this.channels.pulses[0].sample();
       const pulse2 = this.channels.pulses[1].sample();
+      const term = this.registers.audterm.value;
+      const vol = this.registers.audvol;
+      let left = 0;
+      let right = 0;
 
-      this.sample = (pulse1 + pulse2) * 0.01;
+      if (term & 0b00010000) left += pulse1;
+      if (term & 0b00100000) left += pulse2;
+      if (term & 0b00000001) right += pulse1;
+      if (term & 0b00000010) right += pulse2;
+
+      // A value of 0 is treated as a volume of 1 (very quiet), and a value of 7 is treated as a volume of 8 (no volume reduction).
+      // Importantly, the amplifier never mutes a non-silent input.
+      left *= ((vol.leftVolume + 1) / 8) * GAIN;
+      right *= ((vol.rightVolume + 1) / 8) * GAIN;
+      this.sample[0] = left;
+      this.sample[1] = right;
 
       this.sampleCounter -= STEPS_PER_SAMPLE;
-      onSample(this.sample);
+      onSample(left, right);
     }
   }
 

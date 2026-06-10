@@ -90,7 +90,7 @@ export default class Emulation {
             // this.gb.scanline(true);
           } else {
             this.gb.frame();
-            if (this.samples.length !== SAMPLES_PER_FRAME)
+            if (this.samples.length !== SAMPLES_PER_FRAME * 2)
               this.samples = this._resample(this.samples, SAMPLES_PER_FRAME);
           }
           this._updateSound();
@@ -119,8 +119,8 @@ export default class Emulation {
     this.screen.setBuffer(frameBuffer);
   };
 
-  _onAudio = (sample) => {
-    this.samples.push(sample);
+  _onAudio = (left, right) => {
+    this.samples.push(left, right);
   };
 
   _updateSound() {
@@ -129,18 +129,20 @@ export default class Emulation {
   }
 
   _resample(src, target) {
-    const n = src.length;
+    const n = src.length / 2;
     if (n === target) return src.slice();
-    if (n === 0) return new Array(target).fill(0);
-    if (n === 1) return new Array(target).fill(src[0]);
+    if (n === 0) return new Array(target * 2).fill(0);
+    if (n === 1) return new Array(target).fill(0).flatMap(() => src);
 
-    const out = new Array(target);
+    const out = new Array(target * 2);
     for (let i = 0; i < target; i++) {
       const t = (i * (n - 1)) / (target - 1);
       const k = Math.floor(t);
-      const a = src[k];
-      const b = src[k + 1] ?? a;
-      out[i] = a + (b - a) * (t - k);
+      const a = k * 2;
+      const b = (k + 1) * 2;
+      out[i * 2] = src[a] + ((src[b] ?? src[a]) - src[a]) * (t - k);
+      out[i * 2 + 1] =
+        src[a + 1] + ((src[b + 1] ?? src[a + 1]) - src[a + 1]) * (t - k);
     }
 
     return out;

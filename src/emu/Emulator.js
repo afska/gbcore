@@ -15,9 +15,9 @@ export default class Emulator {
     this.sampleCount = 0;
 
     this.onFrame = onFrame;
-    this.onSample = (sample) => {
+    this.onSample = (left, right) => {
       this.sampleCount++;
-      onSample(sample);
+      onSample(left, right);
     };
 
     this.memory = new MemoryBus();
