@@ -86,8 +86,7 @@ export default class Emulation {
       try {
         if (!this._canSyncToAudio()) {
           if (isDebugStepScanlineRequested) {
-            // TODO: Add support
-            // this.gb.scanline(true);
+            this.gb.scanline(true);
           } else {
             this.gb.frame();
             if (this.samples.length !== SAMPLES_PER_FRAME * 2)

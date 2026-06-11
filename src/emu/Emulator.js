@@ -89,6 +89,11 @@ export default class Emulator {
     }
   }
 
+  /** Runs the emulation until the next scanline. */
+  scanline() {
+    // TODO: IMPLEMENT
+  }
+
   /** Executes a step in the emulation (1 CPU instruction). Returns the number of T-cycles. */
   step() {
     const mCycles = this.cpu.step();
