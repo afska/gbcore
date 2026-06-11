@@ -2,7 +2,7 @@ import NoiseChannel from "./channels/NoiseChannel";
 import PulseChannel from "./channels/PulseChannel";
 import AudioRegisters from "./io";
 
-const APU_RATE = 4194304;
+export const APU_RATE = 4194304;
 const SAMPLE_RATE = 44100;
 const STEPS_PER_SAMPLE = APU_RATE / SAMPLE_RATE;
 const MAX_VOLUME = 15;

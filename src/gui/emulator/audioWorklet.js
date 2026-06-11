@@ -1,7 +1,7 @@
 import RingBuffer from "ringbufferjs";
 
 const CHANNELS = 2;
-const AUDIO_BUFFER_SIZE = 4096 * CHANNELS;
+const AUDIO_BUFFER_SIZE = 1024 * CHANNELS;
 
 class PlayerWorklet extends AudioWorkletProcessor {
   constructor() {

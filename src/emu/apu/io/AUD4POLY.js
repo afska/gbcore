@@ -6,7 +6,7 @@ import InMemoryRegister from "../../lib/InMemoryRegister";
 export default class AUD4POLY extends InMemoryRegister.APU {
   onLoad() {
     this.addField("clockDivider", 0, 3)
-      .addField("lfsrWidth", 3)
+      .addField("shortMode", 3)
       .addField("clockShift", 4, 4);
   }
 
