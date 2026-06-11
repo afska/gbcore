@@ -15,7 +15,7 @@ export default class AUDENA extends InMemoryRegister.APU {
     return byte.bitfield(
       +this.apu.channels.pulses[0].isPlaying,
       +this.apu.channels.pulses[1].isPlaying,
-      +false,
+      +this.apu.channels.wave.isPlaying,
       +this.apu.channels.noise.isPlaying,
       0,
       0,

@@ -12,9 +12,9 @@ const WHITE = 0xffffffff;
  * Background + Window renderer.
  */
 export default class BackgroundRenderer {
-  constructor(cpu, ppu) {
-    this.cpu = cpu;
+  constructor(ppu, memory) {
     this.ppu = ppu;
+    this.memory = memory;
   }
 
   renderScanline() {
@@ -53,11 +53,11 @@ export default class BackgroundRenderer {
       const tileMapX = Math.floor(backgroundX / 8);
       const tileIndex = tileMapY * TILES_PER_ROW + tileMapX;
 
-      const tileId = this.cpu.memory.read(tileMapAddress + tileIndex);
+      const tileId = this.memory.read(tileMapAddress + tileIndex);
       const tileStartX = backgroundX % 8;
       const tileInsideY = backgroundY % 8;
       const tile = new Tile(
-        this.cpu.memory,
+        this.memory,
         tileId,
         tileInsideY,
         !lcdc.useUnsignedTileMode

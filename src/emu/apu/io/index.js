@@ -1,5 +1,10 @@
 import IORegisterSegment from "../../lib/IORegisterSegment";
 import AUD1SWEEP from "./AUD1SWEEP";
+import AUD3ENA from "./AUD3ENA";
+import AUD3HIGH from "./AUD3HIGH";
+import AUD3LEN from "./AUD3LEN";
+import AUD3LEVEL from "./AUD3LEVEL";
+import AUD3LOW from "./AUD3LOW";
 import AUD4ENV from "./AUD4ENV";
 import AUD4GO from "./AUD4GO";
 import AUD4LEN from "./AUD4LEN";
@@ -32,6 +37,13 @@ export default class AudioRegisters extends IORegisterSegment {
       env: new AUD12ENV(apu, it),
       sweep: it === 0 ? new AUD1SWEEP(apu) : null
     }));
+    this.wave = {
+      ena: new AUD3ENA(apu),
+      low: new AUD3LOW(apu),
+      high: new AUD3HIGH(apu),
+      len: new AUD3LEN(apu),
+      level: new AUD3LEVEL(apu)
+    };
     this.noise = {
       go: new AUD4GO(apu),
       poly: new AUD4POLY(apu),
@@ -78,6 +90,16 @@ export default class AudioRegisters extends IORegisterSegment {
         return this.audvol;
       case 0xff25:
         return this.audterm;
+      case 0xff1a:
+        return this.wave.ena;
+      case 0xff1b:
+        return this.wave.len;
+      case 0xff1c:
+        return this.wave.level;
+      case 0xff1d:
+        return this.wave.low;
+      case 0xff1e:
+        return this.wave.high;
       case AUDENA_ADDR:
         return this.audena;
       default:

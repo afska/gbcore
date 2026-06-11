@@ -6,6 +6,7 @@ const WRAM_SIZE = 8 * KB;
 const HRAM_SIZE = 127;
 const VRAM_SIZE = 8 * KB;
 const OAM_SIZE = 160;
+const WAVE_RAM_SIZE = 16;
 
 /**
  * The Game Boy has a 16-bit address bus, which is used to address ROM, RAM, and I/O.
@@ -18,6 +19,8 @@ export default class MemoryBus {
 
     this.vram = new Uint8Array(VRAM_SIZE);
     this.oam = new Uint8Array(OAM_SIZE);
+
+    this.waveRam = new Uint8Array(WAVE_RAM_SIZE);
   }
 
   onLoad(cpu, ppu, apu, cartridge, controller) {
@@ -61,6 +64,9 @@ export default class MemoryBus {
       // Not Usable
       // Use of this area is prohibited.
       return 0;
+    } else if (address >= 0xff30 && address < 0xff40) {
+      // Wave RAM
+      return this.waveRam[address - 0xff30];
     } else if ((address >= 0xff00 && address < 0xff80) || address === 0xffff) {
       // I/O Registers
       return this._ioRead(address);
@@ -103,6 +109,9 @@ export default class MemoryBus {
       // Not Usable
       // Use of this area is prohibited.
       return;
+    } else if (address >= 0xff30 && address < 0xff40) {
+      // Wave RAM
+      return (this.waveRam[address - 0xff30] = value);
     } else if ((address >= 0xff00 && address < 0xff80) || address === 0xffff) {
       // I/O Registers
       return this._ioWrite(address, value);

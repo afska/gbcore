@@ -23,7 +23,7 @@ export default class Emulator {
     this.memory = new MemoryBus();
     this.cpu = new CPU(this.memory);
     this.ppu = new PPU(this.cpu);
-    this.apu = new APU(this.cpu);
+    this.apu = new APU(this.memory);
   }
 
   /**

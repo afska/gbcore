@@ -14,9 +14,9 @@ const SPRITE_BYTE_ATTRIBUTES = 3;
  * Sprite renderer.
  */
 export default class SpriteRenderer {
-  constructor(cpu, ppu) {
-    this.cpu = cpu;
+  constructor(ppu, memory) {
     this.ppu = ppu;
+    this.memory = memory;
   }
 
   renderScanline() {
@@ -60,7 +60,7 @@ export default class SpriteRenderer {
       const insideY = sprite.diffY(y);
       const tileInsideY = insideY % 8;
       const tile = new Tile(
-        this.cpu.memory,
+        this.memory,
         sprite.tileIdFor(insideY),
         sprite.flipY ? 7 - tileInsideY : tileInsideY
       );
@@ -87,7 +87,7 @@ export default class SpriteRenderer {
   }
 
   _createSprite(id) {
-    const oam = this.cpu.memory.oam;
+    const oam = this.memory.oam;
     const lcdc = this.ppu.registers.lcdc;
 
     const is8x16 = lcdc.use8x16Sprites === 1;

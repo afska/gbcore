@@ -1,5 +1,6 @@
 import NoiseChannel from "./channels/NoiseChannel";
 import PulseChannel from "./channels/PulseChannel";
+import WaveChannel from "./channels/WaveChannel";
 import AudioRegisters from "./io";
 
 export const APU_RATE = 4194304;
@@ -11,8 +12,8 @@ const MAX_VOLUME = 15;
  * The Game Boy’s sound chip is called the APU.
  */
 export default class APU {
-  constructor(cpu) {
-    this.cpu = cpu;
+  constructor(memory) {
+    this.memory = memory;
 
     this.sampleCounter = 0;
     this.sample = [0, 0];
@@ -20,6 +21,7 @@ export default class APU {
     this.registers = new AudioRegisters(this);
     this.channels = {
       pulses: [new PulseChannel(this, 0), new PulseChannel(this, 1)],
+      wave: new WaveChannel(this),
       noise: new NoiseChannel(this)
     };
 
@@ -28,6 +30,7 @@ export default class APU {
 
   reset() {
     for (let i = 0; i < 2; i++) this.channels.pulses[i].reset();
+    this.channels.wave.reset();
     this.channels.noise.reset();
   }
 
@@ -35,6 +38,7 @@ export default class APU {
     this._processTicks();
     this.channels.pulses[0].step();
     this.channels.pulses[1].step();
+    this.channels.wave.step();
     this.channels.noise.step();
 
     this.sampleCounter++;
@@ -42,9 +46,10 @@ export default class APU {
     if (this.sampleCounter >= STEPS_PER_SAMPLE) {
       const pulse1 = this.channels.pulses[0].sample();
       const pulse2 = this.channels.pulses[1].sample();
+      const wave = this.channels.wave.sample();
       const noise = this.channels.noise.sample();
 
-      this._mix(pulse1, pulse2, null, noise);
+      this._mix(pulse1, pulse2, wave, noise);
 
       this.sampleCounter -= STEPS_PER_SAMPLE;
       onSample(this.sample[0], this.sample[1]);
@@ -56,7 +61,7 @@ export default class APU {
   }
 
   _processTicks() {
-    const currentDivApu = this.cpu.memory.timer.div.divApu;
+    const currentDivApu = this.memory.timer.div.divApu;
     for (; this.divApu < currentDivApu; this.divApu++) {
       if (this.divApu % 8 === 0) {
         // Envelope sweep
@@ -69,6 +74,7 @@ export default class APU {
         // Sound length
         this.channels.pulses[0].lengthCounterTick();
         this.channels.pulses[1].lengthCounterTick();
+        this.channels.wave.lengthCounterTick();
         this.channels.noise.lengthCounterTick();
       }
 
@@ -96,6 +102,10 @@ export default class APU {
       left += pulse2;
       leftChannels++;
     }
+    if (this.channels.wave.isPlaying && term.channel3Left) {
+      left += wave;
+      leftChannels++;
+    }
     if (this.channels.noise.isPlaying && term.channel4Left) {
       left += noise;
       leftChannels++;
@@ -106,6 +116,10 @@ export default class APU {
     }
     if (this.channels.pulses[1].isPlaying && term.channel2Right) {
       right += pulse2;
+      rightChannels++;
+    }
+    if (this.channels.wave.isPlaying && term.channel3Right) {
+      right += wave;
       rightChannels++;
     }
     if (this.channels.noise.isPlaying && term.channel4Right) {

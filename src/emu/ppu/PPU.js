@@ -16,6 +16,7 @@ export const T_CYCLES_PER_FRAME = DOTS_PER_SCANLINE * TOTAL_SCANLINES;
 export default class PPU {
   constructor(cpu) {
     this.cpu = cpu;
+    this.memory = cpu.memory;
 
     this.dot = 0;
     this.scanline = 0;
@@ -27,8 +28,8 @@ export default class PPU {
 
     this.registers = new VideoRegisters(this);
 
-    this.backgroundRenderer = new BackgroundRenderer(this.cpu, this);
-    this.spriteRenderer = new SpriteRenderer(this.cpu, this);
+    this.backgroundRenderer = new BackgroundRenderer(this, this.memory);
+    this.spriteRenderer = new SpriteRenderer(this, this.memory);
 
     this.syncSTAT();
   }
