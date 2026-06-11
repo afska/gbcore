@@ -82,8 +82,11 @@ export default class Emulator {
     if (!this.context) return;
 
     this.sampleCount = 0;
+    let elapsed = 0;
 
-    while (this.sampleCount < n) this.step();
+    while (this.sampleCount < n && elapsed < T_CYCLES_PER_FRAME) {
+      elapsed += this.step();
+    }
   }
 
   /** Executes a step in the emulation (1 CPU instruction). Returns the number of T-cycles. */

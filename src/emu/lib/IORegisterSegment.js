@@ -2,7 +2,7 @@
 export default class IORegisterSegment {
   /** Called when the CPU reads an address in this range. */
   read(address) {
-    return this._getRegister(address)?.onRead();
+    return this._getRegister(address)?.onRead() ?? 0;
   }
 
   /** Called when the CPU writes to an address in this range. */

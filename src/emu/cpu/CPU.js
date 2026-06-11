@@ -25,12 +25,15 @@ export default class CPU {
       l: new Register8Bit()
     };
 
-    this.registers.af = new RegisterPair(this.registers.a, this.registers.f);
+    this.registers.flags = new FlagsRegister();
+
+    this.registers.af = new RegisterPair(
+      this.registers.a,
+      this.registers.flags
+    );
     this.registers.bc = new RegisterPair(this.registers.b, this.registers.c);
     this.registers.de = new RegisterPair(this.registers.d, this.registers.e);
     this.registers.hl = new RegisterPair(this.registers.h, this.registers.l);
-
-    this.registers.flags = new FlagsRegister();
 
     this.registers.pc = new Register16Bit(0x0100);
     this.registers.sp = new Register16Bit(0xfffe);
