@@ -16,7 +16,7 @@ export default class AUDENA extends InMemoryRegister.APU {
       +this.apu.channels.pulses[0].isPlaying,
       +this.apu.channels.pulses[1].isPlaying,
       +false,
-      +false,
+      +this.apu.channels.noise.isPlaying,
       0,
       0,
       0,

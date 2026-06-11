@@ -1,11 +1,9 @@
 import InMemoryRegister from "../../lib/InMemoryRegister";
 
-// TODO: SAME AS AUD4ENV
-
 /**
- * AUD1ENV/AUD2ENV (aka NR12/NR22): Channel 1/2 volume & envelope
+ * AUD4ENV (aka NR42): Channel 4 volume & envelope
  */
-export default class AUD12ENV extends InMemoryRegister.APU {
+export default class AUD4ENV extends InMemoryRegister.APU {
   onLoad() {
     this.addField("sweepPace", 0, 3)
       .addField("increase", 3)
@@ -30,7 +28,6 @@ export default class AUD12ENV extends InMemoryRegister.APU {
 
     this.setValue(value);
 
-    if (wasDACEnabled && !this.isDACEnabled)
-      this.apu.channels.pulses[this.id].stop();
+    if (wasDACEnabled && !this.isDACEnabled) this.apu.channels.noise.stop();
   }
 }

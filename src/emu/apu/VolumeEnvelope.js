@@ -19,12 +19,10 @@ export default class VolumeEnvelope {
     this._counter++;
 
     if (this._counter >= this._sweepPace) {
-      const oscillator = channel.oscillator;
-
-      if (sign > 0 && oscillator.volume < MAX_VOLUME) {
-        oscillator.volume++;
-      } else if (sign < 0 && oscillator.volume > 0) {
-        oscillator.volume--;
+      if (sign > 0 && channel.volume < MAX_VOLUME) {
+        channel.volume++;
+      } else if (sign < 0 && channel.volume > 0) {
+        channel.volume--;
       }
 
       this._counter = 0;

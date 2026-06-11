@@ -1,5 +1,9 @@
 import IORegisterSegment from "../../lib/IORegisterSegment";
 import AUD1SWEEP from "./AUD1SWEEP";
+import AUD4ENV from "./AUD4ENV";
+import AUD4GO from "./AUD4GO";
+import AUD4LEN from "./AUD4LEN";
+import AUD4POLY from "./AUD4POLY";
 import AUD12ENV from "./AUD12ENV";
 import AUD12HIGH from "./AUD12HIGH";
 import AUD12LEN from "./AUD12LEN";
@@ -28,6 +32,12 @@ export default class AudioRegisters extends IORegisterSegment {
       env: new AUD12ENV(apu, it),
       sweep: it === 0 ? new AUD1SWEEP(apu) : null
     }));
+    this.noise = {
+      go: new AUD4GO(apu),
+      poly: new AUD4POLY(apu),
+      len: new AUD4LEN(apu),
+      env: new AUD4ENV(apu)
+    };
   }
 
   write(address, value) {
@@ -56,6 +66,14 @@ export default class AudioRegisters extends IORegisterSegment {
         return this.pulses[1].low;
       case 0xff19:
         return this.pulses[1].high;
+      case 0xff20:
+        return this.noise.len;
+      case 0xff21:
+        return this.noise.env;
+      case 0xff22:
+        return this.noise.poly;
+      case 0xff23:
+        return this.noise.go;
       case 0xff24:
         return this.audvol;
       case 0xff25:

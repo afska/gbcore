@@ -34,6 +34,14 @@ export default class PulseChannel {
     this.registers.low.setValue(value & 0b00011111111);
   }
 
+  get volume() {
+    return this.oscillator.volume;
+  }
+
+  set volume(value) {
+    this.oscillator.volume = value;
+  }
+
   reset() {
     this.registers.low.setValue(0);
     this.registers.high.setValue(0);
@@ -51,12 +59,12 @@ export default class PulseChannel {
   trigger() {
     this.isPlaying = true;
 
-    this.oscillator.volume = this.registers.env.initialVolume;
+    this.volume = this.registers.env.initialVolume;
     this.lengthCounter.resetIfNeeded();
     this.volumeEnvelope.reset(this.registers.env.sweepPace);
     if (this.id === 0) this.frequencySweep.trigger();
 
-    if (!this.registers.env.isDACEnabled) this.isPlaying = false;
+    if (!this.registers.env.isDACEnabled) this.stop();
   }
 
   stop() {
