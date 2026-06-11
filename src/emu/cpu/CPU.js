@@ -20,7 +20,6 @@ export default class CPU {
       c: new Register8Bit(),
       d: new Register8Bit(),
       e: new Register8Bit(),
-      f: new Register8Bit(),
       h: new Register8Bit(),
       l: new Register8Bit()
     };
