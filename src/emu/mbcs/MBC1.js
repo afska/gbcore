@@ -3,6 +3,7 @@ import MBC from "./MBC";
 
 export default (options = {}) => {
   /**
+   * (max 2MByte ROM and/or 32 KiB RAM)
    * This is the first MBC chip for the Game Boy. Any newer MBC chips work similarly, so it is relatively easy to upgrade a program from one MBC chip to another — or to make it compatible with several types of MBCs.
    */
   return class MBC1 extends MBC {

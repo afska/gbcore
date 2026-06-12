@@ -1,5 +1,6 @@
 import MBC1 from "./MBC1";
 import MBC2 from "./MBC2";
+import MBC3 from "./MBC3";
 import NoMBC from "./NoMBC";
 
 export default [
@@ -14,11 +15,19 @@ export default [
   { id: 0x0b, name: "MMM01", MBC: null },
   { id: 0x0c, name: "MMM01+RAM", MBC: null },
   { id: 0x0d, name: "MMM01+RAM+BATTERY", MBC: null },
-  { id: 0x0f, name: "MBC3+TIMER+BATTERY", MBC: null },
-  { id: 0x10, name: "MBC3+TIMER+RAM+BATTERY", MBC: null },
-  { id: 0x11, name: "MBC3", MBC: null },
-  { id: 0x12, name: "MBC3+RAM", MBC: null },
-  { id: 0x13, name: "MBC3+RAM+BATTERY", MBC: null },
+  {
+    id: 0x0f,
+    name: "MBC3+TIMER+BATTERY",
+    MBC: MBC3({ timer: true, batt: true })
+  },
+  {
+    id: 0x10,
+    name: "MBC3+TIMER+RAM+BATTERY",
+    MBC: MBC3({ timer: true, ram: true, batt: true })
+  },
+  { id: 0x11, name: "MBC3", MBC: MBC3() },
+  { id: 0x12, name: "MBC3+RAM", MBC: MBC3({ ram: true }) },
+  { id: 0x13, name: "MBC3+RAM+BATTERY", MBC: MBC3({ ram: true, batt: true }) },
   { id: 0x19, name: "MBC5", MBC: null },
   { id: 0x1a, name: "MBC5+RAM", MBC: null },
   { id: 0x1b, name: "MBC5+RAM+BATTERY", MBC: null },
