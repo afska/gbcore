@@ -1,4 +1,5 @@
 import MBC1 from "./MBC1";
+import MBC2 from "./MBC2";
 import NoMBC from "./NoMBC";
 
 export default [
@@ -6,8 +7,8 @@ export default [
   { id: 0x01, name: "MBC1", MBC: MBC1() },
   { id: 0x02, name: "MBC1+RAM", MBC: MBC1({ ram: true }) },
   { id: 0x03, name: "MBC1+RAM+BATTERY", MBC: MBC1({ ram: true, batt: true }) },
-  { id: 0x05, name: "MBC2", MBC: null },
-  { id: 0x06, name: "MBC2+BATTERY", MBC: null },
+  { id: 0x05, name: "MBC2", MBC: MBC2() },
+  { id: 0x06, name: "MBC2+BATTERY", MBC: MBC2({ batt: true }) },
   { id: 0x08, name: "ROM+RAM", MBC: NoMBC({ ram: true }) },
   { id: 0x09, name: "ROM+RAM+BATTERY", MBC: NoMBC({ ram: true, batt: true }) },
   { id: 0x0b, name: "MMM01", MBC: null },

@@ -74,7 +74,7 @@ export default class MBC {
   }
 
   get hasSaveFile() {
-    return this.hasRam && this.options.ram && this.options.batt;
+    return this.hasRam && this.options.batt;
   }
 
   get hasRam() {
