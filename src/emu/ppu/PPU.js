@@ -103,6 +103,24 @@ export default class PPU {
     return !!this.registers.lcdc.enableLCD;
   }
 
+  getSaveState() {
+    return {
+      dot: this.dot,
+      scanline: this.scanline,
+      windowLine: this.windowLine,
+      frame: this.frame,
+      registers: this.registers.getSaveState()
+    };
+  }
+
+  setSaveState(saveState) {
+    this.dot = saveState.dot;
+    this.scanline = saveState.scanline;
+    this.windowLine = saveState.windowLine;
+    this.frame = saveState.frame;
+    this.registers.setSaveState(saveState.registers);
+  }
+
   _getMode() {
     if (this.scanline >= HEIGHT) return 1; // VBlank
     if (this.dot < 80) return 2; // OAM

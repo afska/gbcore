@@ -69,6 +69,41 @@ export default class CPU {
     this.if |= interrupt.mask;
   }
 
+  getSaveState() {
+    return {
+      registers: {
+        a: this.registers.a.getSaveState(),
+        b: this.registers.b.getSaveState(),
+        c: this.registers.c.getSaveState(),
+        d: this.registers.d.getSaveState(),
+        e: this.registers.e.getSaveState(),
+        h: this.registers.h.getSaveState(),
+        l: this.registers.l.getSaveState(),
+        flags: this.registers.flags.getSaveState(),
+        pc: this.registers.pc.getSaveState(),
+        sp: this.registers.sp.getSaveState()
+      },
+      cycles: this.cycles,
+      ime: this.ime,
+      eiCountdown: this.eiCountdown,
+      ie: this.ie,
+      if: this.if,
+      halted: this.halted
+    };
+  }
+
+  setSaveState(saveState) {
+    for (let name of Object.keys(saveState.registers))
+      this.registers[name].setSaveState(saveState.registers[name]);
+
+    this.cycles = saveState.cycles;
+    this.ime = saveState.ime;
+    this.eiCountdown = saveState.eiCountdown;
+    this.ie = saveState.ie;
+    this.if = saveState.if;
+    this.halted = saveState.halted;
+  }
+
   fetchProgramByte() {
     const value = this.memory.read(this.registers.pc.getValue());
     this.registers.pc.increment();

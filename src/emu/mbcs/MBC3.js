@@ -69,6 +69,32 @@ export default (options = {}) => {
         return (this.$getRamPage(page)[address - 0xa000] = value);
       }
     }
+
+    getSaveState() {
+      return {
+        ...super.getSaveState(),
+        registers: {
+          ramAndRtcEnable: this._registers.ramAndRtcEnable.getSaveState(),
+          romBankSelect: this._registers.romBankSelect.getSaveState(),
+          secondaryBankSelect:
+            this._registers.secondaryBankSelect.getSaveState()
+        }
+      };
+    }
+
+    setSaveState(saveState) {
+      super.setSaveState(saveState);
+
+      this._registers.ramAndRtcEnable.setSaveState(
+        saveState.registers.ramAndRtcEnable
+      );
+      this._registers.romBankSelect.setSaveState(
+        saveState.registers.romBankSelect
+      );
+      this._registers.secondaryBankSelect.setSaveState(
+        saveState.registers.secondaryBankSelect
+      );
+    }
   };
 };
 
@@ -113,5 +139,18 @@ class SecondaryBankSelect extends InMemoryRegister {
 
   setValue(value) {
     if (value >= 0 && value <= 0x07) this.ramBank = value;
+  }
+
+  getSaveState() {
+    return {
+      ...super.getSaveState(),
+      ramBank: this.ramBank
+    };
+  }
+
+  setSaveState(saveState) {
+    super.setSaveState(saveState);
+
+    this.ramBank = saveState.ramBank;
   }
 }

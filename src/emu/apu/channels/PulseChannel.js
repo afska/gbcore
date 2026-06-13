@@ -96,4 +96,22 @@ export default class PulseChannel {
 
     this.frequencySweep.clock();
   }
+
+  getSaveState() {
+    return {
+      isPlaying: this.isPlaying,
+      oscillator: this.oscillator.getSaveState(),
+      lengthCounter: this.lengthCounter.getSaveState(),
+      volumeEnvelope: this.volumeEnvelope.getSaveState(),
+      frequencySweep: this.frequencySweep.getSaveState()
+    };
+  }
+
+  setSaveState(saveState) {
+    this.isPlaying = saveState.isPlaying;
+    this.oscillator.setSaveState(saveState.oscillator);
+    this.lengthCounter.setSaveState(saveState.lengthCounter);
+    this.volumeEnvelope.setSaveState(saveState.volumeEnvelope);
+    this.frequencySweep.setSaveState(saveState.frequencySweep);
+  }
 }

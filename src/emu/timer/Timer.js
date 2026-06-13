@@ -36,6 +36,26 @@ export default class Timer extends IORegisterSegment {
     this._divCycleCount = 0;
   }
 
+  getSaveState() {
+    return {
+      div: this.div.getSaveState(),
+      tima: this.tima.getSaveState(),
+      tma: this.tma.getSaveState(),
+      tac: this.tac.getSaveState(),
+      divCycleCount: this._divCycleCount,
+      timaCycleCount: this._timaCycleCount
+    };
+  }
+
+  setSaveState(saveState) {
+    this.div.setSaveState(saveState.div);
+    this.tima.setSaveState(saveState.tima);
+    this.tma.setSaveState(saveState.tma);
+    this.tac.setSaveState(saveState.tac);
+    this._divCycleCount = saveState.divCycleCount;
+    this._timaCycleCount = saveState.timaCycleCount;
+  }
+
   _incrementDiv(mCycles) {
     this._divCycleCount += mCycles;
 

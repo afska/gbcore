@@ -11,6 +11,14 @@ class Register {
   decrement() {
     this.setValue(this.getValue() - 1);
   }
+
+  getSaveState() {
+    return this.getValue();
+  }
+
+  setSaveState(saveState) {
+    this.setValue(saveState);
+  }
 }
 
 /**

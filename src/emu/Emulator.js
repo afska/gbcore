@@ -122,7 +122,16 @@ export default class Emulator {
   getSaveState() {
     if (!this.context) return;
 
-    return {}; // TODO: IMPLEMENT
+    return {
+      memory: this.memory.getSaveState(),
+      cpu: this.cpu.getSaveState(),
+      ppu: this.ppu.getSaveState(),
+      apu: this.apu.getSaveState(),
+      cartridge: this.context.cartridge.getSaveState(),
+      controller: this.context.controller.getSaveState(),
+      saveFile:
+        this.getSaveFile() != null ? Array.from(this.getSaveFile()) : null
+    };
   }
 
   /*
@@ -132,7 +141,12 @@ export default class Emulator {
   setSaveState(saveState) {
     if (!this.context) return;
 
-    // TODO: IMPLEMENT
+    this.memory.setSaveState(saveState.memory);
+    this.cpu.setSaveState(saveState.cpu);
+    this.ppu.setSaveState(saveState.ppu);
+    this.apu.setSaveState(saveState.apu);
+    this.context.cartridge.setSaveState(saveState.cartridge);
+    this.context.controller.setSaveState(saveState.controller);
   }
 
   _clockPPU(tCycles) {

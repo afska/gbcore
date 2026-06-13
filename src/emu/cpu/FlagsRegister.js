@@ -31,4 +31,12 @@ export default class FlagsRegister {
     this.subtraction = byte.getFlag(value, 6);
     this.zero = byte.getFlag(value, 7);
   }
+
+  getSaveState() {
+    return this.getValue();
+  }
+
+  setSaveState(saveState) {
+    this.setValue(saveState);
+  }
 }

@@ -45,6 +45,16 @@ export default class MBC {
     throw new Error("not_implemented");
   }
 
+  getSaveState() {
+    return {
+      ram: Array.from(this.getRam())
+    };
+  }
+
+  setSaveState(saveState) {
+    this.setRam(saveState.ram);
+  }
+
   setRam(bytes) {
     const pageSize = this.ramPageSize();
 

@@ -21,4 +21,20 @@ export default class PulseOscillator {
 
     return this._phase < DUTY_TABLE[this.dutyCycle] ? this.volume : 0;
   }
+
+  getSaveState() {
+    return {
+      frequency: this.frequency,
+      dutyCycle: this.dutyCycle,
+      volume: this.volume,
+      phase: this._phase
+    };
+  }
+
+  setSaveState(saveState) {
+    this.frequency = saveState.frequency;
+    this.dutyCycle = saveState.dutyCycle;
+    this.volume = saveState.volume;
+    this._phase = saveState.phase;
+  }
 }

@@ -36,4 +36,18 @@ export default class WaveOscillator {
       this.volume
     );
   }
+
+  getSaveState() {
+    return {
+      frequency: this.frequency,
+      volume: this.volume,
+      phase: this._phase
+    };
+  }
+
+  setSaveState(saveState) {
+    this.frequency = saveState.frequency;
+    this.volume = saveState.volume;
+    this._phase = saveState.phase;
+  }
 }

@@ -28,4 +28,17 @@ export default class DIV extends InMemoryRegister.Unit {
     this.set(0);
     this.unit.resetDivPhase();
   }
+
+  getSaveState() {
+    return {
+      ...super.getSaveState(),
+      divApu: this.divApu
+    };
+  }
+
+  setSaveState(saveState) {
+    super.setSaveState(saveState);
+
+    this.divApu = saveState.divApu;
+  }
 }

@@ -26,4 +26,17 @@ export default class STAT extends InMemoryRegister.PPU {
 
     this.ppu.syncSTAT();
   }
+
+  getSaveState() {
+    return {
+      ...super.getSaveState(),
+      interruptLine: this.interruptLine
+    };
+  }
+
+  setSaveState(saveState) {
+    super.setSaveState(saveState);
+
+    this.interruptLine = saveState.interruptLine;
+  }
 }

@@ -127,6 +127,28 @@ export default class MemoryBus {
     return byte.buildU16(this.read(address + 1), this.read(address));
   }
 
+  getSaveState() {
+    return {
+      wramBank0: Array.from(this.wramBank0),
+      wramBank1: Array.from(this.wramBank1),
+      hram: Array.from(this.hram),
+      vram: Array.from(this.vram),
+      oam: Array.from(this.oam),
+      waveRam: Array.from(this.waveRam),
+      timer: this.timer.getSaveState()
+    };
+  }
+
+  setSaveState(saveState) {
+    this.wramBank0.set(saveState.wramBank0);
+    this.wramBank1.set(saveState.wramBank1);
+    this.hram.set(saveState.hram);
+    this.vram.set(saveState.vram);
+    this.oam.set(saveState.oam);
+    this.waveRam.set(saveState.waveRam);
+    this.timer.setSaveState(saveState.timer);
+  }
+
   _ioRead(address) {
     if (address === 0xff00) {
       // Joypad input

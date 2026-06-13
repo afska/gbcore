@@ -26,6 +26,16 @@ export default class InMemoryRegister {
     this._writeReadOnlyFields();
   }
 
+  getSaveState() {
+    return {
+      value: this.value
+    };
+  }
+
+  setSaveState(saveState) {
+    this.setValue(saveState.value);
+  }
+
   /** Adds a read-only field of `size` bits named `name`, starting at `startPosition`. */
   addField(name, startPosition, size = 1) {
     this._readOnlyFields.push({ name, startPosition, size });

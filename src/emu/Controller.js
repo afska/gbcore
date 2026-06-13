@@ -33,6 +33,18 @@ export default class Controller {
     });
   }
 
+  getSaveState() {
+    return {
+      selectDpad: this._selectDpad,
+      selectButtons: this._selectButtons
+    };
+  }
+
+  setSaveState(saveState) {
+    this._selectDpad = saveState.selectDpad;
+    this._selectButtons = saveState.selectButtons;
+  }
+
   onRead() {
     return byte.bitfield(
       this._getBit("BUTTON_A", "BUTTON_RIGHT"),

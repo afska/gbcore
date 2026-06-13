@@ -60,6 +60,31 @@ export default class APU {
     return !!this.registers.audena.enableAudio;
   }
 
+  getSaveState() {
+    return {
+      sampleCounter: this.sampleCounter,
+      divApu: this.divApu,
+      registers: this.registers.getSaveState(),
+      channels: {
+        pulses: this.channels.pulses.map((it) => it.getSaveState()),
+        wave: this.channels.wave.getSaveState(),
+        noise: this.channels.noise.getSaveState()
+      }
+    };
+  }
+
+  setSaveState(saveState) {
+    this.sampleCounter = saveState.sampleCounter;
+    this.divApu = saveState.divApu;
+    this.registers.setSaveState(saveState.registers);
+
+    this.channels.pulses.forEach((it, i) =>
+      it.setSaveState(saveState.channels.pulses[i])
+    );
+    this.channels.wave.setSaveState(saveState.channels.wave);
+    this.channels.noise.setSaveState(saveState.channels.noise);
+  }
+
   _processTicks() {
     const currentDivApu = this.memory.timer.div.divApu;
     for (; this.divApu < currentDivApu; this.divApu++) {

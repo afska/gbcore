@@ -65,4 +65,20 @@ export default class FrequencySweep {
   get _negative() {
     return this.channel.registers.sweep.negative;
   }
+
+  getSaveState() {
+    return {
+      enabled: this._enabled,
+      notePeriod: this._notePeriod,
+      sweepPace: this._sweepPace,
+      counter: this._counter
+    };
+  }
+
+  setSaveState(saveState) {
+    this._enabled = saveState.enabled;
+    this._notePeriod = saveState.notePeriod;
+    this._sweepPace = saveState.sweepPace;
+    this._counter = saveState.counter;
+  }
 }

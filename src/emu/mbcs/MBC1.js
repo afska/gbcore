@@ -80,6 +80,32 @@ export default (options = {}) => {
       }
     }
 
+    getSaveState() {
+      return {
+        ...super.getSaveState(),
+        registers: {
+          ramEnable: this._registers.ramEnable.getSaveState(),
+          romBankSelect: this._registers.romBankSelect.getSaveState(),
+          secondaryBankSelect:
+            this._registers.secondaryBankSelect.getSaveState(),
+          bankingMode: this._registers.bankingMode.getSaveState()
+        }
+      };
+    }
+
+    setSaveState(saveState) {
+      super.setSaveState(saveState);
+
+      this._registers.ramEnable.setSaveState(saveState.registers.ramEnable);
+      this._registers.romBankSelect.setSaveState(
+        saveState.registers.romBankSelect
+      );
+      this._registers.secondaryBankSelect.setSaveState(
+        saveState.registers.secondaryBankSelect
+      );
+      this._registers.bankingMode.setSaveState(saveState.registers.bankingMode);
+    }
+
     _buildPageId(high, low = 0) {
       return (high << 5) | low;
     }

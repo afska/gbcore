@@ -29,6 +29,38 @@ export default class VideoRegisters extends IORegisterSegment {
     this.wx = new WXY(ppu);
   }
 
+  getSaveState() {
+    return {
+      lcdc: this.lcdc.getSaveState(),
+      stat: this.stat.getSaveState(),
+      ly: this.ly.getSaveState(),
+      lyc: this.lyc.getSaveState(),
+      oamDma: this.oamDma.getSaveState(),
+      bgp: this.bgp.getSaveState(),
+      obp0: this.obp0.getSaveState(),
+      obp1: this.obp1.getSaveState(),
+      scy: this.scy.getSaveState(),
+      scx: this.scx.getSaveState(),
+      wy: this.wy.getSaveState(),
+      wx: this.wx.getSaveState()
+    };
+  }
+
+  setSaveState(saveState) {
+    this.lcdc.setSaveState(saveState.lcdc);
+    this.stat.setSaveState(saveState.stat);
+    this.ly.setSaveState(saveState.ly);
+    this.lyc.setSaveState(saveState.lyc);
+    this.oamDma.setSaveState(saveState.oamDma);
+    this.bgp.setSaveState(saveState.bgp);
+    this.obp0.setSaveState(saveState.obp0);
+    this.obp1.setSaveState(saveState.obp1);
+    this.scy.setSaveState(saveState.scy);
+    this.scx.setSaveState(saveState.scx);
+    this.wy.setSaveState(saveState.wy);
+    this.wx.setSaveState(saveState.wx);
+  }
+
   _getRegister(address) {
     switch (address) {
       case 0xff40:

@@ -31,6 +31,16 @@ export default class Cartridge {
     return this.mbc.write(address, value);
   }
 
+  getSaveState() {
+    return {
+      mbc: this.mbc.getSaveState()
+    };
+  }
+
+  setSaveState(saveState) {
+    this.mbc.setSaveState(saveState.mbc);
+  }
+
   _buildHeader() {
     const romSizeCode = this.bytes[0x0148];
     const ramSizeCode = this.bytes[0x0149];

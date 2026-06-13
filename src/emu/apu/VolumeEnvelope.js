@@ -28,4 +28,16 @@ export default class VolumeEnvelope {
       this._counter = 0;
     }
   }
+
+  getSaveState() {
+    return {
+      counter: this._counter,
+      sweepPace: this._sweepPace
+    };
+  }
+
+  setSaveState(saveState) {
+    this._counter = saveState.counter;
+    this._sweepPace = saveState.sweepPace;
+  }
 }

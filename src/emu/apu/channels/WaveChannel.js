@@ -68,4 +68,18 @@ export default class WaveChannel {
   lengthCounterTick() {
     if (this.registers.high.enableLength) this.lengthCounter.clock(this);
   }
+
+  getSaveState() {
+    return {
+      isPlaying: this.isPlaying,
+      oscillator: this.oscillator.getSaveState(),
+      lengthCounter: this.lengthCounter.getSaveState()
+    };
+  }
+
+  setSaveState(saveState) {
+    this.isPlaying = saveState.isPlaying;
+    this.oscillator.setSaveState(saveState.oscillator);
+    this.lengthCounter.setSaveState(saveState.lengthCounter);
+  }
 }

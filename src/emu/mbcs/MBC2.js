@@ -79,6 +79,25 @@ export default (options = {}) => {
       return this.internalRam.slice();
     }
 
+    getSaveState() {
+      return {
+        ...super.getSaveState(),
+        registers: {
+          ramEnable: this._registers.ramEnable.getSaveState(),
+          romBankSelect: this._registers.romBankSelect.getSaveState()
+        }
+      };
+    }
+
+    setSaveState(saveState) {
+      super.setSaveState(saveState);
+
+      this._registers.ramEnable.setSaveState(saveState.registers.ramEnable);
+      this._registers.romBankSelect.setSaveState(
+        saveState.registers.romBankSelect
+      );
+    }
+
     get hasRam() {
       return true;
     }

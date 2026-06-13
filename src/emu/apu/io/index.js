@@ -52,6 +52,61 @@ export default class AudioRegisters extends IORegisterSegment {
     };
   }
 
+  getSaveState() {
+    return {
+      audena: this.audena.getSaveState(),
+      audterm: this.audterm.getSaveState(),
+      audvol: this.audvol.getSaveState(),
+      pulses: this.pulses.map((it) => ({
+        low: it.low.getSaveState(),
+        high: it.high.getSaveState(),
+        len: it.len.getSaveState(),
+        env: it.env.getSaveState(),
+        sweep: it.sweep?.getSaveState() ?? null
+      })),
+      wave: {
+        ena: this.wave.ena.getSaveState(),
+        low: this.wave.low.getSaveState(),
+        high: this.wave.high.getSaveState(),
+        len: this.wave.len.getSaveState(),
+        level: this.wave.level.getSaveState()
+      },
+      noise: {
+        go: this.noise.go.getSaveState(),
+        poly: this.noise.poly.getSaveState(),
+        len: this.noise.len.getSaveState(),
+        env: this.noise.env.getSaveState()
+      }
+    };
+  }
+
+  setSaveState(saveState) {
+    this.audena.setSaveState(saveState.audena);
+    this.audterm.setSaveState(saveState.audterm);
+    this.audvol.setSaveState(saveState.audvol);
+
+    this.pulses.forEach((pulse, i) => {
+      const pulseState = saveState.pulses[i];
+
+      pulse.low.setSaveState(pulseState.low);
+      pulse.high.setSaveState(pulseState.high);
+      pulse.len.setSaveState(pulseState.len);
+      pulse.env.setSaveState(pulseState.env);
+      pulse.sweep?.setSaveState(pulseState.sweep);
+    });
+
+    this.wave.ena.setSaveState(saveState.wave.ena);
+    this.wave.low.setSaveState(saveState.wave.low);
+    this.wave.high.setSaveState(saveState.wave.high);
+    this.wave.len.setSaveState(saveState.wave.len);
+    this.wave.level.setSaveState(saveState.wave.level);
+
+    this.noise.go.setSaveState(saveState.noise.go);
+    this.noise.poly.setSaveState(saveState.noise.poly);
+    this.noise.len.setSaveState(saveState.noise.len);
+    this.noise.env.setSaveState(saveState.noise.env);
+  }
+
   write(address, value) {
     if (!this.audena.enableAudio && address !== AUDENA_ADDR) return;
 

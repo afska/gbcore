@@ -75,6 +75,33 @@ export default (options = {}) => {
       }
     }
 
+    getSaveState() {
+      return {
+        ...super.getSaveState(),
+        registers: {
+          ramEnable: this._registers.ramEnable.getSaveState(),
+          romBankSelectLow: this._registers.romBankSelectLow.getSaveState(),
+          romBankSelectHigh: this._registers.romBankSelectHigh.getSaveState(),
+          ramBankSelect: this._registers.ramBankSelect.getSaveState()
+        }
+      };
+    }
+
+    setSaveState(saveState) {
+      super.setSaveState(saveState);
+
+      this._registers.ramEnable.setSaveState(saveState.registers.ramEnable);
+      this._registers.romBankSelectLow.setSaveState(
+        saveState.registers.romBankSelectLow
+      );
+      this._registers.romBankSelectHigh.setSaveState(
+        saveState.registers.romBankSelectHigh
+      );
+      this._registers.ramBankSelect.setSaveState(
+        saveState.registers.ramBankSelect
+      );
+    }
+
     _buildPageId(high, low) {
       return byte.buildU16(high, low);
     }
@@ -108,6 +135,19 @@ class RomBankSelectLow extends InMemoryRegister {
   setValue(value) {
     this.bankNumberLow = value;
   }
+
+  getSaveState() {
+    return {
+      ...super.getSaveState(),
+      bankNumberLow: this.bankNumberLow
+    };
+  }
+
+  setSaveState(saveState) {
+    super.setSaveState(saveState);
+
+    this.bankNumberLow = saveState.bankNumberLow;
+  }
 }
 
 /*
@@ -131,5 +171,18 @@ class RamBankSelect extends InMemoryRegister {
 
   setValue(value) {
     if (value >= 0 && value <= 0x0f) this.ramBank = value;
+  }
+
+  getSaveState() {
+    return {
+      ...super.getSaveState(),
+      ramBank: this.ramBank
+    };
+  }
+
+  setSaveState(saveState) {
+    super.setSaveState(saveState);
+
+    this.ramBank = saveState.ramBank;
   }
 }

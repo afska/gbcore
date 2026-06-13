@@ -31,4 +31,16 @@ export default class LengthCounter {
       channel.stop();
     }
   }
+
+  getSaveState() {
+    return {
+      counter: this._counter,
+      target: this._target
+    };
+  }
+
+  setSaveState(saveState) {
+    this._counter = saveState.counter;
+    this._target = saveState.target;
+  }
 }

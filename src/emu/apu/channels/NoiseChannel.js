@@ -105,4 +105,24 @@ export default class NoiseChannel {
     if (this.registers.env.hasEnvelope)
       this.volumeEnvelope.clock(this, this.registers.env.increase ? 1 : -1);
   }
+
+  getSaveState() {
+    return {
+      isPlaying: this.isPlaying,
+      lengthCounter: this.lengthCounter.getSaveState(),
+      volumeEnvelope: this.volumeEnvelope.getSaveState(),
+      volume: this.volume,
+      lfsr: this.lfsr,
+      dividerCount: this.dividerCount
+    };
+  }
+
+  setSaveState(saveState) {
+    this.isPlaying = saveState.isPlaying;
+    this.lengthCounter.setSaveState(saveState.lengthCounter);
+    this.volumeEnvelope.setSaveState(saveState.volumeEnvelope);
+    this.volume = saveState.volume;
+    this.lfsr = saveState.lfsr;
+    this.dividerCount = saveState.dividerCount;
+  }
 }

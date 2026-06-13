@@ -32,4 +32,17 @@ export default class LCDC extends InMemoryRegister.PPU {
 
     if (!enableLCD && this.enableLCD) this.needsWhiteFrame = true;
   }
+
+  getSaveState() {
+    return {
+      ...super.getSaveState(),
+      needsWhiteFrame: this.needsWhiteFrame
+    };
+  }
+
+  setSaveState(saveState) {
+    super.setSaveState(saveState);
+
+    this.needsWhiteFrame = saveState.needsWhiteFrame;
+  }
 }
