@@ -1,3 +1,4 @@
+import hardware from "./hardware";
 import byte from "./lib/byte";
 import TimerRegisters from "./timer/Timer";
 
@@ -17,7 +18,8 @@ export default class MemoryBus {
     this.wramBank1 = new Uint8Array(WRAM_SIZE / 2);
     this.hram = new Uint8Array(HRAM_SIZE);
 
-    this.vram = new Uint8Array(VRAM_SIZE);
+    this.vramBank0 = new Uint8Array(VRAM_SIZE);
+    this.vramBank1Cgb = new Uint8Array(VRAM_SIZE);
     this.oam = new Uint8Array(OAM_SIZE);
 
     this.waveRam = new Uint8Array(WAVE_RAM_SIZE);
@@ -42,7 +44,14 @@ export default class MemoryBus {
     } else if (address >= 0x8000 && address < 0xa000) {
       // 8 KiB Video RAM (VRAM)
       // In CGB mode, switchable bank 0/1
-      return this.vram[address - 0x8000];
+      if (
+        this.hardwareMode !== hardware.DMG &&
+        this.ppu.registers.vbk.bank === 1
+      ) {
+        return this.vramBank1Cgb[address - 0x8000];
+      } else {
+        return this.vramBank0[address - 0x8000];
+      }
     } else if (address >= 0xa000 && address < 0xc000) {
       // 8 KiB External RAM
       // From cartridge, switchable bank if any
@@ -87,7 +96,14 @@ export default class MemoryBus {
     } else if (address >= 0x8000 && address < 0xa000) {
       // 8 KiB Video RAM (VRAM)
       // In CGB mode, switchable bank 0/1
-      return (this.vram[address - 0x8000] = value);
+      if (
+        this.hardwareMode !== hardware.DMG &&
+        this.ppu.registers.vbk.bank === 1
+      ) {
+        return (this.vramBank1Cgb[address - 0x8000] = value);
+      } else {
+        return (this.vramBank0[address - 0x8000] = value);
+      }
     } else if (address >= 0xa000 && address < 0xc000) {
       // 8 KiB External RAM
       // From cartridge, switchable bank if any
@@ -128,12 +144,18 @@ export default class MemoryBus {
     return byte.buildU16(this.read(address + 1), this.read(address));
   }
 
+  readVram(address, bank = 0) {
+    const offset = address - 0x8000;
+    return bank === 1 ? this.vramBank1Cgb[offset] : this.vramBank0[offset];
+  }
+
   getSaveState() {
     return {
       wramBank0: Array.from(this.wramBank0),
       wramBank1: Array.from(this.wramBank1),
       hram: Array.from(this.hram),
-      vram: Array.from(this.vram),
+      vramBank0: Array.from(this.vramBank0),
+      vramBank1Cgb: Array.from(this.vramBank1Cgb),
       oam: Array.from(this.oam),
       waveRam: Array.from(this.waveRam),
       timer: this.timer.getSaveState(),
@@ -145,7 +167,8 @@ export default class MemoryBus {
     this.wramBank0.set(saveState.wramBank0);
     this.wramBank1.set(saveState.wramBank1);
     this.hram.set(saveState.hram);
-    this.vram.set(saveState.vram);
+    this.vramBank0.set(saveState.vramBank0);
+    this.vramBank1Cgb.set(saveState.vramBank1Cgb);
     this.oam.set(saveState.oam);
     this.waveRam.set(saveState.waveRam);
     this.timer.setSaveState(saveState.timer);
@@ -164,7 +187,7 @@ export default class MemoryBus {
     } else if (address >= 0xff10 && address < 0xff27) {
       // Audio registers
       return this.apu.registers.read(address);
-    } else if (address >= 0xff40 && address < 0xff4c) {
+    } else if ((address >= 0xff40 && address < 0xff4c) || address === 0xff4f) {
       // Video registers
       return this.ppu.registers.read(address);
     } else if (address === 0xffff) {
@@ -187,7 +210,7 @@ export default class MemoryBus {
     } else if (address >= 0xff10 && address < 0xff27) {
       // Audio registers
       return this.apu.registers.write(address, value);
-    } else if (address >= 0xff40 && address < 0xff4c) {
+    } else if ((address >= 0xff40 && address < 0xff4c) || address === 0xff4f) {
       // Video registers
       return this.ppu.registers.write(address, value);
     } else if (address === 0xffff) {

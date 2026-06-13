@@ -7,6 +7,7 @@ import Palette from "./Palette";
 import SCXY from "./SCXY";
 import STAT from "./STAT";
 import WXY from "./WXY";
+import VBK from "./cgb/VBK";
 
 /**
  * Video registers: $FF40 - $FF4C
@@ -27,6 +28,8 @@ export default class VideoRegisters extends IORegisterSegment {
     this.scx = new SCXY(ppu);
     this.wy = new WXY(ppu);
     this.wx = new WXY(ppu);
+
+    this.vbk = new VBK(ppu);
   }
 
   getSaveState() {
@@ -42,7 +45,9 @@ export default class VideoRegisters extends IORegisterSegment {
       scy: this.scy.getSaveState(),
       scx: this.scx.getSaveState(),
       wy: this.wy.getSaveState(),
-      wx: this.wx.getSaveState()
+      wx: this.wx.getSaveState(),
+
+      vbk: this.vbk.getSaveState()
     };
   }
 
@@ -59,6 +64,8 @@ export default class VideoRegisters extends IORegisterSegment {
     this.scx.setSaveState(saveState.scx);
     this.wy.setSaveState(saveState.wy);
     this.wx.setSaveState(saveState.wx);
+
+    this.vbk.setSaveState(saveState.vbk);
   }
 
   _getRegister(address) {
@@ -87,6 +94,8 @@ export default class VideoRegisters extends IORegisterSegment {
         return this.wy;
       case 0xff4b:
         return this.wx;
+      case 0xff4f:
+        return this.vbk;
       default:
     }
   }

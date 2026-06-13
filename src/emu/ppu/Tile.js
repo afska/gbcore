@@ -8,7 +8,7 @@ const TILE_SIZE_BYTES = 16;
  * A Tile in VRAM.
  */
 export default class Tile {
-  constructor(memory, tileId, y, useSignedTileMode = false) {
+  constructor(memory, tileId, y, useSignedTileMode = false, bank) {
     // the "unsigned" addressing mode interprets the byte as an unsigned 8-bit number and starts from 0x8000
     let vramBase = VRAM_BASE_UNSIGNED;
 
@@ -20,8 +20,8 @@ export default class Tile {
 
     const address = vramBase + tileId * TILE_SIZE_BYTES + y * 2;
 
-    this._lowRow = memory.read(address);
-    this._highRow = memory.read(address + 1);
+    this._lowRow = memory.readVram(address, bank);
+    this._highRow = memory.readVram(address + 1, bank);
   }
 
   getColorIndex(x) {

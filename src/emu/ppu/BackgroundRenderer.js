@@ -1,3 +1,5 @@
+import hardware from "../hardware";
+import byte from "../lib/byte";
 import Tile from "./Tile";
 
 const WIDTH = 160;
@@ -53,14 +55,26 @@ export default class BackgroundRenderer {
       const tileMapX = Math.floor(backgroundX / 8);
       const tileIndex = tileMapY * TILES_PER_ROW + tileMapX;
 
-      const tileId = this.memory.read(tileMapAddress + tileIndex);
+      let tileBank = 0;
+      if (this.memory.hardwareMode !== hardware.DMG) {
+        const tileAttributes = this.memory.readVram(
+          tileMapAddress + tileIndex,
+          1
+        );
+        if (byte.getFlag(tileAttributes, 3)) tileBank = 1;
+        // TODO: Priority (bit 7), Y flip (bit 6), X flip (bit 5), Color palette (bits 0-2)
+        // https://gbdev.io/pandocs/Tile_Maps.html#bg-map-attributes-cgb-mode-only
+      }
+
+      const tileId = this.memory.readVram(tileMapAddress + tileIndex);
       const tileStartX = backgroundX % 8;
       const tileInsideY = backgroundY % 8;
       const tile = new Tile(
         this.memory,
         tileId,
         tileInsideY,
-        !lcdc.useUnsignedTileMode
+        !lcdc.useUnsignedTileMode,
+        tileBank
       );
 
       const tilePixels = Math.min(8 - tileStartX, WIDTH - x);
