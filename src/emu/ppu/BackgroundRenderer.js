@@ -56,13 +56,17 @@ export default class BackgroundRenderer {
       const tileIndex = tileMapY * TILES_PER_ROW + tileMapX;
 
       let tileBank = 0;
+      let tileFlipX = false,
+        tileFlipY = false;
       if (this.memory.hardwareMode !== hardware.DMG) {
         const tileAttributes = this.memory.readVram(
           tileMapAddress + tileIndex,
           1
         );
         if (byte.getFlag(tileAttributes, 3)) tileBank = 1;
-        // TODO: Priority (bit 7), Y flip (bit 6), X flip (bit 5), Color palette (bits 0-2)
+        if (byte.getFlag(tileAttributes, 5)) tileFlipX = true;
+        if (byte.getFlag(tileAttributes, 6)) tileFlipY = true;
+        // TODO: Priority (bit 7), Color palette (bits 0-2)
         // https://gbdev.io/pandocs/Tile_Maps.html#bg-map-attributes-cgb-mode-only
       }
 
@@ -72,7 +76,7 @@ export default class BackgroundRenderer {
       const tile = new Tile(
         this.memory,
         tileId,
-        tileInsideY,
+        tileFlipY ? 7 - tileInsideY : tileInsideY,
         !lcdc.useUnsignedTileMode,
         tileBank
       );
@@ -80,7 +84,10 @@ export default class BackgroundRenderer {
       const tilePixels = Math.min(8 - tileStartX, WIDTH - x);
 
       for (let xx = 0; xx < tilePixels; xx++) {
-        const colorIndex = tile.getColorIndex(tileStartX + xx);
+        const insideX = tileStartX + xx;
+        const colorIndex = tile.getColorIndex(
+          tileFlipX ? 7 - insideX : insideX
+        );
         const color = this.ppu.registers.bgp.colorFor(colorIndex);
         this.ppu.plotBG(x + xx, y, color, colorIndex);
       }
