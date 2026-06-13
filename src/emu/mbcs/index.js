@@ -1,6 +1,7 @@
 import MBC1 from "./MBC1";
 import MBC2 from "./MBC2";
 import MBC3 from "./MBC3";
+import MBC5 from "./MBC5";
 import NoMBC from "./NoMBC";
 
 export default [
@@ -28,12 +29,16 @@ export default [
   { id: 0x11, name: "MBC3", MBC: MBC3() },
   { id: 0x12, name: "MBC3+RAM", MBC: MBC3({ ram: true }) },
   { id: 0x13, name: "MBC3+RAM+BATTERY", MBC: MBC3({ ram: true, batt: true }) },
-  { id: 0x19, name: "MBC5", MBC: null },
-  { id: 0x1a, name: "MBC5+RAM", MBC: null },
-  { id: 0x1b, name: "MBC5+RAM+BATTERY", MBC: null },
-  { id: 0x1c, name: "MBC5+RUMBLE", MBC: null },
-  { id: 0x1d, name: "MBC5+RUMBLE+RAM", MBC: null },
-  { id: 0x1e, name: "MBC5+RUMBLE+RAM+BATTERY", MBC: null },
+  { id: 0x19, name: "MBC5", MBC: MBC5() },
+  { id: 0x1a, name: "MBC5+RAM", MBC: MBC5({ ram: true }) },
+  { id: 0x1b, name: "MBC5+RAM+BATTERY", MBC: MBC5({ ram: true, batt: true }) },
+  { id: 0x1c, name: "MBC5+RUMBLE", MBC: MBC5({ rumble: true }) },
+  { id: 0x1d, name: "MBC5+RUMBLE+RAM", MBC: MBC5({ rumble: true, ram: true }) },
+  {
+    id: 0x1e,
+    name: "MBC5+RUMBLE+RAM+BATTERY",
+    MBC: MBC5({ rumble: true, ram: true, batt: true })
+  },
   { id: 0x20, name: "MBC6", MBC: null },
   { id: 0x22, name: "MBC7+SENSOR+RUMBLE+RAM+BATTERY", MBC: null },
   { id: 0xfc, name: "POCKET CAMERA", MBC: null },

@@ -29,7 +29,7 @@ export default (options = {}) => {
         return this.$getRomPage(page)[address - 0x4000];
       }
 
-      // TODO: RTC
+      // TODO: RTC if options.timer
       // A000-BFFF - RAM Bank 00-07 or RTC register (Read/Write)
       if (
         options.ram &&
