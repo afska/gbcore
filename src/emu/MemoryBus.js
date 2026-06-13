@@ -23,12 +23,13 @@ export default class MemoryBus {
     this.waveRam = new Uint8Array(WAVE_RAM_SIZE);
   }
 
-  onLoad(cpu, ppu, apu, cartridge, controller) {
+  onLoad(cpu, ppu, apu, cartridge, controller, hardwareMode) {
     this.cpu = cpu;
     this.ppu = ppu;
     this.apu = apu;
     this.cartridge = cartridge;
     this.controller = controller;
+    this.hardwareMode = hardwareMode;
 
     this.timer = new TimerRegisters(cpu);
   }
@@ -135,7 +136,8 @@ export default class MemoryBus {
       vram: Array.from(this.vram),
       oam: Array.from(this.oam),
       waveRam: Array.from(this.waveRam),
-      timer: this.timer.getSaveState()
+      timer: this.timer.getSaveState(),
+      hardwareMode: this.hardwareMode
     };
   }
 
@@ -147,6 +149,7 @@ export default class MemoryBus {
     this.oam.set(saveState.oam);
     this.waveRam.set(saveState.waveRam);
     this.timer.setSaveState(saveState.timer);
+    this.hardwareMode = saveState.hardwareMode;
   }
 
   _ioRead(address) {

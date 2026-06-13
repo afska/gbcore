@@ -3,6 +3,7 @@ import Controller from "./Controller";
 import MemoryBus from "./MemoryBus";
 import APU from "./apu/APU";
 import CPU from "./cpu/CPU";
+import hardware from "./hardware";
 import PPU, { HEIGHT, T_CYCLES_PER_FRAME, WIDTH } from "./ppu/PPU";
 
 const T_CYCLES_PER_MCYCLE = 4;
@@ -31,12 +32,23 @@ export default class Emulator {
    * `bytes`: `Uint8Array`
    * `saveFileBytes`: `Uint8Array` or null
    */
-  load(bytes, saveFileBytes = null) {
+  load(bytes, saveFileBytes = null, forcedHardware = null) {
     const cartridge = new Cartridge(bytes);
     const controller = new Controller(this.cpu);
+    const hardwareMode =
+      forcedHardware ??
+      (cartridge.header.cgbMode === "monochrome" ? hardware.DMG : hardware.GBC);
 
-    this.memory.onLoad(this.cpu, this.ppu, this.apu, cartridge, controller);
+    this.memory.onLoad(
+      this.cpu,
+      this.ppu,
+      this.apu,
+      cartridge,
+      controller,
+      hardwareMode
+    );
 
+    this.cpu.setHardware(hardwareMode);
     this.context = { cartridge, controller };
 
     this._setSaveFile(saveFileBytes);

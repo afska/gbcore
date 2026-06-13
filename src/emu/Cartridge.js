@@ -44,11 +44,17 @@ export default class Cartridge {
   _buildHeader() {
     const romSizeCode = this.bytes[0x0148];
     const ramSizeCode = this.bytes[0x0149];
+    const cgbFlag = this.bytes[0x0143];
 
     return {
       title: this._getString(0x0134, 16), // can be 11 in new cartridges
       manufacturerCode: this._getString(0x013f, 4),
-      cgbFlag: this.bytes[0x0143],
+      cgbMode:
+        cgbFlag === 0x80
+          ? "cgb-compatible"
+          : cgbFlag === 0xc0
+            ? "cgb-exclusive"
+            : "monochrome",
       sgbFlag: this.bytes[0x0146],
       cartridgeType: this.bytes[0x0147],
       romBanks16KiB: (() => {
