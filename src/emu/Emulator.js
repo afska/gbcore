@@ -3,7 +3,7 @@ import Controller from "./Controller";
 import MemoryBus from "./MemoryBus";
 import APU from "./apu/APU";
 import CPU from "./cpu/CPU";
-import PPU, { T_CYCLES_PER_FRAME } from "./ppu/PPU";
+import PPU, { HEIGHT, T_CYCLES_PER_FRAME, WIDTH } from "./ppu/PPU";
 
 const T_CYCLES_PER_MCYCLE = 4;
 
@@ -90,8 +90,28 @@ export default class Emulator {
   }
 
   /** Runs the emulation until the next scanline. */
-  scanline() {
-    // TODO: IMPLEMENT
+  scanline(debug = false) {
+    if (!this.context) return;
+
+    const currentScanline = this.ppu.scanline;
+    let elapsed = 0;
+
+    while (elapsed < T_CYCLES_PER_FRAME) {
+      elapsed += this.step();
+
+      if (this.ppu.scanline !== currentScanline) break;
+    }
+
+    if (!debug) return;
+
+    const oldFrameBuffer = new Uint32Array(this.ppu.frameBuffer);
+
+    if (this.ppu.scanline < HEIGHT)
+      for (let x = 0; x < WIDTH; x++)
+        this.ppu.plot(x, this.ppu.scanline, 0xff0000ff);
+
+    this.onFrame(this.ppu.frameBuffer);
+    this.ppu.frameBuffer.set(oldFrameBuffer);
   }
 
   /** Executes a step in the emulation (1 CPU instruction). Returns the number of T-cycles. */

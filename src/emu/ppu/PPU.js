@@ -3,8 +3,8 @@ import BackgroundRenderer from "./BackgroundRenderer";
 import SpriteRenderer from "./SpriteRenderer";
 import VideoRegisters from "./io";
 
-const WIDTH = 160;
-const HEIGHT = 144;
+export const WIDTH = 160;
+export const HEIGHT = 144;
 const DOTS_PER_SCANLINE = 456;
 const RENDER_DOT = 252;
 const TOTAL_SCANLINES = 154;

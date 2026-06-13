@@ -1,6 +1,8 @@
 import InMemoryRegister from "../lib/InMemoryRegister";
 import MBC from "./MBC";
 
+// TODO: RTC if options.timer
+
 export default (options = {}) => {
   /**
    * (max 2MByte ROM and/or 32KByte RAM and Timer)
@@ -29,7 +31,6 @@ export default (options = {}) => {
         return this.$getRomPage(page)[address - 0x4000];
       }
 
-      // TODO: RTC if options.timer
       // A000-BFFF - RAM Bank 00-07 or RTC register (Read/Write)
       if (
         options.ram &&
@@ -56,7 +57,6 @@ export default (options = {}) => {
       } else if (address >= 0x6000 && address < 0x8000) {
       }
 
-      // TODO: RTC
       // A000-BFFF - RAM Bank 00-07 or RTC register (Read/Write)
       if (
         options.ram &&

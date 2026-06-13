@@ -1,7 +1,5 @@
 import InMemoryRegister from "../../lib/InMemoryRegister";
 
-// TODO: SAME AS AUD4ENV
-
 /**
  * AUD1ENV/AUD2ENV (aka NR12/NR22): Channel 1/2 volume & envelope
  */

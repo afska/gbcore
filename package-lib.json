@@ -1,13 +1,13 @@
 {
   "name": "gbcore",
-  "version": "1.0.84",
+  "version": "1.0.0",
   "main": "index.js",
-  "description": "A really broken GB emulator that introduces glitches and random bugs on purpose!",
+  "description": "A basic GB emulator (executes whole instructions and scanlines, not cycle-accurate) made for educational purposes.",
   "author": "[r]labs",
   "license": "MIT",
   "dependencies": {},
   "keywords": [
-    "nes",
+    "gb",
     "emulator",
     "core",
     "cpu",
