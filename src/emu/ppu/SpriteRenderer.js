@@ -46,13 +46,25 @@ export default class SpriteRenderer {
       }
     }
 
-    // sprite priority: smaller X wins; if X matches, lower OAM index wins
+    // CGB sprite priority: lower OAM index wins
+    if (this.memory.hardwareMode !== hardware.DMG) return sprites;
+
+    // DMG sprite priority: smaller X wins; if X matches, lower OAM index wins
     return sprites.sort((a, b) => a.x - b.x || a.id - b.id);
   }
 
   _render(sprites) {
     const y = this.ppu.scanline;
+    const lcdc = this.ppu.registers.lcdc;
     const claimedPixels = new Uint8Array(WIDTH);
+
+    // CGB mode: LCDC.0 == 0 always prioritizes sprites
+    let prioritizeSprites = false;
+    if (
+      this.memory.hardwareMode !== hardware.DMG &&
+      !lcdc.showBackgroundAndWindowOrCgbMasterPriority
+    )
+      prioritizeSprites = true;
 
     for (let sprite of sprites) {
       const dmgPalette = sprite.dmgPaletteId
@@ -80,7 +92,10 @@ export default class SpriteRenderer {
         claimedPixels[x] = 1;
 
         const isCoveredByBackground =
-          !sprite.isInFrontOfBackground && this.ppu.isBackgroundPixelOpaque(x);
+          !prioritizeSprites &&
+          this.ppu.isBackgroundPixelOpaque(x) &&
+          (!sprite.isInFrontOfBackground ||
+            this.ppu.doesBackgroundPixelHavePriority(x));
         if (isCoveredByBackground) continue;
 
         const color =

@@ -7,7 +7,7 @@ import InMemoryRegister from "../../lib/InMemoryRegister";
  */
 export default class LCDC extends InMemoryRegister.PPU {
   onLoad() {
-    this.addField("showBackgroundAndWindow", 0)
+    this.addField("showBackgroundAndWindowOrCgbMasterPriority", 0)
       .addField("showSprites", 1)
       .addField("use8x16Sprites", 2)
       .addField("backgroundTileMapId", 3)

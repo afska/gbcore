@@ -28,6 +28,7 @@ export default class PPU {
 
     this.frameBuffer = new Uint32Array(WIDTH * HEIGHT);
     this.backgroundColorIndexes = new Uint8Array(WIDTH);
+    this.backgroundPriorityPixels = new Uint8Array(WIDTH);
 
     this.registers = new VideoRegisters(this);
 
@@ -54,8 +55,9 @@ export default class PPU {
     return (0xff << 24) | (b8 << 16) | (g8 << 8) | (r8 << 0);
   }
 
-  plotBG(x, y, color, colorIndex) {
+  plotBG(x, y, color, colorIndex, hasPriority) {
     this.backgroundColorIndexes[x] = colorIndex;
+    this.backgroundPriorityPixels[x] = +hasPriority;
     this.plot(x, y, color);
   }
 
@@ -65,6 +67,10 @@ export default class PPU {
 
   isBackgroundPixelOpaque(x) {
     return this.backgroundColorIndexes[x] > 0;
+  }
+
+  doesBackgroundPixelHavePriority(x) {
+    return !!this.backgroundPriorityPixels[x];
   }
 
   step(onFrame) {
