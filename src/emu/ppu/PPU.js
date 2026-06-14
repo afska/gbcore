@@ -98,7 +98,7 @@ export default class PPU {
 
   syncSTAT() {
     const stat = this.registers.stat;
-    const currentMode = this._getMode();
+    const currentMode = this.mode;
     const lycEqualsLy = this.scanline === this.registers.lyc.value;
 
     stat.ppuMode = currentMode;
@@ -115,6 +115,17 @@ export default class PPU {
       this.cpu.requestInterrupt(interrupts.LCD);
 
     stat.interruptLine = interruptLine;
+  }
+
+  get isDrawing() {
+    return this.mode === 3;
+  }
+
+  get mode() {
+    if (this.scanline >= HEIGHT) return 1; // VBlank
+    if (this.dot < 80) return 2; // OAM
+    if (this.dot < 252) return 3; // Drawing
+    return 0; // HBlank
   }
 
   get isEnabled() {
@@ -137,12 +148,5 @@ export default class PPU {
     this.windowLine = saveState.windowLine;
     this.frame = saveState.frame;
     this.registers.setSaveState(saveState.registers);
-  }
-
-  _getMode() {
-    if (this.scanline >= HEIGHT) return 1; // VBlank
-    if (this.dot < 80) return 2; // OAM
-    if (this.dot < 252) return 3; // Drawing
-    return 0; // HBlank
   }
 }
