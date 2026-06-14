@@ -56,7 +56,7 @@ export default (options = {}) => {
         this._registers.ramEnable.setValue(value);
       } else if (address >= 0x2000 && address < 0x3000) {
         this._registers.romBankSelectLow.setValue(value);
-      } else if (address >= 3000 && address < 0x4000) {
+      } else if (address >= 0x3000 && address < 0x4000) {
         this._registers.romBankSelectHigh.setValue(value);
       } else if (address >= 0x4000 && address < 0x6000) {
         this._registers.ramBankSelect.setValue(value);
