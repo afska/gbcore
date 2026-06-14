@@ -42,7 +42,7 @@ export default class Sprite {
     return byte.getBit(this.attributes, SPRITE_ATTR_CGB_BANK_BIT);
   }
 
-  get cgbPalette() {
+  get cgbPaletteId() {
     return byte.getBits(this.attributes, SPRITE_ATTR_CGB_PALETTE_BIT, 3);
   }
 

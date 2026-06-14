@@ -1,12 +1,14 @@
 import IORegisterSegment from "../../lib/IORegisterSegment";
+import GrayscalePalette from "./GrayscalePalette";
 import LCDC from "./LCDC";
 import LY from "./LY";
 import LYC from "./LYC";
 import OAMDMA from "./OAMDMA";
-import Palette from "./Palette";
 import SCXY from "./SCXY";
 import STAT from "./STAT";
 import WXY from "./WXY";
+import PD from "./cgb/PD";
+import PI from "./cgb/PI";
 import VBK from "./cgb/VBK";
 
 /**
@@ -21,15 +23,19 @@ export default class VideoRegisters extends IORegisterSegment {
     this.ly = new LY(ppu);
     this.lyc = new LYC(ppu);
     this.oamDma = new OAMDMA(ppu);
-    this.bgp = new Palette(ppu, 0xfc);
-    this.obp0 = new Palette(ppu, 0xff);
-    this.obp1 = new Palette(ppu, 0xff);
+    this.bgp = new GrayscalePalette(ppu, 0xfc);
+    this.obp0 = new GrayscalePalette(ppu, 0xff);
+    this.obp1 = new GrayscalePalette(ppu, 0xff);
     this.scy = new SCXY(ppu);
     this.scx = new SCXY(ppu);
     this.wy = new WXY(ppu);
     this.wx = new WXY(ppu);
 
     this.vbk = new VBK(ppu);
+    this.bgpi = new PI(ppu);
+    this.bgpd = new PD(ppu, "bgpi", "paletteRamBackground");
+    this.obpi = new PI(ppu);
+    this.obpd = new PD(ppu, "obpi", "paletteRamSprites");
   }
 
   getSaveState() {
@@ -47,7 +53,11 @@ export default class VideoRegisters extends IORegisterSegment {
       wy: this.wy.getSaveState(),
       wx: this.wx.getSaveState(),
 
-      vbk: this.vbk.getSaveState()
+      vbk: this.vbk.getSaveState(),
+      bgpi: this.bgpi.getSaveState(),
+      bgpd: this.bgpd.getSaveState(),
+      obpi: this.obpi.getSaveState(),
+      obpd: this.obpd.getSaveState()
     };
   }
 
@@ -66,6 +76,10 @@ export default class VideoRegisters extends IORegisterSegment {
     this.wx.setSaveState(saveState.wx);
 
     this.vbk.setSaveState(saveState.vbk);
+    this.bgpi.setSaveState(saveState.bgpi);
+    this.bgpd.setSaveState(saveState.bgpd);
+    this.obpi.setSaveState(saveState.obpi);
+    this.obpd.setSaveState(saveState.obpd);
   }
 
   _getRegister(address) {
@@ -96,6 +110,14 @@ export default class VideoRegisters extends IORegisterSegment {
         return this.wx;
       case 0xff4f:
         return this.vbk;
+      case 0xff68:
+        return this.bgpi;
+      case 0xff69:
+        return this.bgpd;
+      case 0xff6a:
+        return this.obpi;
+      case 0xff6b:
+        return this.obpd;
       default:
     }
   }

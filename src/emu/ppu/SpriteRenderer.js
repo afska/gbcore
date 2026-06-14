@@ -55,16 +55,17 @@ export default class SpriteRenderer {
     const claimedPixels = new Uint8Array(WIDTH);
 
     for (let sprite of sprites) {
-      const palette = sprite.dmgPaletteId
+      const dmgPalette = sprite.dmgPaletteId
         ? this.ppu.registers.obp1
         : this.ppu.registers.obp0;
+      const cgbPaletteId = sprite.cgbPaletteId;
       const insideY = sprite.diffY(y);
       const tileInsideY = insideY % 8;
       const tile = new Tile(
         this.memory,
         sprite.tileIdFor(insideY),
         sprite.flipY ? 7 - tileInsideY : tileInsideY,
-        this.memory.hardwareMode !== hardware.DMG ? sprite.bank : 0
+        this.memory.hardwareMode !== hardware.DMG ? sprite.cgbBank : 0
       );
 
       for (let insideX = 0; insideX < 8; insideX++) {
@@ -83,7 +84,11 @@ export default class SpriteRenderer {
           this.ppu.isBackgroundPixelOpaque(x, y);
         if (isCoveredByBackground) continue;
 
-        this.ppu.plot(x, y, palette.colorFor(colorIndex));
+        const color =
+          this.memory.hardwareMode !== hardware.DMG
+            ? this.ppu.getColor("paletteRamSprites", cgbPaletteId, colorIndex)
+            : dmgPalette.colorFor(colorIndex);
+        this.ppu.plot(x, y, color);
       }
     }
   }

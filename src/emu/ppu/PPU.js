@@ -1,4 +1,5 @@
 import interrupts from "../interrupts";
+import byte from "../lib/byte";
 import BackgroundRenderer from "./BackgroundRenderer";
 import SpriteRenderer from "./SpriteRenderer";
 import VideoRegisters from "./io";
@@ -32,6 +33,23 @@ export default class PPU {
     this.spriteRenderer = new SpriteRenderer(this, this.memory);
 
     this.syncSTAT();
+  }
+
+  getColor(bankName, paletteId, colorIndex) {
+    const lowByte =
+      this.memory[bankName][(paletteId * 8 + colorIndex * 2) % 64];
+    const highByte =
+      this.memory[bankName][(paletteId * 8 + colorIndex * 2 + 1) % 64];
+    const color = byte.buildU16(highByte, lowByte);
+    const red /*   */ = (color & 0b000000000011111) >> 0;
+    const green /* */ = (color & 0b000001111100000) >> 5;
+    const blue /*  */ = (color & 0b111110000000000) >> 10;
+
+    const r8 = Math.round((red * 255) / 31);
+    const g8 = Math.round((green * 255) / 31);
+    const b8 = Math.round((blue * 255) / 31);
+
+    return (0xff << 24) | (b8 << 16) | (g8 << 8) | (r8 << 0);
   }
 
   plotBG(x, y, color, colorIndex) {

@@ -7,7 +7,11 @@ const WRAM_SIZE = 8 * KB;
 const HRAM_SIZE = 127;
 const VRAM_SIZE = 8 * KB;
 const OAM_SIZE = 160;
+const PALETTE_RAM_SIZE = 64;
 const WAVE_RAM_SIZE = 16;
+
+// TODO: IGNORE SOME READ/WRITES DURING MODE 3: VRAM, PALETTE RAM, (OAM?); reads return 0xff
+// TODO: THROW INVALID OPCODES ON INVALID OPCODES INSTEAD OF RUNNING NOP
 
 /**
  * The Game Boy has a 16-bit address bus, which is used to address ROM, RAM, and I/O.
@@ -21,6 +25,8 @@ export default class MemoryBus {
     this.vramBank0 = new Uint8Array(VRAM_SIZE);
     this.vramBank1Cgb = new Uint8Array(VRAM_SIZE);
     this.oam = new Uint8Array(OAM_SIZE);
+    this.paletteRamBackground = new Uint8Array(PALETTE_RAM_SIZE);
+    this.paletteRamSprites = new Uint8Array(PALETTE_RAM_SIZE);
 
     this.waveRam = new Uint8Array(WAVE_RAM_SIZE);
   }
@@ -157,6 +163,8 @@ export default class MemoryBus {
       vramBank0: Array.from(this.vramBank0),
       vramBank1Cgb: Array.from(this.vramBank1Cgb),
       oam: Array.from(this.oam),
+      paletteRamBackground: Array.from(this.paletteRamBackground),
+      paletteRamSprites: Array.from(this.paletteRamSprites),
       waveRam: Array.from(this.waveRam),
       timer: this.timer.getSaveState(),
       hardwareMode: this.hardwareMode
@@ -170,6 +178,8 @@ export default class MemoryBus {
     this.vramBank0.set(saveState.vramBank0);
     this.vramBank1Cgb.set(saveState.vramBank1Cgb);
     this.oam.set(saveState.oam);
+    this.paletteRamBackground.set(saveState.paletteRamBackground);
+    this.paletteRamSprites.set(saveState.paletteRamSprites);
     this.waveRam.set(saveState.waveRam);
     this.timer.setSaveState(saveState.timer);
     this.hardwareMode = saveState.hardwareMode;
@@ -187,7 +197,14 @@ export default class MemoryBus {
     } else if (address >= 0xff10 && address < 0xff27) {
       // Audio registers
       return this.apu.registers.read(address);
-    } else if ((address >= 0xff40 && address < 0xff4c) || address === 0xff4f) {
+    } else if (
+      (address >= 0xff40 && address < 0xff4c) ||
+      address === 0xff4f ||
+      address === 0xff68 ||
+      address === 0xff69 ||
+      address === 0xff6a ||
+      address === 0xff6b
+    ) {
       // Video registers
       return this.ppu.registers.read(address);
     } else if (address === 0xffff) {
@@ -210,7 +227,14 @@ export default class MemoryBus {
     } else if (address >= 0xff10 && address < 0xff27) {
       // Audio registers
       return this.apu.registers.write(address, value);
-    } else if ((address >= 0xff40 && address < 0xff4c) || address === 0xff4f) {
+    } else if (
+      (address >= 0xff40 && address < 0xff4c) ||
+      address === 0xff4f ||
+      address === 0xff68 ||
+      address === 0xff69 ||
+      address === 0xff6a ||
+      address === 0xff6b
+    ) {
       // Video registers
       return this.ppu.registers.write(address, value);
     } else if (address === 0xffff) {
