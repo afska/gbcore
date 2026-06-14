@@ -16,6 +16,7 @@ export default class PD extends InMemoryRegister.PPU {
 
   onRead() {
     if (this.ppu.memory.hardwareMode === hardware.DMG) return 0;
+    if (this.ppu.isDrawing) return 0xff;
 
     const address = this.ppu.registers[this.indexRegister].address;
     return this.ppu.memory[this.bankName][address];
@@ -25,7 +26,7 @@ export default class PD extends InMemoryRegister.PPU {
     if (this.ppu.memory.hardwareMode === hardware.DMG) return;
 
     const address = this.ppu.registers[this.indexRegister].address;
-    this.ppu.memory[this.bankName][address] = value;
+    if (!this.ppu.isDrawing) this.ppu.memory[this.bankName][address] = value;
 
     if (this.ppu.registers[this.indexRegister].autoIncrement)
       this.ppu.registers[this.indexRegister].address =

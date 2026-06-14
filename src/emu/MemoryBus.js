@@ -10,7 +10,6 @@ const OAM_SIZE = 160;
 const PALETTE_RAM_SIZE = 64;
 const WAVE_RAM_SIZE = 16;
 
-// TODO: IGNORE SOME READ/WRITES DURING MODE 3: VRAM, PALETTE RAM, (OAM?); reads return 0xff
 // TODO: THROW INVALID OPCODES ON INVALID OPCODES INSTEAD OF RUNNING NOP
 
 /**
@@ -49,6 +48,8 @@ export default class MemoryBus {
       return this.cartridge.read(address);
     } else if (address >= 0x8000 && address < 0xa000) {
       // 8 KiB Video RAM (VRAM)
+      if (this.ppu.isDrawing) return 0xff;
+
       // In CGB mode, switchable bank 0/1
       if (
         this.hardwareMode !== hardware.DMG &&
@@ -75,6 +76,8 @@ export default class MemoryBus {
       return this.read(address - 0xe000 + 0xc000);
     } else if (address >= 0xfe00 && address < 0xfea0) {
       // Object attribute memory (OAM)
+      if (this.ppu.isOamBlocked) return 0xff;
+
       return this.oam[address - 0xfe00];
     } else if (address >= 0xfea0 && address < 0xff00) {
       // Not Usable
@@ -101,6 +104,8 @@ export default class MemoryBus {
       return this.cartridge.write(address, value);
     } else if (address >= 0x8000 && address < 0xa000) {
       // 8 KiB Video RAM (VRAM)
+      if (this.ppu.isDrawing) return;
+
       // In CGB mode, switchable bank 0/1
       if (
         this.hardwareMode !== hardware.DMG &&
@@ -127,6 +132,8 @@ export default class MemoryBus {
       return this.write(address - 0xe000 + 0xc000, value);
     } else if (address >= 0xfe00 && address < 0xfea0) {
       // Object attribute memory (OAM)
+      if (this.ppu.isOamBlocked) return;
+
       return (this.oam[address - 0xfe00] = value);
     } else if (address >= 0xfea0 && address < 0xff00) {
       // Not Usable

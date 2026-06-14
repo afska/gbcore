@@ -11,6 +11,8 @@ const RENDER_DOT = 252;
 const TOTAL_SCANLINES = 154;
 export const T_CYCLES_PER_FRAME = DOTS_PER_SCANLINE * TOTAL_SCANLINES;
 
+const MODES = { HBLANK: 0, VBLANK: 1, OAM: 2, DRAWING: 3 };
+
 /**
  * The Game Boy outputs graphics to a 160×144 pixel LCD, using a quite complex mechanism to facilitate rendering.
  */
@@ -118,14 +120,22 @@ export default class PPU {
   }
 
   get isDrawing() {
-    return this.mode === 3;
+    return this.isEnabled && this.mode === MODES.DRAWING;
+  }
+
+  get isSearchingOam() {
+    return this.isEnabled && this.mode === MODES.OAM;
+  }
+
+  get isOamBlocked() {
+    return this.isSearchingOam || this.isDrawing;
   }
 
   get mode() {
-    if (this.scanline >= HEIGHT) return 1; // VBlank
-    if (this.dot < 80) return 2; // OAM
-    if (this.dot < 252) return 3; // Drawing
-    return 0; // HBlank
+    if (this.scanline >= HEIGHT) return MODES.VBLANK;
+    if (this.dot < 80) return MODES.OAM;
+    if (this.dot < 252) return MODES.DRAWING;
+    return MODES.HBLANK;
   }
 
   get isEnabled() {
