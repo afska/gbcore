@@ -27,7 +27,7 @@ export default class PPU {
     this.frame = 0;
 
     this.frameBuffer = new Uint32Array(WIDTH * HEIGHT);
-    this.backgroundColorIndexes = new Uint8Array(WIDTH * HEIGHT);
+    this.backgroundColorIndexes = new Uint8Array(WIDTH);
 
     this.registers = new VideoRegisters(this);
 
@@ -55,7 +55,7 @@ export default class PPU {
   }
 
   plotBG(x, y, color, colorIndex) {
-    this.backgroundColorIndexes[y * WIDTH + x] = colorIndex;
+    this.backgroundColorIndexes[x] = colorIndex;
     this.plot(x, y, color);
   }
 
@@ -63,8 +63,8 @@ export default class PPU {
     this.frameBuffer[y * WIDTH + x] = color;
   }
 
-  isBackgroundPixelOpaque(x, y) {
-    return this.backgroundColorIndexes[y * WIDTH + x] > 0;
+  isBackgroundPixelOpaque(x) {
+    return this.backgroundColorIndexes[x] > 0;
   }
 
   step(onFrame) {

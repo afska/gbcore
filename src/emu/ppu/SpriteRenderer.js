@@ -80,8 +80,7 @@ export default class SpriteRenderer {
         claimedPixels[x] = 1;
 
         const isCoveredByBackground =
-          !sprite.isInFrontOfBackground &&
-          this.ppu.isBackgroundPixelOpaque(x, y);
+          !sprite.isInFrontOfBackground && this.ppu.isBackgroundPixelOpaque(x);
         if (isCoveredByBackground) continue;
 
         const color =
