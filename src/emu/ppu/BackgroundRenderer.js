@@ -77,8 +77,8 @@ export default class BackgroundRenderer {
         this.memory,
         tileId,
         tileFlipY ? 7 - tileInsideY : tileInsideY,
-        !lcdc.useUnsignedTileMode,
-        tileBank
+        tileBank,
+        !lcdc.useUnsignedTileMode
       );
 
       const tilePixels = Math.min(8 - tileStartX, WIDTH - x);

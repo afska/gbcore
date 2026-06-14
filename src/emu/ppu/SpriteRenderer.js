@@ -1,3 +1,4 @@
+import hardware from "../hardware";
 import Sprite from "./Sprite";
 import Tile from "./Tile";
 
@@ -62,7 +63,8 @@ export default class SpriteRenderer {
       const tile = new Tile(
         this.memory,
         sprite.tileIdFor(insideY),
-        sprite.flipY ? 7 - tileInsideY : tileInsideY
+        sprite.flipY ? 7 - tileInsideY : tileInsideY,
+        this.memory.hardwareMode !== hardware.DMG ? sprite.bank : 0
       );
 
       for (let insideX = 0; insideX < 8; insideX++) {
