@@ -1,9 +1,11 @@
+import WBK from "./cpu/WBK";
 import hardware from "./hardware";
 import byte from "./lib/byte";
 import TimerRegisters from "./timer/Timer";
 
 const KB = 1024;
-const WRAM_SIZE = 8 * KB;
+const WRAM_BANK_SIZE = 4 * KB;
+const WRAM_BANKS = 8;
 const HRAM_SIZE = 127;
 const VRAM_SIZE = 8 * KB;
 const OAM_SIZE = 160;
@@ -17,8 +19,9 @@ const WAVE_RAM_SIZE = 16;
  */
 export default class MemoryBus {
   constructor() {
-    this.wramBank0 = new Uint8Array(WRAM_SIZE / 2);
-    this.wramBank1 = new Uint8Array(WRAM_SIZE / 2);
+    this.wramBanks = new Array(WRAM_BANKS)
+      .fill(null)
+      .map((it) => new Uint8Array(WRAM_BANK_SIZE));
     this.hram = new Uint8Array(HRAM_SIZE);
 
     this.vramBank0 = new Uint8Array(VRAM_SIZE);
@@ -39,6 +42,7 @@ export default class MemoryBus {
     this.hardwareMode = hardwareMode;
 
     this.timer = new TimerRegisters(cpu);
+    this.wbk = new WBK(cpu);
   }
 
   read(address) {
@@ -65,11 +69,16 @@ export default class MemoryBus {
       return this.cartridge.read(address);
     } else if (address >= 0xc000 && address < 0xd000) {
       // 4 KiB Work RAM (WRAM)
-      return this.wramBank0[address - 0xc000];
+      return this.wramBanks[0][address - 0xc000];
     } else if (address >= 0xd000 && address < 0xe000) {
       // 4 KiB Work RAM (WRAM)
       // In CGB mode, switchable bank 1–7
-      return this.wramBank1[address - 0xd000];
+
+      if (this.hardwareMode !== hardware.DMG) {
+        return this.wramBanks[this.wbk.selectedBank][address - 0xd000];
+      } else {
+        return this.wramBanks[1][address - 0xd000];
+      }
     } else if (address >= 0xe000 && address < 0xfe00) {
       // Echo RAM (mirror of C000–DDFF)
       // Use of this area is prohibited.
@@ -121,11 +130,17 @@ export default class MemoryBus {
       return this.cartridge.write(address, value);
     } else if (address >= 0xc000 && address < 0xd000) {
       // 4 KiB Work RAM (WRAM)
-      return (this.wramBank0[address - 0xc000] = value);
+      return (this.wramBanks[0][address - 0xc000] = value);
     } else if (address >= 0xd000 && address < 0xe000) {
       // 4 KiB Work RAM (WRAM)
       // In CGB mode, switchable bank 1–7
-      return (this.wramBank1[address - 0xd000] = value);
+
+      if (this.hardwareMode !== hardware.DMG) {
+        return (this.wramBanks[this.wbk.selectedBank][address - 0xd000] =
+          value);
+      } else {
+        return (this.wramBanks[1][address - 0xd000] = value);
+      }
     } else if (address >= 0xe000 && address < 0xfe00) {
       // Echo RAM (mirror of C000–DDFF)
       // Use of this area is prohibited.
@@ -164,8 +179,7 @@ export default class MemoryBus {
 
   getSaveState() {
     return {
-      wramBank0: Array.from(this.wramBank0),
-      wramBank1: Array.from(this.wramBank1),
+      wramBanks: this.wramBanks.map((it) => Array.from(it)),
       hram: Array.from(this.hram),
       vramBank0: Array.from(this.vramBank0),
       vramBank1Cgb: Array.from(this.vramBank1Cgb),
@@ -174,13 +188,15 @@ export default class MemoryBus {
       paletteRamSprites: Array.from(this.paletteRamSprites),
       waveRam: Array.from(this.waveRam),
       timer: this.timer.getSaveState(),
+      wbk: this.wbk.getSaveState(),
       hardwareMode: this.hardwareMode
     };
   }
 
   setSaveState(saveState) {
-    this.wramBank0.set(saveState.wramBank0);
-    this.wramBank1.set(saveState.wramBank1);
+    for (let i = 0; i < WRAM_BANKS; i++) {
+      this.wramBanks[i].set(saveState.wramBanks[i]);
+    }
     this.hram.set(saveState.hram);
     this.vramBank0.set(saveState.vramBank0);
     this.vramBank1Cgb.set(saveState.vramBank1Cgb);
@@ -189,6 +205,7 @@ export default class MemoryBus {
     this.paletteRamSprites.set(saveState.paletteRamSprites);
     this.waveRam.set(saveState.waveRam);
     this.timer.setSaveState(saveState.timer);
+    this.wbk.setSaveState(saveState.wbk);
     this.hardwareMode = saveState.hardwareMode;
   }
 
@@ -214,6 +231,9 @@ export default class MemoryBus {
     ) {
       // Video registers
       return this.ppu.registers.read(address);
+    } else if (address === 0xff70) {
+      // (CGB) WRAM Bank Select
+      return this.wbk.onRead();
     } else if (address === 0xffff) {
       // IE: Interrupt enable
       return this.cpu.ie;
@@ -244,6 +264,9 @@ export default class MemoryBus {
     ) {
       // Video registers
       return this.ppu.registers.write(address, value);
+    } else if (address === 0xff70) {
+      // (CGB) WRAM Bank Select
+      return this.wbk.onWrite(value);
     } else if (address === 0xffff) {
       // IE: Interrupt enable
       return (this.cpu.ie = value);
