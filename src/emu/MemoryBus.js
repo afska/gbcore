@@ -7,7 +7,7 @@ const KB = 1024;
 const WRAM_BANK_SIZE = 4 * KB;
 const WRAM_BANKS = 8;
 const HRAM_SIZE = 127;
-const VRAM_SIZE = 8 * KB;
+const VRAM_BANK_SIZE = 8 * KB;
 const OAM_SIZE = 160;
 const PALETTE_RAM_SIZE = 64;
 const WAVE_RAM_SIZE = 16;
@@ -24,8 +24,8 @@ export default class MemoryBus {
       .map((it) => new Uint8Array(WRAM_BANK_SIZE));
     this.hram = new Uint8Array(HRAM_SIZE);
 
-    this.vramBank0 = new Uint8Array(VRAM_SIZE);
-    this.vramBank1Cgb = new Uint8Array(VRAM_SIZE);
+    this.vramBank0 = new Uint8Array(VRAM_BANK_SIZE);
+    this.vramBank1Cgb = new Uint8Array(VRAM_BANK_SIZE);
     this.oam = new Uint8Array(OAM_SIZE);
     this.paletteRamBackground = new Uint8Array(PALETTE_RAM_SIZE);
     this.paletteRamSprites = new Uint8Array(PALETTE_RAM_SIZE);
@@ -224,10 +224,8 @@ export default class MemoryBus {
     } else if (
       (address >= 0xff40 && address < 0xff4c) ||
       address === 0xff4f ||
-      address === 0xff68 ||
-      address === 0xff69 ||
-      address === 0xff6a ||
-      address === 0xff6b
+      (address >= 0xff51 && address <= 0xff55) ||
+      (address >= 0xff68 && address <= 0xff6b)
     ) {
       // Video registers
       return this.ppu.registers.read(address);
@@ -257,10 +255,8 @@ export default class MemoryBus {
     } else if (
       (address >= 0xff40 && address < 0xff4c) ||
       address === 0xff4f ||
-      address === 0xff68 ||
-      address === 0xff69 ||
-      address === 0xff6a ||
-      address === 0xff6b
+      (address >= 0xff51 && address <= 0xff55) ||
+      (address >= 0xff68 && address <= 0xff6b)
     ) {
       // Video registers
       return this.ppu.registers.write(address, value);
