@@ -74,12 +74,16 @@ export default class PPU {
   }
 
   step(onFrame) {
+    const previousMode = this.mode;
     this.dot++;
 
     if (this.scanline < HEIGHT && this.dot === RENDER_DOT) {
       this.backgroundRenderer.renderScanline();
       this.spriteRenderer.renderScanline();
     }
+
+    if (previousMode !== MODES.HBLANK && this.mode === MODES.HBLANK)
+      this.registers.vdmaLen.hdma();
 
     if (this.dot >= DOTS_PER_SCANLINE) {
       this.dot = 0;

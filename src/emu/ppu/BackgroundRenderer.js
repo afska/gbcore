@@ -6,6 +6,7 @@ const WIDTH = 160;
 const BG_WIDTH = 256;
 const BG_HEIGHT = 256;
 const TILES_PER_ROW = 32;
+const TILEMAP_BASE = 0x9800;
 const TILEMAP_SIZE_BYTES = 1024;
 const WINDOW_X_OFFSET = 7;
 const WHITE = 0xffffffff;
@@ -55,7 +56,7 @@ export default class BackgroundRenderer {
       const tileMapId = isWindow
         ? lcdc.windowTileMapId
         : lcdc.backgroundTileMapId;
-      const tileMapAddress = 0x9800 + tileMapId * TILEMAP_SIZE_BYTES;
+      const tileMapAddress = TILEMAP_BASE + tileMapId * TILEMAP_SIZE_BYTES;
       const tileMapY = Math.floor(backgroundY / 8);
       const tileMapX = Math.floor(backgroundX / 8);
       const tileIndex = tileMapY * TILES_PER_ROW + tileMapX;
