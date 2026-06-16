@@ -162,6 +162,8 @@ export default class PPU {
   }
 
   get mode() {
+    if (!this.isEnabled) return MODES.HBLANK;
+
     if (this.scanline >= HEIGHT) return MODES.VBLANK;
     if (this.dot < 80) return MODES.OAM;
     if (this.dot < 252) return MODES.DRAWING;
