@@ -18,7 +18,5 @@ export default class OAMDMA extends InMemoryRegister.PPU {
       const data = cpu.memory.read(address);
       cpu.memory.oam[i] = data;
     }
-
-    cpu.cycles += 160;
   }
 }
