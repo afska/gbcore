@@ -24,9 +24,8 @@ const operations = [
   ...stack
 ];
 
-const NOP = misc[0];
-const normalOperations = new Array(256).fill(NOP);
-const prefixOperations = new Array(256).fill(NOP);
+const normalOperations = new Array(256).fill(null);
+const prefixOperations = new Array(256).fill(null);
 
 for (const operation of operations) {
   if (operation.id >= 0xcb00) prefixOperations[operation.id & 0xff] = operation;

@@ -7,6 +7,8 @@ import Stack from "./Stack";
 import { getOperation } from "./opcodes";
 
 const PREFIX_INSTRUCTION = 0xcb;
+const FORMAT_OPCODE = (opcode, isPrefix) =>
+  `${isPrefix ? "0xcb" : "0x"}${opcode.toString(16).padStart(2, "0")}`;
 
 /**
  * The Game Boy’s SM83 processor possesses a CISC, variable-length instruction set.
@@ -68,7 +70,8 @@ export default class CPU {
     if (isPrefix) opcode = this.fetchProgramByte();
 
     const operation = getOperation(opcode, isPrefix);
-    if (operation == null) throw new Error(`Unknown opcode: ${opcode}`);
+    if (operation == null)
+      throw new Error(`Invalid opcode: ${FORMAT_OPCODE(opcode, isPrefix)}`);
 
     operation.run(this);
     this.cycles += operation.cycles;

@@ -13,8 +13,6 @@ const OAM_SIZE = 160;
 const PALETTE_RAM_SIZE = 64;
 const WAVE_RAM_SIZE = 16;
 
-// TODO: THROW INVALID OPCODES ON INVALID OPCODES INSTEAD OF RUNNING NOP
-
 /**
  * The Game Boy has a 16-bit address bus, which is used to address ROM, RAM, and I/O.
  */
