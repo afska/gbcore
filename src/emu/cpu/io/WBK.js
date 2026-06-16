@@ -1,5 +1,5 @@
-import hardware from "../hardware";
-import InMemoryRegister from "../lib/InMemoryRegister";
+import hardware from "../../hardware";
+import InMemoryRegister from "../../lib/InMemoryRegister";
 
 /**
  * SVBK/WBK (CGB Mode only): WRAM bank

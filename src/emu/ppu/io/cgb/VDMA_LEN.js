@@ -41,7 +41,10 @@ export default class VDMA_LEN extends InMemoryRegister.PPU {
     this.src += length;
     this.destIndex += length;
 
-    cpu.cycles += (length / BLOCK_SIZE_BYTES) * M_CYCLES_PER_BLOCK; // TODO: * 2 in double speed mode
+    cpu.cycles +=
+      (length / BLOCK_SIZE_BYTES) *
+      M_CYCLES_PER_BLOCK *
+      (this.ppu.memory.doubleSpeed ? 2 : 1);
 
     this.setValue(DMA_FINISHED);
   }
@@ -64,7 +67,7 @@ export default class VDMA_LEN extends InMemoryRegister.PPU {
     this.src += length;
     this.destIndex += length;
 
-    cpu.cycles += M_CYCLES_PER_BLOCK; // TODO: * 2 in double speed mode
+    cpu.cycles += M_CYCLES_PER_BLOCK * (this.ppu.memory.doubleSpeed ? 2 : 1);
 
     if (isLastBlock || length < BLOCK_SIZE_BYTES) {
       this.isHdmaActive = false;

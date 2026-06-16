@@ -1,4 +1,5 @@
-import WBK from "./cpu/WBK";
+import KEY1 from "./cpu/io/KEY1";
+import WBK from "./cpu/io/WBK";
 import hardware from "./hardware";
 import byte from "./lib/byte";
 import TimerRegisters from "./timer/Timer";
@@ -43,6 +44,8 @@ export default class MemoryBus {
 
     this.timer = new TimerRegisters(cpu);
     this.wbk = new WBK(cpu);
+    this.key1 = new KEY1(cpu);
+    this.doubleSpeed = false;
   }
 
   read(address) {
@@ -189,6 +192,8 @@ export default class MemoryBus {
       waveRam: Array.from(this.waveRam),
       timer: this.timer.getSaveState(),
       wbk: this.wbk.getSaveState(),
+      key1: this.key1.getSaveState(),
+      doubleSpeed: this.doubleSpeed,
       hardwareMode: this.hardwareMode
     };
   }
@@ -206,6 +211,8 @@ export default class MemoryBus {
     this.waveRam.set(saveState.waveRam);
     this.timer.setSaveState(saveState.timer);
     this.wbk.setSaveState(saveState.wbk);
+    this.key1.setSaveState(saveState.key1);
+    this.doubleSpeed = saveState.doubleSpeed;
     this.hardwareMode = saveState.hardwareMode;
   }
 
@@ -229,6 +236,12 @@ export default class MemoryBus {
     ) {
       // Video registers
       return this.ppu.registers.read(address);
+    } else if (address === 0xff4c) {
+      // (CGB) KEY0 (is DMG compatibility mode enabled?)
+      return +(this.hardwareMode === hardware.DMG) << 2;
+    } else if (address === 0xff4d) {
+      // (CGB) KEY1
+      return this.key1.onRead();
     } else if (address === 0xff70) {
       // (CGB) WRAM Bank Select
       return this.wbk.onRead();
@@ -260,6 +273,9 @@ export default class MemoryBus {
     ) {
       // Video registers
       return this.ppu.registers.write(address, value);
+    } else if (address === 0xff4d) {
+      // (CGB) KEY1
+      return this.key1.onWrite(value);
     } else if (address === 0xff70) {
       // (CGB) WRAM Bank Select
       return this.wbk.onWrite(value);

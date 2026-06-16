@@ -129,7 +129,7 @@ export default class Emulator {
   /** Executes a step in the emulation (1 CPU instruction). Returns the number of T-cycles. */
   step() {
     const mCycles = this.cpu.step();
-    const tCycles = mCycles * T_CYCLES_PER_MCYCLE;
+    const tCycles = mCycles * this.tCyclesPerMcycle;
     this._clockPPU(tCycles);
     this._clockAPU(tCycles);
 
@@ -204,5 +204,9 @@ export default class Emulator {
     if (!mbc.hasSaveFile) return;
 
     mbc.setRam(saveFileBytes);
+  }
+
+  get tCyclesPerMcycle() {
+    return T_CYCLES_PER_MCYCLE * (this.memory.doubleSpeed ? 0.5 : 1);
   }
 }
