@@ -2,8 +2,6 @@ import InMemoryRegister from "../lib/InMemoryRegister";
 import byte from "../lib/byte";
 import MBC from "./MBC";
 
-// TODO: RUMBLE (bit 3 of ram bank select register (1 = ON)) if options.rumble
-
 export default (options = {}) => {
   /**
    * It can map up to 64 Mbits (8 MiB) of ROM.
@@ -17,7 +15,7 @@ export default (options = {}) => {
         ramEnable: new RamEnable(),
         romBankSelectLow: new RomBankSelectLow(),
         romBankSelectHigh: new RomBankSelectHigh(),
-        ramBankSelect: new RamBankSelect()
+        ramBankSelect: new RamBankSelect(options)
       };
     }
 
@@ -56,7 +54,7 @@ export default (options = {}) => {
         this._registers.ramEnable.setValue(value);
       } else if (address >= 0x2000 && address < 0x3000) {
         this._registers.romBankSelectLow.setValue(value);
-      } else if (address >= 3000 && address < 0x4000) {
+      } else if (address >= 0x3000 && address < 0x4000) {
         this._registers.romBankSelectHigh.setValue(value);
       } else if (address >= 0x4000 && address < 0x6000) {
         this._registers.ramBankSelect.setValue(value);
@@ -165,11 +163,18 @@ class RomBankSelectHigh extends InMemoryRegister {
 As for the MBC1s RAM Banking Mode, writing a value in the range $00-$0F maps the corresponding external RAM bank (if any) into the memory area at A000-BFFF.
 */
 class RamBankSelect extends InMemoryRegister {
+  constructor(options) {
+    super();
+    this.options = options;
+  }
+
   onLoad() {
     this.ramBank = 0;
   }
 
   setValue(value) {
+    // UNIMPLEMENTED: RUMBLE SUPPORT
+    if (this.options.rumble) value = byte.setBit(value, 3, 0);
     if (value >= 0 && value <= 0x0f) this.ramBank = value;
   }
 

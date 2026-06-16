@@ -1,4 +1,5 @@
 import interrupts from "../interrupts";
+import byte from "../lib/byte";
 import BackgroundRenderer from "./BackgroundRenderer";
 import SpriteRenderer from "./SpriteRenderer";
 import VideoRegisters from "./io";
@@ -9,6 +10,8 @@ const DOTS_PER_SCANLINE = 456;
 const RENDER_DOT = 252;
 const TOTAL_SCANLINES = 154;
 export const T_CYCLES_PER_FRAME = DOTS_PER_SCANLINE * TOTAL_SCANLINES;
+
+const MODES = { HBLANK: 0, VBLANK: 1, OAM: 2, DRAWING: 3 };
 
 /**
  * The Game Boy outputs graphics to a 160×144 pixel LCD, using a quite complex mechanism to facilitate rendering.
@@ -24,7 +27,8 @@ export default class PPU {
     this.frame = 0;
 
     this.frameBuffer = new Uint32Array(WIDTH * HEIGHT);
-    this.backgroundColorIndexes = new Uint8Array(WIDTH * HEIGHT);
+    this.backgroundColorIndexes = new Uint8Array(WIDTH);
+    this.backgroundPriorityPixels = new Uint8Array(WIDTH);
 
     this.registers = new VideoRegisters(this);
 
@@ -32,10 +36,38 @@ export default class PPU {
     this.spriteRenderer = new SpriteRenderer(this, this.memory);
 
     this.syncSTAT();
+    this.needsDisabledFrame = false;
   }
 
-  plotBG(x, y, color, colorIndex) {
-    this.backgroundColorIndexes[y * WIDTH + x] = colorIndex;
+  disable() {
+    this.needsDisabledFrame = true;
+
+    this.dot = 0;
+    this.scanline = 0;
+    this.windowLine = 0;
+    this.syncSTAT();
+  }
+
+  getColor(bankName, paletteId, colorIndex) {
+    const lowByte =
+      this.memory[bankName][(paletteId * 8 + colorIndex * 2) % 64];
+    const highByte =
+      this.memory[bankName][(paletteId * 8 + colorIndex * 2 + 1) % 64];
+    const color = byte.buildU16(highByte, lowByte);
+    const red /*   */ = (color & 0b000000000011111) >> 0;
+    const green /* */ = (color & 0b000001111100000) >> 5;
+    const blue /*  */ = (color & 0b111110000000000) >> 10;
+
+    const r8 = Math.round((red * 255) / 31);
+    const g8 = Math.round((green * 255) / 31);
+    const b8 = Math.round((blue * 255) / 31);
+
+    return (0xff << 24) | (b8 << 16) | (g8 << 8) | (r8 << 0);
+  }
+
+  plotBG(x, y, color, colorIndex, hasPriority) {
+    this.backgroundColorIndexes[x] = colorIndex;
+    this.backgroundPriorityPixels[x] = +hasPriority;
     this.plot(x, y, color);
   }
 
@@ -43,17 +75,35 @@ export default class PPU {
     this.frameBuffer[y * WIDTH + x] = color;
   }
 
-  isBackgroundPixelOpaque(x, y) {
-    return this.backgroundColorIndexes[y * WIDTH + x] > 0;
+  isBackgroundPixelOpaque(x) {
+    return this.backgroundColorIndexes[x] > 0;
+  }
+
+  doesBackgroundPixelHavePriority(x) {
+    return !!this.backgroundPriorityPixels[x];
   }
 
   step(onFrame) {
+    if (!this.isEnabled) {
+      if (this.needsDisabledFrame) {
+        this.frameBuffer.fill(0xffffffff);
+        this.backgroundColorIndexes.fill(0);
+        this.backgroundPriorityPixels.fill(0);
+        this.needsDisabledFrame = false;
+      }
+      return;
+    }
+
+    const previousMode = this.mode;
     this.dot++;
 
     if (this.scanline < HEIGHT && this.dot === RENDER_DOT) {
       this.backgroundRenderer.renderScanline();
       this.spriteRenderer.renderScanline();
     }
+
+    if (previousMode !== MODES.HBLANK && this.mode === MODES.HBLANK)
+      this.registers.vdmaLen.hdma();
 
     if (this.dot >= DOTS_PER_SCANLINE) {
       this.dot = 0;
@@ -80,7 +130,7 @@ export default class PPU {
 
   syncSTAT() {
     const stat = this.registers.stat;
-    const currentMode = this._getMode();
+    const currentMode = this.mode;
     const lycEqualsLy = this.scanline === this.registers.lyc.value;
 
     stat.ppuMode = currentMode;
@@ -99,6 +149,25 @@ export default class PPU {
     stat.interruptLine = interruptLine;
   }
 
+  get isDrawing() {
+    return this.isEnabled && this.mode === MODES.DRAWING;
+  }
+
+  get isSearchingOam() {
+    return this.isEnabled && this.mode === MODES.OAM;
+  }
+
+  get isOamBlocked() {
+    return this.isSearchingOam || this.isDrawing;
+  }
+
+  get mode() {
+    if (this.scanline >= HEIGHT) return MODES.VBLANK;
+    if (this.dot < 80) return MODES.OAM;
+    if (this.dot < 252) return MODES.DRAWING;
+    return MODES.HBLANK;
+  }
+
   get isEnabled() {
     return !!this.registers.lcdc.enableLCD;
   }
@@ -109,7 +178,8 @@ export default class PPU {
       scanline: this.scanline,
       windowLine: this.windowLine,
       frame: this.frame,
-      registers: this.registers.getSaveState()
+      registers: this.registers.getSaveState(),
+      needsDisabledFrame: this.needsDisabledFrame
     };
   }
 
@@ -119,12 +189,6 @@ export default class PPU {
     this.windowLine = saveState.windowLine;
     this.frame = saveState.frame;
     this.registers.setSaveState(saveState.registers);
-  }
-
-  _getMode() {
-    if (this.scanline >= HEIGHT) return 1; // VBlank
-    if (this.dot < 80) return 2; // OAM
-    if (this.dot < 252) return 3; // Drawing
-    return 0; // HBlank
+    this.needsDisabledFrame = saveState.needsDisabledFrame;
   }
 }

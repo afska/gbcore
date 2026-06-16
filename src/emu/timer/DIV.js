@@ -20,8 +20,8 @@ export default class DIV extends InMemoryRegister.Unit {
     this.setValue(value);
 
     // every time DIV's bit 4 (or 5 in double-speed mode) goes from 1 to 0, DIV-APU is incremented
-    if (byte.getFlag(oldValue, 4) && !byte.getFlag(value, 4)) this.divApu++;
-    // TODO: IMPLEMENT double-speed
+    const bit = this.unit.cpu.memory.doubleSpeed ? 5 : 4;
+    if (byte.getFlag(oldValue, bit) && !byte.getFlag(value, bit)) this.divApu++;
   }
 
   onWrite(value) {

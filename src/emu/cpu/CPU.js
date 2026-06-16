@@ -1,3 +1,4 @@
+import hardware from "../hardware";
 import interrupts from "../interrupts";
 import byte from "../lib/byte";
 import FlagsRegister from "./FlagsRegister";
@@ -46,6 +47,16 @@ export default class CPU {
     this.ie = 0;
     this.if = 0;
     this.halted = false;
+  }
+
+  setHardware(hardwareMode = hardware.GBC) {
+    this.registers.a.setValue(0);
+    this.registers.b.setValue(0);
+
+    if (hardwareMode === hardware.GBC || hardwareMode === hardware.GBA) {
+      this.registers.a.setValue(0x11);
+      if (hardwareMode === hardware.GBA) this.registers.b.setValue(1);
+    }
   }
 
   step() {

@@ -75,6 +75,16 @@ export default class InMemoryRegister {
     };
   }
 
+  static get CPU() {
+    return class CPUInMemoryRegister extends InMemoryRegister {
+      constructor(cpu) {
+        super();
+
+        this.cpu = cpu;
+      }
+    };
+  }
+
   static get PPU() {
     return class PPUInMemoryRegister extends InMemoryRegister {
       constructor(ppu) {

@@ -3,6 +3,7 @@ import Controller from "./Controller";
 import MemoryBus from "./MemoryBus";
 import APU from "./apu/APU";
 import CPU from "./cpu/CPU";
+import hardware from "./hardware";
 import PPU, { HEIGHT, T_CYCLES_PER_FRAME, WIDTH } from "./ppu/PPU";
 
 const T_CYCLES_PER_MCYCLE = 4;
@@ -30,13 +31,25 @@ export default class Emulator {
    * Loads a ROM file.
    * `bytes`: `Uint8Array`
    * `saveFileBytes`: `Uint8Array` or null
+   * `forcedHardware`: 0 (DMG), 1 (GBC), 2 (GBA), or null (autodetect)
    */
-  load(bytes, saveFileBytes = null) {
+  load(bytes, saveFileBytes = null, forcedHardware = null) {
     const cartridge = new Cartridge(bytes);
     const controller = new Controller(this.cpu);
+    const hardwareMode =
+      forcedHardware ??
+      (cartridge.header.cgbMode === "monochrome" ? hardware.DMG : hardware.GBC);
 
-    this.memory.onLoad(this.cpu, this.ppu, this.apu, cartridge, controller);
+    this.memory.onLoad(
+      this.cpu,
+      this.ppu,
+      this.apu,
+      cartridge,
+      controller,
+      hardwareMode
+    );
 
+    this.cpu.setHardware(hardwareMode);
     this.context = { cartridge, controller };
 
     this._setSaveFile(saveFileBytes);
@@ -117,7 +130,7 @@ export default class Emulator {
   /** Executes a step in the emulation (1 CPU instruction). Returns the number of T-cycles. */
   step() {
     const mCycles = this.cpu.step();
-    const tCycles = mCycles * T_CYCLES_PER_MCYCLE;
+    const tCycles = mCycles * this.tCyclesPerMcycle;
     this._clockPPU(tCycles);
     this._clockAPU(tCycles);
 
@@ -170,16 +183,12 @@ export default class Emulator {
   }
 
   _clockPPU(tCycles) {
-    if (!this.ppu.isEnabled) return;
-
     for (let i = 0; i < tCycles; i++) {
       this.ppu.step(this.onFrame);
     }
   }
 
   _clockAPU(tCycles) {
-    if (!this.apu.isEnabled) return;
-
     for (let i = 0; i < tCycles; i++) {
       this.apu.step(this.onSample);
     }
@@ -192,5 +201,9 @@ export default class Emulator {
     if (!mbc.hasSaveFile) return;
 
     mbc.setRam(saveFileBytes);
+  }
+
+  get tCyclesPerMcycle() {
+    return T_CYCLES_PER_MCYCLE * (this.memory.doubleSpeed ? 0.5 : 1);
   }
 }

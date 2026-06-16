@@ -87,7 +87,7 @@ export default class NoiseChannel {
     const bit1 = (this.lfsr >> 1) & 1;
     const feedback = +(bit0 === bit1);
 
-    // The result of LFSR0 ⊙ FSSR1 (1 if bit 0 and bit 1 are identical, 0 otherwise) is written to bit 15.
+    // The result of LFSR0 ⊙ LFSR1 (1 if bit 0 and bit 1 are identical, 0 otherwise) is written to bit 15.
     this.lfsr = byte.setBit(this.lfsr, 15, feedback);
 
     // If “short mode” was selected in NR43, then bit 15 is copied to bit 7 as well.

@@ -1,3 +1,4 @@
+import hardware from "../hardware";
 import Sprite from "./Sprite";
 import Tile from "./Tile";
 
@@ -45,24 +46,38 @@ export default class SpriteRenderer {
       }
     }
 
-    // sprite priority: smaller X wins; if X matches, lower OAM index wins
+    // CGB sprite priority: lower OAM index wins
+    if (this.memory.hardwareMode !== hardware.DMG) return sprites;
+
+    // DMG sprite priority: smaller X wins; if X matches, lower OAM index wins
     return sprites.sort((a, b) => a.x - b.x || a.id - b.id);
   }
 
   _render(sprites) {
     const y = this.ppu.scanline;
+    const lcdc = this.ppu.registers.lcdc;
     const claimedPixels = new Uint8Array(WIDTH);
 
+    // CGB mode: LCDC.0 == 0 always prioritizes sprites
+    let prioritizeSprites = false;
+    if (
+      this.memory.hardwareMode !== hardware.DMG &&
+      !lcdc.showBackgroundAndWindowOrCgbMasterPriority
+    )
+      prioritizeSprites = true;
+
     for (let sprite of sprites) {
-      const palette = sprite.dmgPaletteId
+      const dmgPalette = sprite.dmgPaletteId
         ? this.ppu.registers.obp1
         : this.ppu.registers.obp0;
+      const cgbPaletteId = sprite.cgbPaletteId;
       const insideY = sprite.diffY(y);
       const tileInsideY = insideY % 8;
       const tile = new Tile(
         this.memory,
         sprite.tileIdFor(insideY),
-        sprite.flipY ? 7 - tileInsideY : tileInsideY
+        sprite.flipY ? 7 - tileInsideY : tileInsideY,
+        this.memory.hardwareMode !== hardware.DMG ? sprite.cgbBank : 0
       );
 
       for (let insideX = 0; insideX < 8; insideX++) {
@@ -77,11 +92,17 @@ export default class SpriteRenderer {
         claimedPixels[x] = 1;
 
         const isCoveredByBackground =
-          !sprite.isInFrontOfBackground &&
-          this.ppu.isBackgroundPixelOpaque(x, y);
+          !prioritizeSprites &&
+          this.ppu.isBackgroundPixelOpaque(x) &&
+          (!sprite.isInFrontOfBackground ||
+            this.ppu.doesBackgroundPixelHavePriority(x));
         if (isCoveredByBackground) continue;
 
-        this.ppu.plot(x, y, palette.colorFor(colorIndex));
+        const color =
+          this.memory.hardwareMode !== hardware.DMG
+            ? this.ppu.getColor("paletteRamSprites", cgbPaletteId, colorIndex)
+            : dmgPalette.colorFor(colorIndex);
+        this.ppu.plot(x, y, color);
       }
     }
   }

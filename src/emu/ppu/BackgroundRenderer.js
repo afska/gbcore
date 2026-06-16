@@ -1,9 +1,12 @@
+import hardware from "../hardware";
+import byte from "../lib/byte";
 import Tile from "./Tile";
 
 const WIDTH = 160;
 const BG_WIDTH = 256;
 const BG_HEIGHT = 256;
 const TILES_PER_ROW = 32;
+const TILEMAP_BASE = 0x9800;
 const TILEMAP_SIZE_BYTES = 1024;
 const WINDOW_X_OFFSET = 7;
 const WHITE = 0xffffffff;
@@ -21,9 +24,14 @@ export default class BackgroundRenderer {
     const y = this.ppu.scanline;
     const lcdc = this.ppu.registers.lcdc;
 
-    if (!lcdc.showBackgroundAndWindow || lcdc.needsWhiteFrame) {
+    // DMG mode: LCDC.0 == 0 disables bg
+    if (
+      (this.memory.hardwareMode === hardware.DMG &&
+        !lcdc.showBackgroundAndWindowOrCgbMasterPriority) ||
+      lcdc.needsWhiteFrame
+    ) {
       for (let x = 0; x < WIDTH; x++) {
-        this.ppu.plotBG(x, y, WHITE, 0);
+        this.ppu.plotBG(x, y, WHITE, 0, false);
       }
       return;
     }
@@ -48,27 +56,51 @@ export default class BackgroundRenderer {
       const tileMapId = isWindow
         ? lcdc.windowTileMapId
         : lcdc.backgroundTileMapId;
-      const tileMapAddress = 0x9800 + tileMapId * TILEMAP_SIZE_BYTES;
+      const tileMapAddress = TILEMAP_BASE + tileMapId * TILEMAP_SIZE_BYTES;
       const tileMapY = Math.floor(backgroundY / 8);
       const tileMapX = Math.floor(backgroundX / 8);
       const tileIndex = tileMapY * TILES_PER_ROW + tileMapX;
 
-      const tileId = this.memory.read(tileMapAddress + tileIndex);
+      let tileBank = 0;
+      let tileFlipX = false,
+        tileFlipY = false;
+      let paletteId = 0;
+      let hasPriority = false;
+      if (this.memory.hardwareMode !== hardware.DMG) {
+        const tileAttributes = this.memory.readVram(
+          tileMapAddress + tileIndex,
+          1
+        );
+        paletteId = byte.getBits(tileAttributes, 0, 3);
+        if (byte.getFlag(tileAttributes, 3)) tileBank = 1;
+        if (byte.getFlag(tileAttributes, 5)) tileFlipX = true;
+        if (byte.getFlag(tileAttributes, 6)) tileFlipY = true;
+        if (byte.getFlag(tileAttributes, 7)) hasPriority = true;
+      }
+
+      const tileId = this.memory.readVram(tileMapAddress + tileIndex);
       const tileStartX = backgroundX % 8;
       const tileInsideY = backgroundY % 8;
       const tile = new Tile(
         this.memory,
         tileId,
-        tileInsideY,
+        tileFlipY ? 7 - tileInsideY : tileInsideY,
+        tileBank,
         !lcdc.useUnsignedTileMode
       );
 
       const tilePixels = Math.min(8 - tileStartX, WIDTH - x);
 
       for (let xx = 0; xx < tilePixels; xx++) {
-        const colorIndex = tile.getColorIndex(tileStartX + xx);
-        const color = this.ppu.registers.bgp.colorFor(colorIndex);
-        this.ppu.plotBG(x + xx, y, color, colorIndex);
+        const insideX = tileStartX + xx;
+        const colorIndex = tile.getColorIndex(
+          tileFlipX ? 7 - insideX : insideX
+        );
+        const color =
+          this.memory.hardwareMode !== hardware.DMG
+            ? this.ppu.getColor("paletteRamBackground", paletteId, colorIndex)
+            : this.ppu.registers.bgp.colorFor(colorIndex);
+        this.ppu.plotBG(x + xx, y, color, colorIndex, hasPriority);
       }
 
       x += tilePixels;
