@@ -46,10 +46,10 @@ export default class APU {
     this.sampleCounter++;
 
     if (this.sampleCounter >= STEPS_PER_SAMPLE) {
-      const pulse1 = this.channels.pulses[0].sample();
-      const pulse2 = this.channels.pulses[1].sample();
-      const wave = this.channels.wave.sample();
-      const noise = this.channels.noise.sample();
+      const pulse1 = this._normalizeSample(this.channels.pulses[0]);
+      const pulse2 = this._normalizeSample(this.channels.pulses[1]);
+      const wave = this._normalizeSample(this.channels.wave);
+      const noise = this._normalizeSample(this.channels.noise);
 
       this._mix(pulse1, pulse2, wave, noise);
 
@@ -154,10 +154,8 @@ export default class APU {
       rightChannels++;
     }
 
-    // Centering
-    // We move the signal from 0..15 to -1..1
-    if (leftChannels) left = (left / (MAX_VOLUME * leftChannels)) * 2 - 1;
-    if (rightChannels) right = (right / (MAX_VOLUME * rightChannels)) * 2 - 1;
+    if (leftChannels) left /= leftChannels;
+    if (rightChannels) right /= rightChannels;
 
     // Master volume
     // A value of 0 is treated as a volume of 1 (very quiet), and a value of 7 is treated as a volume of 8 (no volume reduction).
@@ -167,5 +165,17 @@ export default class APU {
 
     this.sample[0] = left;
     this.sample[1] = right;
+  }
+
+  _normalizeSample(channel) {
+    const sample = channel.sample();
+    if (!channel.isPlaying || channel.volume === 0) return 0;
+
+    // conversion from (0 .. volume) to a zero-centered range:
+    //   e.g. (0 .. 15) to (-1 .. 1)
+    // starting from (0 .. volume), if we multiply by 2 we get a (0 .. volume*2) range
+    // so we shift everything by volume to get a (-volume .. volume) range
+    // then, we divide by MAX_VOLUME, so (-15 .. 15) becomes (-1 .. 1) and (-7.5 .. 7.5) becomes (-0.5 .. 0.5)
+    return (sample * 2 - channel.volume) / MAX_VOLUME;
   }
 }

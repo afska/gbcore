@@ -2,6 +2,8 @@ import byte from "../../lib/byte";
 import LengthCounter from "../LengthCounter";
 import WaveOscillator from "../oscillators/WaveOscillator";
 
+const MAX_VOLUME = 15;
+
 /**
  * Channel 3, the “wave” channel, produces arbitrary user-supplied waves.
  */
@@ -27,6 +29,14 @@ export default class WaveChannel {
   set notePeriod(value) {
     this.registers.high.periodHigh = (value & 0b11100000000) >> 8;
     this.registers.low.setValue(value & 0b00011111111);
+  }
+
+  get volume() {
+    return this.oscillator.volume * MAX_VOLUME;
+  }
+
+  set volume(value) {
+    this.oscillator.volume = value / MAX_VOLUME;
   }
 
   reset() {
