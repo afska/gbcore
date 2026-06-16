@@ -36,6 +36,16 @@ export default class PPU {
     this.spriteRenderer = new SpriteRenderer(this, this.memory);
 
     this.syncSTAT();
+    this.needsDisabledFrame = false;
+  }
+
+  disable() {
+    this.needsDisabledFrame = true;
+
+    this.dot = 0;
+    this.scanline = 0;
+    this.windowLine = 0;
+    this.syncSTAT();
   }
 
   getColor(bankName, paletteId, colorIndex) {
@@ -74,6 +84,16 @@ export default class PPU {
   }
 
   step(onFrame) {
+    if (!this.isEnabled) {
+      if (this.needsDisabledFrame) {
+        this.frameBuffer.fill(0xffffffff);
+        this.backgroundColorIndexes.fill(0);
+        this.backgroundPriorityPixels.fill(0);
+        this.needsDisabledFrame = false;
+      }
+      return;
+    }
+
     const previousMode = this.mode;
     this.dot++;
 
@@ -158,7 +178,8 @@ export default class PPU {
       scanline: this.scanline,
       windowLine: this.windowLine,
       frame: this.frame,
-      registers: this.registers.getSaveState()
+      registers: this.registers.getSaveState(),
+      needsDisabledFrame: this.needsDisabledFrame
     };
   }
 
@@ -168,5 +189,6 @@ export default class PPU {
     this.windowLine = saveState.windowLine;
     this.frame = saveState.frame;
     this.registers.setSaveState(saveState.registers);
+    this.needsDisabledFrame = saveState.needsDisabledFrame;
   }
 }

@@ -182,16 +182,12 @@ export default class Emulator {
   }
 
   _clockPPU(tCycles) {
-    if (!this.ppu.isEnabled) return;
-
     for (let i = 0; i < tCycles; i++) {
       this.ppu.step(this.onFrame);
     }
   }
 
   _clockAPU(tCycles) {
-    if (!this.apu.isEnabled) return;
-
     for (let i = 0; i < tCycles; i++) {
       this.apu.step(this.onSample);
     }
