@@ -1,7 +1,7 @@
 import InMemoryRegister from "../lib/InMemoryRegister";
 import MBC from "./MBC";
 
-// TODO: RTC if options.timer
+// UNIMPLEMENTED: RTC if options.timer
 
 export default (options = {}) => {
   /**
