@@ -30,6 +30,13 @@ export default class LCDC extends InMemoryRegister.PPU {
 
     this.setValue(value);
 
+    if (enableLCD && !this.enableLCD) {
+      // When the LCDC goes from ON to OFF, LY is reset to 0.
+      this.ppu.dot = 0;
+      this.ppu.scanline = 0;
+      this.ppu.windowLine = 0;
+    }
+
     if (!enableLCD && this.enableLCD) this.needsWhiteFrame = true;
   }
 
