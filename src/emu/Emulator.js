@@ -31,6 +31,7 @@ export default class Emulator {
    * Loads a ROM file.
    * `bytes`: `Uint8Array`
    * `saveFileBytes`: `Uint8Array` or null
+   * `forcedHardware`: 0 (DMG), 1 (GBC), 2 (GBA), or null (autodetect)
    */
   load(bytes, saveFileBytes = null, forcedHardware = null) {
     const cartridge = new Cartridge(bytes);
