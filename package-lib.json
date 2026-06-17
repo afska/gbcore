@@ -1,6 +1,6 @@
 {
   "name": "gbcore",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "index.js",
   "description": "A basic GB emulator (executes whole instructions and scanlines, not cycle-accurate) made for educational purposes.",
   "author": "[r]labs",

@@ -7,6 +7,7 @@ export const APU_RATE = 4194304;
 const SAMPLE_RATE = 44100;
 const STEPS_PER_SAMPLE = APU_RATE / SAMPLE_RATE;
 const MAX_VOLUME = 15;
+const NUM_CHANNELS = 4;
 
 /**
  * The Game Boy’s sound chip is called the APU.
@@ -118,44 +119,19 @@ export default class APU {
 
     let left = 0;
     let right = 0;
-    let leftChannels = 0;
-    let rightChannels = 0;
 
-    if (this.channels.pulses[0].isPlaying && term.channel1Left) {
-      left += pulse1;
-      leftChannels++;
-    }
-    if (this.channels.pulses[1].isPlaying && term.channel2Left) {
-      left += pulse2;
-      leftChannels++;
-    }
-    if (this.channels.wave.isPlaying && term.channel3Left) {
-      left += wave;
-      leftChannels++;
-    }
-    if (this.channels.noise.isPlaying && term.channel4Left) {
-      left += noise;
-      leftChannels++;
-    }
-    if (this.channels.pulses[0].isPlaying && term.channel1Right) {
-      right += pulse1;
-      rightChannels++;
-    }
-    if (this.channels.pulses[1].isPlaying && term.channel2Right) {
-      right += pulse2;
-      rightChannels++;
-    }
-    if (this.channels.wave.isPlaying && term.channel3Right) {
-      right += wave;
-      rightChannels++;
-    }
-    if (this.channels.noise.isPlaying && term.channel4Right) {
-      right += noise;
-      rightChannels++;
-    }
+    if (term.channel1Left) left += pulse1;
+    if (term.channel2Left) left += pulse2;
+    if (term.channel3Left) left += wave;
+    if (term.channel4Left) left += noise;
 
-    if (leftChannels) left /= leftChannels;
-    if (rightChannels) right /= rightChannels;
+    if (term.channel1Right) right += pulse1;
+    if (term.channel2Right) right += pulse2;
+    if (term.channel3Right) right += wave;
+    if (term.channel4Right) right += noise;
+
+    left /= NUM_CHANNELS;
+    right /= NUM_CHANNELS;
 
     // Master volume
     // A value of 0 is treated as a volume of 1 (very quiet), and a value of 7 is treated as a volume of 8 (no volume reduction).
@@ -169,7 +145,6 @@ export default class APU {
 
   _normalizeSample(channel) {
     const sample = channel.sample();
-    if (!channel.isPlaying || channel.volume === 0) return 0;
 
     // conversion from (0 .. volume) to a zero-centered range:
     //   e.g. (0 .. 15) to (-1 .. 1)
