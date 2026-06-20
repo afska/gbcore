@@ -476,7 +476,7 @@ export default [
     cycles: 1
   },
 
-  // SUB B
+  // SUB A, B
   {
     id: 0x90,
     run: (cpu) => {
@@ -486,7 +486,7 @@ export default [
     cycles: 1
   },
 
-  // SUB C
+  // SUB A, C
   {
     id: 0x91,
     run: (cpu) => {
@@ -496,7 +496,7 @@ export default [
     cycles: 1
   },
 
-  // SUB D
+  // SUB A, D
   {
     id: 0x92,
     run: (cpu) => {
@@ -506,7 +506,7 @@ export default [
     cycles: 1
   },
 
-  // SUB E
+  // SUB A, E
   {
     id: 0x93,
     run: (cpu) => {
@@ -516,7 +516,7 @@ export default [
     cycles: 1
   },
 
-  // SUB H
+  // SUB A, H
   {
     id: 0x94,
     run: (cpu) => {
@@ -526,7 +526,7 @@ export default [
     cycles: 1
   },
 
-  // SUB L
+  // SUB A, L
   {
     id: 0x95,
     run: (cpu) => {
@@ -536,7 +536,7 @@ export default [
     cycles: 1
   },
 
-  // SUB (HL)
+  // SUB A, (HL)
   {
     id: 0x96,
     run: (cpu) => {
@@ -547,7 +547,7 @@ export default [
     cycles: 2
   },
 
-  // SUB A
+  // SUB A, A
   {
     id: 0x97,
     run: (cpu) => {
@@ -739,7 +739,7 @@ export default [
     cycles: 2
   },
 
-  // SUB d8
+  // SUB A, d8
   {
     id: 0xd6,
     run: (cpu) => {
