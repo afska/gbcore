@@ -36,7 +36,16 @@ export default class APU {
   }
 
   step(onSample) {
-    if (!this.isEnabled) return;
+    if (!this.isEnabled) {
+      this.sampleCounter++;
+      if (this.sampleCounter >= STEPS_PER_SAMPLE) {
+        this.sampleCounter -= STEPS_PER_SAMPLE;
+        this.sample[0] = 0;
+        this.sample[1] = 0;
+        onSample(0, 0);
+      }
+      return;
+    }
 
     this._processTicks();
     this.channels.pulses[0].step();
