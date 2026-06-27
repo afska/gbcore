@@ -4,9 +4,9 @@ import MemoryBus from "./MemoryBus";
 import APU from "./apu/APU";
 import CPU from "./cpu/CPU";
 import hardware from "./hardware";
-import PPU, { HEIGHT, T_CYCLES_PER_FRAME, WIDTH } from "./ppu/PPU";
+import PPU, { HEIGHT, TICKS_PER_FRAME, WIDTH } from "./ppu/PPU";
 
-const T_CYCLES_PER_MCYCLE = 4;
+const TICKS_PER_MCYCLE = 4;
 
 /**
  * A Game Boy emulator.
@@ -79,7 +79,7 @@ export default class Emulator {
     const currentFrame = this.ppu.frame;
     let elapsed = 0;
 
-    while (elapsed < T_CYCLES_PER_FRAME) {
+    while (elapsed < TICKS_PER_FRAME) {
       elapsed += this.step();
 
       if (this.ppu.frame !== currentFrame) return;
@@ -97,7 +97,7 @@ export default class Emulator {
     this.sampleCount = 0;
     let elapsed = 0;
 
-    while (this.sampleCount < n && elapsed < T_CYCLES_PER_FRAME) {
+    while (this.sampleCount < n && elapsed < TICKS_PER_FRAME) {
       elapsed += this.step();
     }
   }
@@ -109,7 +109,7 @@ export default class Emulator {
     const currentScanline = this.ppu.scanline;
     let elapsed = 0;
 
-    while (elapsed < T_CYCLES_PER_FRAME) {
+    while (elapsed < TICKS_PER_FRAME) {
       elapsed += this.step();
 
       if (this.ppu.scanline !== currentScanline) break;
@@ -127,14 +127,14 @@ export default class Emulator {
     this.ppu.frameBuffer.set(oldFrameBuffer);
   }
 
-  /** Executes a step in the emulation (1 CPU instruction). Returns the number of T-cycles. */
+  /** Executes a step in the emulation (1 CPU instruction). Returns the number of ticks. */
   step() {
     const mCycles = this.cpu.step();
-    const tCycles = mCycles * this.tCyclesPerMcycle;
-    this._clockPPU(tCycles);
-    this._clockAPU(tCycles);
+    const ticks = mCycles * this.ticksPerMcycle;
+    this._clockPPU(ticks);
+    this._clockAPU(ticks);
 
-    return tCycles;
+    return ticks;
   }
 
   /**
@@ -182,14 +182,14 @@ export default class Emulator {
     this.context.controller.setSaveState(saveState.controller);
   }
 
-  _clockPPU(tCycles) {
-    for (let i = 0; i < tCycles; i++) {
+  _clockPPU(ticks) {
+    for (let i = 0; i < ticks; i++) {
       this.ppu.step(this.onFrame);
     }
   }
 
-  _clockAPU(tCycles) {
-    for (let i = 0; i < tCycles; i++) {
+  _clockAPU(ticks) {
+    for (let i = 0; i < ticks; i++) {
       this.apu.step(this.onSample);
     }
   }
@@ -203,7 +203,7 @@ export default class Emulator {
     mbc.setRam(saveFileBytes);
   }
 
-  get tCyclesPerMcycle() {
-    return T_CYCLES_PER_MCYCLE * (this.memory.doubleSpeed ? 0.5 : 1);
+  get ticksPerMcycle() {
+    return TICKS_PER_MCYCLE * (this.memory.doubleSpeed ? 0.5 : 1);
   }
 }
