@@ -133,6 +133,16 @@ export default class AudioRegisters extends IORegisterSegment {
         return this.pulses[1].low;
       case 0xff19:
         return this.pulses[1].high;
+      case 0xff1a:
+        return this.wave.ena;
+      case 0xff1b:
+        return this.wave.len;
+      case 0xff1c:
+        return this.wave.level;
+      case 0xff1d:
+        return this.wave.low;
+      case 0xff1e:
+        return this.wave.high;
       case 0xff20:
         return this.noise.len;
       case 0xff21:
@@ -145,16 +155,6 @@ export default class AudioRegisters extends IORegisterSegment {
         return this.audvol;
       case 0xff25:
         return this.audterm;
-      case 0xff1a:
-        return this.wave.ena;
-      case 0xff1b:
-        return this.wave.len;
-      case 0xff1c:
-        return this.wave.level;
-      case 0xff1d:
-        return this.wave.low;
-      case 0xff1e:
-        return this.wave.high;
       case AUDENA_ADDR:
         return this.audena;
       default:
