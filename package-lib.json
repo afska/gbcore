@@ -1,8 +1,8 @@
 {
   "name": "gbcore",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "main": "index.js",
-  "description": "A basic GB emulator (executes whole instructions and scanlines, not cycle-accurate) made for educational purposes.",
+  "description": "A basic GB/GBC emulator made for educational purposes, just to learn about the system! It executes whole instructions and scanlines rather than being cycle-accurate.",
   "author": "[r]labs",
   "license": "MIT",
   "dependencies": {},

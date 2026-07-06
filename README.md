@@ -1,6 +1,6 @@
 # gbcore
 
-A basic GB/GBC emulator (executes whole instructions and scanlines, not cycle-accurate) made for educational purposes: just to learn about the system!
+A basic GB/GBC emulator made for educational purposes, just to learn about the system! It executes whole instructions and scanlines rather than being cycle-accurate.
 
 ## Features
 
