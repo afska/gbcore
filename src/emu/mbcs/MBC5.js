@@ -107,10 +107,10 @@ export default (options = {}) => {
 };
 
 /*
-  0000-1FFF - RAM Enable (Write Only)
-  Mostly the same as for MBC1. Writing $0A will enable reading and writing to external RAM. Writing $00 will disable it.
-  Actual MBCs actually enable RAM when writing any value whose bottom 4 bits equal $A (so $0A, $1A, and so on), and disable it when writing anything else. Relying on this behavior is not recommended for compatibility reasons.
-  */
+0000-1FFF - RAM Enable (Write Only)
+Mostly the same as for MBC1. Writing $0A will enable reading and writing to external RAM. Writing $00 will disable it.
+Actual MBCs actually enable RAM when writing any value whose bottom 4 bits equal $A (so $0A, $1A, and so on), and disable it when writing anything else. Relying on this behavior is not recommended for compatibility reasons.
+*/
 class RamEnable extends InMemoryRegister {
   onLoad() {
     this.addField("enableRamWith0xA", 0, 4);
@@ -122,9 +122,9 @@ class RamEnable extends InMemoryRegister {
 }
 
 /*
-  2000-2FFF - 8 least significant bits of ROM bank number (Write Only)
-  The 8 least significant bits of the ROM bank number go here. Writing 0 will indeed give bank 0 on MBC5, unlike other MBCs.
-  */
+2000-2FFF - 8 least significant bits of ROM bank number (Write Only)
+The 8 least significant bits of the ROM bank number go here. Writing 0 will indeed give bank 0 on MBC5, unlike other MBCs.
+*/
 class RomBankSelectLow extends InMemoryRegister {
   onLoad() {
     this.bankNumberLow = 0;
@@ -149,9 +149,9 @@ class RomBankSelectLow extends InMemoryRegister {
 }
 
 /*
-  3000-3FFF - 9th bit of ROM bank number (Write Only)
-  The 9th bit of the ROM bank number goes here.
-  */
+3000-3FFF - 9th bit of ROM bank number (Write Only)
+The 9th bit of the ROM bank number goes here.
+*/
 class RomBankSelectHigh extends InMemoryRegister {
   onLoad() {
     this.addField("bankNumberLastBit", 0, 1);
