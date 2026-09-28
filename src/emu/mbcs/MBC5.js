@@ -11,11 +11,16 @@ export default (options = {}) => {
     onLoad() {
       this.options = options;
 
+      this.rumble = {
+        isRumbling: false,
+        didRumble: false
+      };
+
       this._registers = {
         ramEnable: new RamEnable(),
         romBankSelectLow: new RomBankSelectLow(),
         romBankSelectHigh: new RomBankSelectHigh(),
-        ramBankSelect: new RamBankSelect(options)
+        ramBankSelect: new RamBankSelect(options, this.rumble)
       };
     }
 
@@ -76,6 +81,7 @@ export default (options = {}) => {
     getSaveState() {
       return {
         ...super.getSaveState(),
+        rumble: this.rumble.isRumbling,
         registers: {
           ramEnable: this._registers.ramEnable.getSaveState(),
           romBankSelectLow: this._registers.romBankSelectLow.getSaveState(),
@@ -98,6 +104,9 @@ export default (options = {}) => {
       this._registers.ramBankSelect.setSaveState(
         saveState.registers.ramBankSelect
       );
+
+      this.rumble.isRumbling = saveState.rumble;
+      this.rumble.didRumble = saveState.rumble;
     }
 
     _buildPageId(high, low) {
@@ -163,9 +172,10 @@ class RomBankSelectHigh extends InMemoryRegister {
 As for the MBC1s RAM Banking Mode, writing a value in the range $00-$0F maps the corresponding external RAM bank (if any) into the memory area at A000-BFFF.
 */
 class RamBankSelect extends InMemoryRegister {
-  constructor(options) {
+  constructor(options, rumble) {
     super();
     this.options = options;
+    this.rumble = rumble;
   }
 
   onLoad() {
@@ -173,8 +183,11 @@ class RamBankSelect extends InMemoryRegister {
   }
 
   setValue(value) {
-    // UNIMPLEMENTED: RUMBLE SUPPORT
-    if (this.options.rumble) value = byte.setBit(value, 3, 0);
+    if (this.options.rumble) {
+      this.rumble.isRumbling = byte.getBit(value, 3) === 1;
+      if (this.rumble.isRumbling) this.rumble.didRumble = true;
+      value = byte.setBit(value, 3, 0);
+    }
     if (value >= 0 && value <= 0x0f) this.ramBank = value;
   }
 

@@ -138,6 +138,24 @@ export default class Emulator {
   }
 
   /**
+   * Returns whether the current cartridge has enabled the rumble motor in this frame.
+   * If true, enable vibration for the whole frame.
+   * Calling this method resets the flag, so call it once per frame.
+   */
+  didRumble() {
+    if (!this.context) return false;
+
+    const rumble = this.context.cartridge.mbc.rumble;
+    if (rumble?.didRumble) {
+      if (!rumble.isRumbling) rumble.didRumble = false;
+
+      return true;
+    }
+
+    return false;
+  }
+
+  /**
    * Returns an array with the save file bytes, or null if the game doesn't have a save file.
    */
   getSaveFile() {

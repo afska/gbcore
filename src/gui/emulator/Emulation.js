@@ -21,11 +21,13 @@ export default class Emulation {
     onSaveState = () => {},
     saveState = null,
     onSaveFile = () => {},
-    saveFile = null
+    saveFile = null,
+    onRumble = () => {}
   ) {
     this.screen = screen;
     this.samples = [];
     this.onSaveFile = onSaveFile;
+    this.onRumble = onRumble;
 
     this.speaker = new Speaker(({ need, have, target }) => {
       try {
@@ -116,6 +118,8 @@ export default class Emulation {
   _onFrame = (frameBuffer) => {
     this.frameTimer.countNewFrame();
     this.screen.setBuffer(frameBuffer);
+
+    this.onRumble(this.gb.didRumble());
   };
 
   _onAudio = (left, right) => {

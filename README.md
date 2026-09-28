@@ -20,7 +20,6 @@ A basic GB/GBC emulator made for educational purposes, just to learn about the s
 - IR port
 - STOP instruction
 - MBC3's RTC
-- MBC5's rumble
 - ...and more! ✨
 
 ## Usage

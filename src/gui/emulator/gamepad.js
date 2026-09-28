@@ -1,10 +1,14 @@
 const DEBUG_MODE = window.location.search === "?debug";
 
 export default {
-  getInput() {
-    const gamepads = navigator
+  getGamepads() {
+    return navigator
       .getGamepads()
       .filter((it) => it && it.mapping === "standard");
+  },
+
+  getInput() {
+    const gamepads = this.getGamepads();
 
     if (gamepads.length === 0) return null;
 

@@ -58,7 +58,8 @@ export default class Emulator extends Component {
       this._setSaveState,
       saveState,
       this._setSaveFile,
-      saveFile
+      saveFile,
+      this._setRumble
     );
   }
 
@@ -132,5 +133,22 @@ export default class Emulator extends Component {
     if (saveFile == null) return;
 
     localStorage.setItem(SAVEFILE_KEY, JSON.stringify(Array.from(saveFile)));
+  };
+
+  _setRumble = (didRumble) => {
+    if (!didRumble) return;
+
+    const vibratingGamepad = gamepad.getGamepads()[0];
+
+    if (vibratingGamepad && vibratingGamepad.vibrationActuator) {
+      vibratingGamepad.vibrationActuator
+        .playEffect("dual-rumble", {
+          startDelay: 0,
+          duration: 16,
+          weakMagnitude: 0.5,
+          strongMagnitude: 1.0
+        })
+        .catch(() => {});
+    }
   };
 }
