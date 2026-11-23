@@ -1,8 +1,8 @@
 import byte from "../lib/byte";
 
 const TILE_SIZE_PIXELS = 8;
-const SPRITE_ATTR_CGB_PALETTE_BIT = 0;
-const SPRITE_ATTR_CGB_BANK_BIT = 3;
+const SPRITE_ATTR_GBC_PALETTE_BIT = 0;
+const SPRITE_ATTR_GBC_BANK_BIT = 3;
 const SPRITE_ATTR_DMG_PALETTE_BIT = 4;
 const SPRITE_ATTR_HORIZONTAL_FLIP_BIT = 5;
 const SPRITE_ATTR_VERTICAL_FLIP_BIT = 6;
@@ -38,12 +38,12 @@ export default class Sprite {
     return scanline - this.y;
   }
 
-  get cgbBank() {
-    return byte.getBit(this.attributes, SPRITE_ATTR_CGB_BANK_BIT);
+  get gbcBank() {
+    return byte.getBit(this.attributes, SPRITE_ATTR_GBC_BANK_BIT);
   }
 
-  get cgbPaletteId() {
-    return byte.getBits(this.attributes, SPRITE_ATTR_CGB_PALETTE_BIT, 3);
+  get gbcPaletteId() {
+    return byte.getBits(this.attributes, SPRITE_ATTR_GBC_PALETTE_BIT, 3);
   }
 
   get isInFrontOfBackground() {
